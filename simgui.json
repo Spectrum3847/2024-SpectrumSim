@@ -1,0 +1,112 @@
+{
+  "HALProvider": {
+    "Other Devices": {
+      "Talon FX (v6)[4]": {
+        "header": {
+          "open": true
+        }
+      },
+      "Talon FX (v6)[4]/Rotor Sensor": {
+        "header": {
+          "open": true
+        }
+      },
+      "Talon FX (v6)[5]": {
+        "header": {
+          "open": true
+        }
+      },
+      "Talon FX (v6)[5]/Fwd Limit": {
+        "header": {
+          "open": true
+        }
+      },
+      "Talon FX (v6)[5]/Rev Limit": {
+        "header": {
+          "open": true
+        }
+      },
+      "Talon FX (v6)[5]/Rotor Sensor": {
+        "header": {
+          "open": true
+        }
+      }
+    }
+  },
+  "NTProvider": {
+    "types": {
+      "/FMSInfo": "FMSInfo",
+      "/SmartDashboard/Arm Viz": "Mechanism2d",
+      "/SmartDashboard/Scheduler": "Scheduler",
+      "/SmartDashboard/VisionSystemSim-main/Sim Field": "Field2d"
+    },
+    "windows": {
+      "/SmartDashboard/Arm Viz": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/Scheduler": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/VisionSystemSim-main/Sim Field": {
+        "Robot": {
+          "length": 0.8500000238418579,
+          "width": 0.8500000238418579
+        },
+        "apriltag": {
+          "image": "./images/tag-blue.png"
+        },
+        "bottom": 1476,
+        "cameras": {
+          "length": 0.10000000149011612,
+          "width": 0.10000000149011612
+        },
+        "height": 8.210550308227539,
+        "left": 150,
+        "right": 2961,
+        "top": 79,
+        "visibleTargetPoses": {
+          "image": "./images/tag-green.png"
+        },
+        "width": 16.541748046875,
+        "window": {
+          "visible": true
+        }
+      }
+    }
+  },
+  "NetworkTables": {
+    "transitory": {
+      "CameraPublisher": {
+        "cameraName-processed": {
+          "open": true
+        },
+        "cameraName-raw": {
+          "open": true,
+          "string[]##v_/CameraPublisher/cameraName-raw/streams": {
+            "open": true
+          }
+        },
+        "open": true
+      },
+      "Pose": {
+        "open": true
+      }
+    }
+  },
+  "NetworkTables Info": {
+    "Clients": {
+      "open": true
+    },
+    "Connections": {
+      "open": true
+    },
+    "Server": {
+      "open": true
+    },
+    "visible": true
+  }
+}
