@@ -35,8 +35,6 @@ public class Robot extends TimedRobot {
 
     private Command m_autonomousCommand;
 
-    private RobotContainer m_robotContainer;
-
     /**
      * This method cancels all commands and returns subsystems to their default commands and the
      * gamepad configs are reset so that new bindings can be assigned based on mode This method
