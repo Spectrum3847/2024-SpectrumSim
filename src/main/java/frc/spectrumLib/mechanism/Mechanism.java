@@ -37,6 +37,11 @@ public abstract class Mechanism implements Subsystem {
         this.config = setConfig();
     }
 
+    public Mechanism(Config config, boolean attached) {
+        this.attached = attached;
+        this.config = config;
+    }
+
     protected abstract Config setConfig();
 
     protected void setConfig(Config config) {

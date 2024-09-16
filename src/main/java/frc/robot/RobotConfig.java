@@ -3,9 +3,93 @@ package frc.robot;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.Timer;
 import frc.robot.swerve.TunerConstants;
 
 public class RobotConfig {
+
+    public static String rioSerial = "empty";
+    public static final Double robotInitDelay = 2.0; // Seconds to wait before starting robot code
+
+    public final String ALPHA2024SERIAL = "032B1F69";
+    public final String PM2024SERIAL = "03223839";
+    public final String ULTRAVIOLET2024SERIAL = "032B1F69"; // "0329AD07";
+
+    public static final String CANIVORE = "*"; // CANbus name is 3847
+    public static final String RIO_CANBUS = "rio";
+
+    public static final int ledPWMport = 0;
+
+    private RobotType robotType = null;
+    public boolean intakeAttached = true;
+
+    public RobotConfig() {
+        if (Robot.isReal()) {
+            Timer.delay(RobotConfig.robotInitDelay); // Wait for the robot to fully boot up
+        }
+        // Set the RoboRio Serial number for this robot, useful for adjusting comp/practice bot
+        // settings
+        if (RobotController.getSerialNumber() != null) {
+            rioSerial = RobotController.getSerialNumber();
+            System.out.println("RIO SERIAL: " + rioSerial);
+        }
+
+        checkRobotType();
+        switch (getRobotType()) {
+            case SIM:
+                /* Set all the constants specifically for the simulation*/
+                break;
+            case ALPHA:
+                break;
+            case PM:
+                break;
+            case ULTRAVIOLET:
+                break;
+            default:
+                /* Set all the default configs */
+                break;
+        }
+
+        RobotTelemetry.print("ROBOT: " + getRobotType());
+    }
+
+    /** Set the RobotType based on if simulation or the serial number of the RIO */
+    public RobotType checkRobotType() {
+        if (Robot.isSimulation()) {
+            robotType = RobotType.SIM;
+            RobotTelemetry.print("Robot Type: Simulation");
+        } else if (rioSerial.equals(ULTRAVIOLET2024SERIAL)) {
+            robotType = RobotType.ULTRAVIOLET;
+            RobotTelemetry.print("Robot Type: ULTRAVIOLET 2024");
+        } else if (rioSerial.equals(ALPHA2024SERIAL)) {
+            robotType = RobotType.ALPHA;
+            RobotTelemetry.print("Robot Type: ALPHA 2024");
+        } else if (rioSerial.equals(PM2024SERIAL)) {
+            robotType = RobotType.PM;
+            RobotTelemetry.print("Robot Type: PM 2024");
+        } else {
+            robotType = RobotType.ULTRAVIOLET;
+            DriverStation.reportError(
+                    "Could not match rio to robot config; defaulting to ULTRAVIOLET robot config",
+                    false);
+            RobotTelemetry.print("Robot Type: ULTRAVIOLET 2024");
+        }
+        return robotType;
+    }
+
+    public RobotType getRobotType() {
+        return robotType;
+    }
+
+    public enum RobotType {
+        ALPHA,
+        PM,
+        ULTRAVIOLET,
+        SIM
+    }
+
     public class Drivetrain {
         public static double kMaxSpeed = TunerConstants.kSpeedAt12VoltsMps; // m/s
         public static double kMaxAngularRate = 1.5 * Math.PI; // rad/s

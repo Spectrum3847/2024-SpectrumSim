@@ -36,7 +36,7 @@ public abstract class Gamepad extends SubsystemBase {
         configure();
     }
 
-    // Configure the driver controller
+    // Configure the pilot controller
     public void configure() {
         // Detect whether the xbox controller has been plugged in after start-up
         if (!configured) {
