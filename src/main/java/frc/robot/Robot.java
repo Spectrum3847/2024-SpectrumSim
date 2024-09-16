@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import org.littletonrobotics.junction.LoggedRobot;
+
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
@@ -22,7 +24,7 @@ import frc.robot.swerve.TunerConstants;
 import frc.robot.vision.VisionSystem;
 import frc.spectrumLib.util.CrashTracker;
 
-public class Robot extends TimedRobot {
+public class Robot extends LoggedRobot {
 
     /** Create a single static instance of all of your subsystems */
     public static RobotTelemetry telemetry;
