@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.elevator.Elevator;
 import frc.robot.intake.Intake;
 import frc.robot.intake.IntakeCommands;
 import frc.robot.leds.LEDs;
@@ -25,9 +26,10 @@ public class Robot extends TimedRobot {
     public static RobotTelemetry telemetry;
 
     public static Swerve swerve;
+    public static Elevator elevator;
+    public static Intake intake;
     public static LEDs leds;
     public static Pilot pilot;
-    public static Intake intake;
     public static VisionSystem visionSystem;
 
     private Command m_autonomousCommand;

@@ -4,7 +4,7 @@ import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Robot;
-import frc.robot.RobotConfig;
+import frc.robot.RobotConfig.DefaultConfig;
 import frc.robot.pilot.PilotCommands;
 import java.util.function.DoubleSupplier;
 
@@ -18,10 +18,10 @@ public class SwerveCommands {
     private static SwerveRequest.FieldCentric fieldCentricDrive =
             new SwerveRequest.FieldCentric()
                     .withDeadband(
-                            RobotConfig.Drivetrain.kMaxSpeed * RobotConfig.Drivetrain.kDeadband)
+                            DefaultConfig.Drivetrain.kMaxSpeed * DefaultConfig.Drivetrain.kDeadband)
                     .withRotationalDeadband(
-                            RobotConfig.Drivetrain.kMaxAngularRate
-                                    * RobotConfig.Drivetrain.kDeadband)
+                            DefaultConfig.Drivetrain.kMaxAngularRate
+                                    * DefaultConfig.Drivetrain.kDeadband)
                     .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
 
     public static Command drive(

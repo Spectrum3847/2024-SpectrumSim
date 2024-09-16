@@ -10,7 +10,7 @@ import frc.spectrumLib.mechanism.TalonFXFactory;
 import java.util.function.DoubleSupplier;
 
 public class Elevator extends Mechanism {
-    public class ElevatorConfig extends Config {
+    public static class ElevatorConfig extends Config {
 
         /* Elevator constants in rotations */
         public final double maxHeight = 29.8;
@@ -48,8 +48,8 @@ public class Elevator extends Mechanism {
 
     public ElevatorConfig config;
 
-    public Elevator(boolean attached) {
-        super(attached);
+    public Elevator(ElevatorConfig config, boolean attached) {
+        super(config, attached);
         if (attached) {
             motor = TalonFXFactory.createConfigTalon(config.id, config.talonConfig);
         }

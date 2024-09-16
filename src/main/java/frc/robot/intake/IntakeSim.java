@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
-import frc.robot.RobotConfig;
+import frc.robot.RobotConfig.DefaultConfig;
 
 public class IntakeSim {
 
@@ -19,19 +19,19 @@ public class IntakeSim {
     private static final SingleJointedArmSim armSim =
             new SingleJointedArmSim(
                     DCMotor.getKrakenX60Foc(1),
-                    RobotConfig.Intake.Arm.ratio,
-                    RobotConfig.Intake.Arm.simMOI,
-                    RobotConfig.Intake.Arm.simCGLength,
-                    RobotConfig.Intake.Arm.minAngle,
-                    RobotConfig.Intake.Arm.maxAngle,
+                    DefaultConfig.Intake.Arm.ratio,
+                    DefaultConfig.Intake.Arm.simMOI,
+                    DefaultConfig.Intake.Arm.simCGLength,
+                    DefaultConfig.Intake.Arm.minAngle,
+                    DefaultConfig.Intake.Arm.maxAngle,
                     true, // Simulate gravity
-                    RobotConfig.Intake.Arm.startingAngle);
+                    DefaultConfig.Intake.Arm.startingAngle);
 
     private static final FlywheelSim rollerSim =
             new FlywheelSim(
                     DCMotor.getKrakenX60Foc(1),
-                    RobotConfig.Intake.Roller.ratio,
-                    RobotConfig.Intake.Roller.simMOI);
+                    DefaultConfig.Intake.Roller.ratio,
+                    DefaultConfig.Intake.Roller.simMOI);
 
     // Mechanism2d Visualization
     // See https://docs.wpilib.org/en/stable/docs/software/dashboards/glass/mech2d-widget.html
@@ -70,12 +70,12 @@ public class IntakeSim {
         // the
         // sim as an absolute encoder.
         armMotorSim.setRawRotorPosition(
-                (armSim.getAngleRads() - RobotConfig.Intake.Arm.startingAngle)
-                        * RobotConfig.Intake.Arm.ratio
+                (armSim.getAngleRads() - DefaultConfig.Intake.Arm.startingAngle)
+                        * DefaultConfig.Intake.Arm.ratio
                         * 2.0
                         * Math.PI);
         armMotorSim.setRotorVelocity(
-                armSim.getVelocityRadPerSec() * RobotConfig.Intake.Arm.ratio / (2.0 * Math.PI));
+                armSim.getVelocityRadPerSec() * DefaultConfig.Intake.Arm.ratio / (2.0 * Math.PI));
 
         double rotationsPerSecond = rollerSim.getAngularVelocityRadPerSec() / (2.0 * Math.PI);
         rollerMotorSim.setRotorVelocity(rotationsPerSecond);
@@ -93,7 +93,7 @@ public class IntakeSim {
                 rollerViz.getAngle()
                         + Math.toDegrees(rollerSim.getAngularVelocityRPM())
                                 * TimedRobot.kDefaultPeriod
-                                * RobotConfig.Intake.Roller.angularVelocityScalar);
+                                * DefaultConfig.Intake.Roller.angularVelocityScalar);
     }
     // --- END STUFF FOR SIMULATION ---
 }
