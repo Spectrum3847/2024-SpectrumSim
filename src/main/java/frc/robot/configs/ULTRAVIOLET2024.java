@@ -1,10 +1,15 @@
 package frc.robot.configs;
 
 import frc.robot.RobotConfig.DefaultConfig;
-import frc.robot.elevator.Elevator.ElevatorConfig;
 
 public class ULTRAVIOLET2024 extends DefaultConfig {
-    public static class elevator extends ElevatorConfig {
+
+    public ULTRAVIOLET2024() {
+        super();
+        elevator = new Elevator();
+    }
+
+    public class Elevator extends DefaultConfig.Elevator {
         public final double maxHeight = 15;
     }
 }

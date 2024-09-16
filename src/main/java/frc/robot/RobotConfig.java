@@ -6,6 +6,8 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
+import frc.robot.configs.ULTRAVIOLET2024;
+import frc.robot.elevator.Elevator.ElevatorConfig;
 import frc.robot.swerve.TunerConstants;
 
 public class RobotConfig {
@@ -25,6 +27,8 @@ public class RobotConfig {
     private RobotType robotType = null;
     public boolean intakeAttached = true;
 
+    public DefaultConfig config;
+
     public RobotConfig() {
         if (Robot.isReal()) {
             Timer.delay(RobotConfig.robotInitDelay); // Wait for the robot to fully boot up
@@ -40,15 +44,20 @@ public class RobotConfig {
         switch (getRobotType()) {
             case SIM:
                 /* Set all the constants specifically for the simulation*/
+                config = new DefaultConfig();
                 break;
             case ALPHA:
+                config = new DefaultConfig();
                 break;
             case PM:
+                config = new DefaultConfig();
                 break;
             case ULTRAVIOLET:
+                config = new ULTRAVIOLET2024();
                 break;
             default:
                 /* Set all the default configs */
+                config = new DefaultConfig();
                 break;
         }
 
@@ -91,14 +100,22 @@ public class RobotConfig {
     }
 
     public static class DefaultConfig {
+        public static Drivetrain drivetrain;
+        public static Elevator elevator;
+
+        public DefaultConfig() {
+            drivetrain = new Drivetrain();
+            elevator = new Elevator();
+        }
+
         public static class Drivetrain {
             public static double kMaxSpeed = TunerConstants.kSpeedAt12VoltsMps; // m/s
             public static double kMaxAngularRate = 1.5 * Math.PI; // rad/s
             public static double kDeadband = 0.1;
         }
 
-        public static class Elevator {
-            public static double elevatorKp = 10.0;
+        public static class Elevator extends ElevatorConfig {
+            public final double maxHeight = 10;
         }
 
         public static class Intake {
