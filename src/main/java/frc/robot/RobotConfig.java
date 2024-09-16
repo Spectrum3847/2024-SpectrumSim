@@ -42,22 +42,17 @@ public class RobotConfig {
 
         checkRobotType();
         switch (getRobotType()) {
-            case SIM:
-                /* Set all the constants specifically for the simulation*/
-                config = new DefaultConfig();
-                break;
             case ALPHA:
                 config = new DefaultConfig();
                 break;
             case PM:
                 config = new DefaultConfig();
                 break;
+            case SIM:
             case ULTRAVIOLET:
-                config = new ULTRAVIOLET2024();
-                break;
             default:
                 /* Set all the default configs */
-                config = new DefaultConfig();
+                config = new ULTRAVIOLET2024();
                 break;
         }
 
@@ -100,22 +95,18 @@ public class RobotConfig {
     }
 
     public static class DefaultConfig {
-        public static Drivetrain drivetrain;
-        public static Elevator elevator;
+        public Drivetrain drivetrain;
+        public ElevatorConfig elevator;
 
         public DefaultConfig() {
             drivetrain = new Drivetrain();
-            elevator = new Elevator();
+            elevator = new ElevatorConfig();
         }
 
-        public static class Drivetrain {
+        public class Drivetrain {
             public static double kMaxSpeed = TunerConstants.kSpeedAt12VoltsMps; // m/s
             public static double kMaxAngularRate = 1.5 * Math.PI; // rad/s
             public static double kDeadband = 0.1;
-        }
-
-        public static class Elevator extends ElevatorConfig {
-            public final double maxHeight = 10;
         }
 
         public static class Intake {

@@ -90,7 +90,6 @@ public class Robot extends TimedRobot {
             PilotCommands.setupDefaultCommand();
 
             pilot.setupTeleopButtons();
-
             RobotTelemetry.print("--- Robot Init Complete ---");
 
         } catch (Throwable t) {
