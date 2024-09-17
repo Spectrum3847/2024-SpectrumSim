@@ -29,6 +29,8 @@ public class Robot extends TimedRobot {
     /** Create a single static instance of all of your subsystems */
     public static RobotTelemetry telemetry;
 
+    public static RobotSim robotSim;
+
     public static Swerve swerve;
     public static Elevator elevator;
     public static Intake intake;
@@ -64,6 +66,7 @@ public class Robot extends TimedRobot {
     public void robotInit() {
         try {
             RobotTelemetry.print("--- Robot Init Starting ---");
+            robotSim = new RobotSim();
 
             /** Set up the config */
             robotConfig = new RobotConfig(); // Setup the robot config and choose which robot

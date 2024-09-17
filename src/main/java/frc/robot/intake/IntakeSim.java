@@ -7,13 +7,21 @@ import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import frc.robot.RobotConfig.DEFAULT;
 import frc.robot.RobotSim;
+import frc.spectrumLib.mechanism.RollerSim;
+import frc.spectrumLib.mechanism.RollerSim.RollerConfig;
 
 public class IntakeSim {
+
+    public static class IntakeSimConfig extends RollerConfig {
+        public IntakeSimConfig() {
+            super();
+            this.setDiameter(3);
+        }
+    }
 
     // --- BEGIN STUFF FOR SIMULATION ---
     private static final SingleJointedArmSim armSim =
@@ -39,22 +47,26 @@ public class IntakeSim {
     private static final double kArmPivotX = 0.7;
     private static final double kArmPivotY = 0.3;
     private static final MechanismRoot2d armPivot =
-            RobotSim.mech.getRoot("Intake Arm Pivot", kArmPivotX, kArmPivotY);
+            RobotSim.leftView.getRoot("Intake Arm Pivot", kArmPivotX, kArmPivotY);
     private static final double kIntakeLength = 0.5;
     private static final MechanismLigament2d armViz =
             armPivot.append(
                     new MechanismLigament2d(
                             "Intake Arm", kIntakeLength, 0.0, 5.0, new Color8Bit(Color.kBlue)));
 
-    private static final MechanismRoot2d rollerAxle =
-            RobotSim.mech.getRoot("Intake Roller Axle", 0.0, 0.0);
-    private static final MechanismLigament2d rollerViz =
-            rollerAxle.append(
-                    new MechanismLigament2d(
-                            "Intake Roller", 0.1, 0.0, 5.0, new Color8Bit(Color.kYellow)));
+    /*private static final MechanismRoot2d rollerAxle =
+                RobotSim.leftView.getRoot("Intake Roller Axle", 0.0, 0.0);
+        private static final MechanismLigament2d rollerViz =
+                rollerAxle.append(
+                        new MechanismLigament2d(
+                                "Intake Roller", 0.1, 0.0, 5.0, new Color8Bit(Color.kYellow)));
+    */
+    private RollerSim rollerSim2;
 
-    public IntakeSim() {
-        SmartDashboard.putData("Viz", RobotSim.mech);
+    public IntakeSim(TalonFXSimState rollerMotorSim) {
+        rollerSim2 =
+                new RollerSim(
+                        RobotSim.leftView, rollerMotorSim, new IntakeSimConfig(), "Intake Roller");
     }
 
     public void simulationPeriodic(TalonFXSimState armMotorSim, TalonFXSimState rollerMotorSim) {
@@ -63,8 +75,8 @@ public class IntakeSim {
         armSim.setInput(armMotorSim.getMotorVoltage());
         armSim.update(TimedRobot.kDefaultPeriod);
 
-        rollerSim.setInput(rollerMotorSim.getMotorVoltage());
-        rollerSim.update(TimedRobot.kDefaultPeriod);
+        // rollerSim.setInput(rollerMotorSim.getMotorVoltage());
+        // rollerSim.update(TimedRobot.kDefaultPeriod);
 
         // ------ Update motor based on sim
         // Make sure to convert radians at the mechanism to rotations at the motor
@@ -87,7 +99,7 @@ public class IntakeSim {
         armViz.setAngle(Math.toDegrees(armSim.getAngleRads()));
 
         // Update the axle as the arm moves
-        rollerAxle.setPosition(
+        /* rollerAxle.setPosition(
                 kArmPivotX + kIntakeLength * Math.cos(armSim.getAngleRads()),
                 kArmPivotY + kIntakeLength * Math.sin(armSim.getAngleRads()));
         // Scale down the angular velocity so we can actually see what is happening
@@ -95,7 +107,10 @@ public class IntakeSim {
                 rollerViz.getAngle()
                         + Math.toDegrees(rollerSim.getAngularVelocityRPM())
                                 * TimedRobot.kDefaultPeriod
-                                * DEFAULT.Intake.Roller.angularVelocityScalar);
+                                * DEFAULT.Intake.Roller.angularVelocityScalar);*/
+        rollerSim2.simulationPeriodic(
+                kArmPivotX + kIntakeLength * Math.cos(armSim.getAngleRads()),
+                kArmPivotY + kIntakeLength * Math.sin(armSim.getAngleRads()));
     }
     // --- END STUFF FOR SIMULATION ---
 }

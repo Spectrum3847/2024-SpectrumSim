@@ -36,7 +36,7 @@ public class Intake extends SubsystemBase {
         // This assumes the arm is always stowed when the code boots.
         armMotor.setPosition(DEFAULT.Intake.Arm.startingAngle);
         retract();
-        intakeSim = new IntakeSim();
+        intakeSim = new IntakeSim(rollerMotorSim);
     }
 
     public void deploy() {

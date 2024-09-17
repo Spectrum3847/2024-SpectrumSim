@@ -60,7 +60,7 @@ public class Elevator extends Mechanism {
         if (isAttached()) {
             motor = TalonFXFactory.createConfigTalon(config.id, config.talonConfig);
         }
-        sim = new ElevatorSim(config, motor.getSimState(), RobotSim.mech);
+        sim = new ElevatorSim(config, motor.getSimState(), RobotSim.leftView);
 
         RobotTelemetry.print("TEST elevator constructor");
     }

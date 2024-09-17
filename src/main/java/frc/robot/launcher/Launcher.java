@@ -1,7 +1,10 @@
 package frc.robot.launcher;
 
 import frc.robot.RobotConfig;
+import frc.robot.RobotSim;
 import frc.spectrumLib.mechanism.Mechanism;
+import frc.spectrumLib.mechanism.RollerSim;
+import frc.spectrumLib.mechanism.RollerSim.RollerConfig;
 import frc.spectrumLib.mechanism.TalonFXFactory;
 
 public class Launcher extends Mechanism {
@@ -33,6 +36,7 @@ public class Launcher extends Mechanism {
     }
 
     public LauncherConfig config;
+    public RollerSim sim;
 
     public Launcher(LauncherConfig config) {
         super(config);
@@ -40,5 +44,19 @@ public class Launcher extends Mechanism {
         if (isAttached()) {
             motor = TalonFXFactory.createConfigTalon(config.id, config.talonConfig);
         }
+
+        // Create a new RollerSim with the left view, the motor's sim state, and a 6 in diameter
+        sim =
+                new RollerSim(
+                        RobotSim.leftView,
+                        motor.getSimState(),
+                        new RollerConfig().setDiameter(6),
+                        getName());
+    }
+
+    // Must be called to enable the simulation
+    // if roller position changes configure x and y to set position.
+    public void simulationPeriodic() {
+        sim.simulationPeriodic(0.5, 0.5);
     }
 }

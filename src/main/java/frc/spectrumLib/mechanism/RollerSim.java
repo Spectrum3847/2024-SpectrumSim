@@ -8,20 +8,38 @@ import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import frc.robot.RobotConfig.DEFAULT;
 
 public class RollerSim {
+
+    public static class RollerConfig {
+        public double rollerDiameterInches = 2;
+        public int backgroundLines = 36;
+        public Color8Bit offColor = new Color8Bit(Color.kBlack);
+        public Color8Bit fwdColor = new Color8Bit(Color.kGreen);
+        public Color8Bit revColor = new Color8Bit(Color.kRed);
+
+        public RollerConfig() {}
+
+        public RollerConfig setDiameter(double diameter) {
+            rollerDiameterInches = diameter;
+            return this;
+        }
+    }
+
+    private MechanismLigament2d[] rollerBackground;
+
     private FlywheelSim rollerSim;
-
     private MechanismRoot2d rollerAxle;
-
     private MechanismLigament2d rollerViz;
     private TalonFXSimState rollerMotorSim;
+    private RollerConfig config;
 
-    public RollerSim(Mechanism2d mech, TalonFXSimState rollerMotorSim, String name) {
+    public RollerSim(
+            Mechanism2d mech, TalonFXSimState rollerMotorSim, RollerConfig config, String name) {
+        this.config = config;
         this.rollerMotorSim = rollerMotorSim;
         rollerSim =
                 new FlywheelSim(
@@ -35,12 +53,22 @@ public class RollerSim {
                 rollerAxle.append(
                         new MechanismLigament2d(
                                 name + " Roller",
-                                Units.inchesToMeters(2),
+                                Units.inchesToMeters(config.rollerDiameterInches) / 2.0,
                                 0.0,
                                 5.0,
                                 new Color8Bit(Color.kWhite)));
 
-        SmartDashboard.putData(name + " Viz", mech);
+        rollerBackground = new MechanismLigament2d[config.backgroundLines];
+        for (int i = 0; i < config.backgroundLines; i++) {
+            rollerBackground[i] =
+                    rollerAxle.append(
+                            new MechanismLigament2d(
+                                    name + " Background " + i,
+                                    Units.inchesToMeters(config.rollerDiameterInches) / 2.0,
+                                    (360 / config.backgroundLines) * i,
+                                    config.rollerDiameterInches,
+                                    new Color8Bit(Color.kBlack)));
+        }
     }
 
     public void simulationPeriodic(double x, double y) {
@@ -61,10 +89,32 @@ public class RollerSim {
         rollerAxle.setPosition(x, y);
 
         // Scale down the angular velocity so we can actually see what is happening
+        double rpm = rollerSim.getAngularVelocityRPM();
         rollerViz.setAngle(
-                rollerViz.getAngle()
-                        + Math.toDegrees(rollerSim.getAngularVelocityRPM())
-                                * TimedRobot.kDefaultPeriod
-                                * 0.1);
+                rollerViz.getAngle() + Math.toDegrees(rpm) * TimedRobot.kDefaultPeriod * 0.1);
+
+        if (rollerMotorSim.getMotorVoltage() == 0.0) {
+            setBackgroundColor(config.offColor);
+        } else if (rollerMotorSim.getMotorVoltage() > 0.0) {
+            setBackgroundColor(config.fwdColor);
+        } else {
+            setHalfBackground(config.revColor);
+        }
+    }
+
+    public void setBackgroundColor(Color8Bit color8Bit) {
+        for (int i = 0; i < config.backgroundLines; i++) {
+            rollerBackground[i].setColor(color8Bit);
+        }
+    }
+
+    public void setHalfBackground(Color8Bit color8Bit) {
+        for (int i = 0; i < config.backgroundLines; i++) {
+            if (i % 2 == 0) {
+                rollerBackground[i].setColor(color8Bit);
+            } else {
+                rollerBackground[i].setColor(config.offColor);
+            }
+        }
     }
 }

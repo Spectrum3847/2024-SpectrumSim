@@ -336,7 +336,7 @@ public abstract class Mechanism implements Subsystem {
 
     public static class Config {
         public String name;
-        public boolean attached = false;
+        public boolean attached = true;
         public CanDeviceId id;
         public TalonFXConfiguration talonConfig;
         public double voltageCompSaturation; // 12V by default

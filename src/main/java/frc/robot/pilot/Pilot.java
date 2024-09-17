@@ -1,8 +1,10 @@
 package frc.robot.pilot;
 
+import frc.robot.Robot;
 import frc.robot.RobotTelemetry;
 import frc.robot.elevator.ElevatorCommands;
 import frc.robot.intake.IntakeCommands;
+import frc.robot.launcher.LauncherCommands;
 import frc.spectrumLib.gamepads.Gamepad;
 import frc.spectrumLib.util.ExpCurve;
 
@@ -61,7 +63,10 @@ public class Pilot extends Gamepad {
         controller.b().whileTrue(ElevatorCommands.fullExtend());
         controller.x().whileTrue(ElevatorCommands.home());
 
-        controller.y().whileTrue(ElevatorCommands.runElevator(() -> controller.getLeftY()));
+        controller
+                .x()
+                .whileTrue(LauncherCommands.runVelocity(-1 * Robot.launcher.config.maxVelocity));
+        controller.y().whileTrue(LauncherCommands.runVelocity(Robot.launcher.config.maxVelocity));
     };
 
     /** Setup the Buttons for Disabled mode. */
