@@ -89,16 +89,16 @@ public class RollerSim {
         rollerAxle.setPosition(x, y);
 
         // Scale down the angular velocity so we can actually see what is happening
-        double rpm = rollerSim.getAngularVelocityRPM();
+        double rpm = rollerSim.getAngularVelocityRPM() / 2;
         rollerViz.setAngle(
                 rollerViz.getAngle() + Math.toDegrees(rpm) * TimedRobot.kDefaultPeriod * 0.1);
 
-        if (rollerMotorSim.getMotorVoltage() == 0.0) {
-            setBackgroundColor(config.offColor);
-        } else if (rollerMotorSim.getMotorVoltage() > 0.0) {
+        if (rollerSim.getAngularVelocityRadPerSec() < -1) {
+            setHalfBackground(config.revColor);
+        } else if (rollerSim.getAngularVelocityRadPerSec() > 1) {
             setBackgroundColor(config.fwdColor);
         } else {
-            setHalfBackground(config.revColor);
+            setBackgroundColor(config.offColor);
         }
     }
 

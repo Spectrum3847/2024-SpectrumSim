@@ -41,7 +41,7 @@ public class Elevator extends Mechanism {
             configForwardSoftLimit(maxHeight, true);
             configReverseSoftLimit(minHeight, true);
             configNeutralBrakeMode(true);
-            configClockwise_Positive();
+            configCounterClockwise_Positive();
         }
 
         /** Use these method to set the config for the mechanism on each robot */

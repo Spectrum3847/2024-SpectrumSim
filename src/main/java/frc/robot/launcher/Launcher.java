@@ -2,9 +2,9 @@ package frc.robot.launcher;
 
 import frc.robot.RobotConfig;
 import frc.robot.RobotSim;
+import frc.robot.launcher.LauncherSim.LauncherSimConfig;
 import frc.spectrumLib.mechanism.Mechanism;
 import frc.spectrumLib.mechanism.RollerSim;
-import frc.spectrumLib.mechanism.RollerSim.RollerConfig;
 import frc.spectrumLib.mechanism.TalonFXFactory;
 
 public class Launcher extends Mechanism {
@@ -30,7 +30,7 @@ public class Launcher extends Mechanism {
             configForwardTorqueCurrentLimit(torqueCurrentLimit);
             configReverseTorqueCurrentLimit(torqueCurrentLimit);
             configNeutralBrakeMode(true);
-            configClockwise_Positive(); // TODO: configure
+            configCounterClockwise_Positive(); // TODO: configure
             configMotionMagic(51, 205, 0);
         }
     }
@@ -48,10 +48,7 @@ public class Launcher extends Mechanism {
         // Create a new RollerSim with the left view, the motor's sim state, and a 6 in diameter
         sim =
                 new RollerSim(
-                        RobotSim.leftView,
-                        motor.getSimState(),
-                        new RollerConfig().setDiameter(6),
-                        getName());
+                        RobotSim.leftView, motor.getSimState(), new LauncherSimConfig(), getName());
     }
 
     // Must be called to enable the simulation

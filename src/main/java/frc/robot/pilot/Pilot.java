@@ -62,6 +62,7 @@ public class Pilot extends Gamepad {
 
         xbox.b().whileTrue(ElevatorCommands.fullExtend());
         xbox.x().whileTrue(ElevatorCommands.home());
+        xbox.y().whileTrue(ElevatorCommands.runElevator(() -> xbox.getLeftY()));
 
         xbox.x().whileTrue(LauncherCommands.runVelocity(-1 * Robot.launcher.config.maxVelocity));
         xbox.y().whileTrue(LauncherCommands.runVelocity(Robot.launcher.config.maxVelocity));
