@@ -86,7 +86,7 @@ public class Robot extends TimedRobot {
             launcher = new Launcher(config.launcher);
             pilot = new Pilot();
             leds = new LEDs();
-            visionSystem = new VisionSystem(() -> swerve.getState().Pose);
+            visionSystem = new VisionSystem(() -> swerve.getRobotPose());
 
             /** Intialize Telemetry */
             telemetry = new RobotTelemetry();

@@ -20,7 +20,7 @@ public class LinearSim {
     public class LinearConfig {
         public int numMotors = 1;
         public double kElevatorGearing = 1;
-        public double kCarriageMass = 5.0;
+        public double kCarriageMass = 1.0;
         public double kElevatorDrumRadius = Units.inchesToMeters(1);
         public double kMinElevatorHeight = 0;
         public double kMaxElevatorHeight = 100;
@@ -42,7 +42,7 @@ public class LinearSim {
                         config.kElevatorDrumRadius,
                         config.kMinElevatorHeight,
                         config.kMaxElevatorHeight,
-                        false,
+                        true,
                         0);
 
         m_mech2dRoot = mech.getRoot("Elevator Root", 0.1, 0);
