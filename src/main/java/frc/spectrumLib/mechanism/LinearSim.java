@@ -1,7 +1,6 @@
 package frc.spectrumLib.mechanism;
 
 import com.ctre.phoenix6.sim.TalonFXSimState;
-import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -46,17 +45,18 @@ public class LinearSim {
                         config.kMinElevatorHeight,
                         config.kMaxElevatorHeight,
                         true,
-                        0,
-                        VecBuilder.fill(0.01));
+                        0);
 
-        m_mech2dRoot = mech.getRoot("Elevator Root", 10, 0);
+        m_mech2dRoot = mech.getRoot("Elevator Root", 0.5, 0);
 
         m_elevatorMech2d =
                 m_mech2dRoot.append(
                         new MechanismLigament2d(
                                 "Elevator",
-                                Units.metersToInches(elevatorSim.getPositionMeters()),
-                                config.angle));
+                                Units.inchesToMeters(20),
+                                config.angle,
+                                5,
+                                new Color8Bit(Color.kOrange)));
     }
 
     public void simulationPeriodic(TalonFXSimState linearMotorSim) {
@@ -69,6 +69,6 @@ public class LinearSim {
                         / (2.0 * Math.PI));
         linearMotorSim.setRawRotorPosition(elevatorSim.getPositionMeters() * 2.0 * Math.PI);
 
-        m_elevatorMech2d.setLength(Units.metersToInches(elevatorSim.getPositionMeters()));
+        m_mech2dRoot.setPosition(0.5, Units.inchesToMeters(elevatorSim.getPositionMeters()));
     }
 }

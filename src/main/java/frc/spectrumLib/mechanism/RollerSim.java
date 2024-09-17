@@ -29,11 +29,11 @@ public class RollerSim {
         }
     }
 
+    private MechanismRoot2d rollerAxle;
     private MechanismLigament2d[] rollerBackground;
+    private MechanismLigament2d rollerViz;
 
     private FlywheelSim rollerSim;
-    private MechanismRoot2d rollerAxle;
-    private MechanismLigament2d rollerViz;
     private TalonFXSimState rollerMotorSim;
     private RollerConfig config;
 

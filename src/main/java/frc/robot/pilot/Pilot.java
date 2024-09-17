@@ -58,15 +58,13 @@ public class Pilot extends Gamepad {
     /** Setup the Buttons for telop mode. */
     /*  A, B, X, Y, Left Bumper, Right Bumper = Buttons 1 to 6 in simualation */
     public void setupTeleopButtons() {
-        controller.a().whileTrue(IntakeCommands.intake());
+        xbox.a().whileTrue(IntakeCommands.intake());
 
-        controller.b().whileTrue(ElevatorCommands.fullExtend());
-        controller.x().whileTrue(ElevatorCommands.home());
+        xbox.b().whileTrue(ElevatorCommands.fullExtend());
+        xbox.x().whileTrue(ElevatorCommands.home());
 
-        controller
-                .x()
-                .whileTrue(LauncherCommands.runVelocity(-1 * Robot.launcher.config.maxVelocity));
-        controller.y().whileTrue(LauncherCommands.runVelocity(Robot.launcher.config.maxVelocity));
+        xbox.x().whileTrue(LauncherCommands.runVelocity(-1 * Robot.launcher.config.maxVelocity));
+        xbox.y().whileTrue(LauncherCommands.runVelocity(Robot.launcher.config.maxVelocity));
     };
 
     /** Setup the Buttons for Disabled mode. */
@@ -105,7 +103,7 @@ public class Pilot extends Gamepad {
     // Positive is forward, up on the left stick is positive
     // Applies Expontial Curve, Deadzone, and Slow Mode toggle
     public double getDriveFwdPositive() {
-        double fwdPositive = LeftStickCurve.calculate(-1 * controller.getLeftY());
+        double fwdPositive = LeftStickCurve.calculate(-1 * xbox.getLeftY());
         // if (isSlowMode) {
         //     fwdPositive *= Math.abs(PilotConfig.slowModeScalor);
         // }
@@ -115,7 +113,7 @@ public class Pilot extends Gamepad {
     // Positive is left, left on the left stick is positive
     // Applies Expontial Curve, Deadzone, and Slow Mode toggle
     public double getDriveLeftPositive() {
-        double leftPositive = -1 * LeftStickCurve.calculate(controller.getLeftX());
+        double leftPositive = -1 * LeftStickCurve.calculate(xbox.getLeftX());
         // if (isSlowMode) {
         //     leftPositive *= Math.abs(PilotConfig.slowModeScalor);
         // }
