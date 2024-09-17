@@ -33,7 +33,7 @@ public abstract class CompetitionFieldSimulation {
     protected final HolonomicChassisSimulation mainRobot;
     protected final Set<GamePieceInSimulation> gamePieces;
 
-    private List<IntakeSimulation> intakeSimulations = new ArrayList<>();
+    //private List<IntakeSimulation> intakeSimulations = new ArrayList<>();
 
     public CompetitionFieldSimulation(HolonomicChassisSimulation mainRobot, FieldObstaclesMap obstaclesMap) {
         this.competitionField = new CompetitionFieldVisualizer(mainRobot);
@@ -58,9 +58,9 @@ public abstract class CompetitionFieldSimulation {
                 robotSimulation.updateSimulationSubTick(i, subPeriodSeconds);
         }
 
-        for (IntakeSimulation intakeSimulation:intakeSimulations)
-            while (!intakeSimulation.getGamePiecesToRemove().isEmpty())
-                this.removeGamePiece(intakeSimulation.getGamePiecesToRemove().poll());
+        // for (IntakeSimulation intakeSimulation:intakeSimulations)
+        //     while (!intakeSimulation.getGamePiecesToRemove().isEmpty())
+        //         this.removeGamePiece(intakeSimulation.getGamePiecesToRemove().poll());
     }
 
     public void addRobot(HolonomicChassisSimulation chassisSimulation) {
@@ -69,11 +69,11 @@ public abstract class CompetitionFieldSimulation {
         this.competitionField.addObject(chassisSimulation);
     }
 
-    public void registerIntake(IntakeSimulation intakeSimulation) {
-        this.intakeSimulations.add(intakeSimulation);
-        this.mainRobot.addFixture(intakeSimulation);
-        this.physicsWorld.addContactListener(intakeSimulation.getGamePieceContactListener());
-    }
+    // public void registerIntake(IntakeSimulation intakeSimulation) {
+    //     this.intakeSimulations.add(intakeSimulation);
+    //     this.mainRobot.addFixture(intakeSimulation);
+    //     this.physicsWorld.addContactListener(intakeSimulation.getGamePieceContactListener());
+    // }
 
     public void addGamePiece(GamePieceInSimulation gamePieceInSimulation) {
         this.physicsWorld.addBody(gamePieceInSimulation);
