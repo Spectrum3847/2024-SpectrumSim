@@ -13,7 +13,7 @@ public class ElevatorSim extends LinearSim {
                 mech,
                 elevatorMotorSim,
                 new LinearConfig(
-                        config.getGearRatio(),
+                        config.kElevatorGearing,
                         config.kElevatorDrumRadiusMeters,
                         config.kCarriageMass),
                 config.name);
