@@ -4,8 +4,8 @@ import frc.robot.RobotConfig;
 import frc.robot.RobotSim;
 import frc.robot.launcher.LauncherSim.LauncherSimConfig;
 import frc.spectrumLib.mechanism.Mechanism;
-import frc.spectrumLib.mechanism.RollerSim;
 import frc.spectrumLib.mechanism.TalonFXFactory;
+import frc.spectrumLib.sim.RollerSim;
 
 public class Launcher extends Mechanism {
 

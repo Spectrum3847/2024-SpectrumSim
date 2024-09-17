@@ -1,4 +1,4 @@
-package frc.spectrumLib.mechanism;
+package frc.spectrumLib.sim;
 
 import com.ctre.phoenix6.sim.TalonFXSimState;
 import edu.wpi.first.math.system.plant.DCMotor;
@@ -16,23 +16,11 @@ public class LinearSim {
 
     private final MechanismRoot2d m_mech2dRoot;
     private final MechanismLigament2d m_elevatorMech2d;
+    LinearConfig config;
 
-    public class LinearConfig {
-        public int numMotors = 1;
-        public double kElevatorGearing = 1;
-        public double kCarriageMass = 1.0;
-        public double kElevatorDrumRadius = Units.inchesToMeters(1);
-        public double kMinElevatorHeight = 0;
-        public double kMaxElevatorHeight = 100;
-
-        // Display Config
-        public double angle = 90;
-        public Color8Bit color = new Color8Bit(Color.kPurple);
-        public double lineWidth = 10;
-    }
-
-    public LinearSim(Mechanism2d mech, TalonFXSimState linearMotorSim, String name) {
-        LinearConfig config = new LinearConfig();
+    public LinearSim(
+            Mechanism2d mech, TalonFXSimState linearMotorSim, LinearConfig config, String name) {
+        this.config = config;
 
         this.elevatorSim =
                 new ElevatorSim(
@@ -57,13 +45,24 @@ public class LinearSim {
                                 new Color8Bit(Color.kOrange)));
     }
 
+    public double getRotationPerSec() {
+        return (elevatorSim.getVelocityMetersPerSecond()
+                        / (2 * Math.PI * config.kElevatorDrumRadius))
+                * config.kElevatorGearing;
+    }
+
+    public double getRotations() {
+        return (elevatorSim.getPositionMeters() / (2 * Math.PI * config.kElevatorDrumRadius))
+                * config.kElevatorGearing;
+    }
+
     public void simulationPeriodic(TalonFXSimState linearMotorSim) {
         elevatorSim.setInput(linearMotorSim.getMotorVoltage());
         elevatorSim.update(TimedRobot.kDefaultPeriod);
 
-        linearMotorSim.setRotorVelocity(elevatorSim.getVelocityMetersPerSecond());
-        linearMotorSim.addRotorPosition(elevatorSim.getPositionMeters());
+        linearMotorSim.setRotorVelocity(getRotationPerSec());
+        linearMotorSim.setRawRotorPosition(getRotations());
 
-        m_mech2dRoot.setPosition(0.1, Units.inchesToMeters(elevatorSim.getPositionMeters()));
+        m_mech2dRoot.setPosition(0.1, elevatorSim.getPositionMeters());
     }
 }

@@ -1,5 +1,6 @@
 package frc.robot.elevator;
 
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
@@ -29,6 +30,11 @@ public class Elevator extends Mechanism {
         public final double torqueCurrentLimit = 100;
         public final double threshold = 20;
 
+        /* Sim properties */
+        public double kElevatorGearing = 5;
+        public double kCarriageMass = 1;
+        public double kElevatorDrumRadiusMeters = Units.inchesToMeters(0.955 / 2);
+
         public ElevatorConfig() {
             super("Elevator", 52, RobotConfig.CANIVORE);
             configPIDGains(0, positionKp, 0, 0);
@@ -38,8 +44,8 @@ public class Elevator extends Mechanism {
             configStatorCurrentLimit(torqueCurrentLimit, true);
             configForwardTorqueCurrentLimit(torqueCurrentLimit);
             configReverseTorqueCurrentLimit(torqueCurrentLimit);
-            configForwardSoftLimit(maxHeight, false);
-            configReverseSoftLimit(minHeight, false);
+            configForwardSoftLimit(maxHeight, true);
+            configReverseSoftLimit(minHeight, true);
             configNeutralBrakeMode(true);
             configCounterClockwise_Positive();
         }
@@ -51,7 +57,7 @@ public class Elevator extends Mechanism {
         }
     }
 
-    public ElevatorConfig config;
+    private ElevatorConfig config;
     public ElevatorSim sim;
 
     public Elevator(ElevatorConfig config) {
@@ -112,6 +118,7 @@ public class Elevator extends Mechanism {
                 if (Math.abs(holdPosition - currentPosition) <= 5) {
                     setMMPosition(holdPosition);
                 } else {
+                    stop();
                     DriverStation.reportError(
                             "ElevatorHoldPosition tried to go too far away from current position. Current Position: "
                                     + currentPosition

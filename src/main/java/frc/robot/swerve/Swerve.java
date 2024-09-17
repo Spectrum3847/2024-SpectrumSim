@@ -16,6 +16,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
@@ -62,7 +63,18 @@ public class Swerve extends SwerveDrivetrain implements Subsystem {
         }
     }
 
+    @Override
+    public void periodic() {
+        setDriverPerspective();
+    }
+
     private void configurePathPlanner() {
+        // Seed robot to mid field at start (Paths will change this starting position)
+        seedFieldRelative(
+                new Pose2d(
+                        Units.feetToMeters(27),
+                        Units.feetToMeters(27 / 2),
+                        BlueAlliancePerspectiveRotation));
         double driveBaseRadius = 0;
         for (var moduleLocation : m_moduleLocations) {
             driveBaseRadius = Math.max(driveBaseRadius, moduleLocation.getNorm());
@@ -90,6 +102,8 @@ public class Swerve extends SwerveDrivetrain implements Subsystem {
                 this); // Subsystem for requirements
     }
 
+    // This allows us to keep the robot pose on the sim field
+    // May need to make this only change the pose if we are in Sim
     public Pose2d getRobotPose() {
         Pose2d pose = getState().Pose;
 
@@ -129,8 +143,7 @@ public class Swerve extends SwerveDrivetrain implements Subsystem {
         m_simNotifier.startPeriodic(kSimLoopPeriod);
     }
 
-    @Override
-    public void periodic() {
+    public void setDriverPerspective() {
         /* Periodically try to apply the operator perspective */
         /* If we haven't applied the operator perspective before, then we should apply it regardless of DS state */
         /* This allows us to correct the perspective in case the robot code restarts mid-match */

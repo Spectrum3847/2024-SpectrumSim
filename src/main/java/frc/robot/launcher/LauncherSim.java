@@ -1,6 +1,6 @@
 package frc.robot.launcher;
 
-import frc.spectrumLib.mechanism.RollerSim.RollerConfig;
+import frc.spectrumLib.sim.RollerSim.RollerConfig;
 
 public class LauncherSim {
     public static class LauncherSimConfig extends RollerConfig {

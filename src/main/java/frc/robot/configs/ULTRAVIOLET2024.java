@@ -8,6 +8,7 @@ public class ULTRAVIOLET2024 extends DEFAULT {
         super();
         // Eleavtor
         elevator.attached(true);
-        elevator.configSupplyCurrentLimit(15);
+        elevator.configSupplyCurrentLimit(20);
+        launcher.attached(true);
     }
 }

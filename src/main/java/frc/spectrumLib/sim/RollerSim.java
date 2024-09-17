@@ -1,4 +1,4 @@
-package frc.spectrumLib.mechanism;
+package frc.spectrumLib.sim;
 
 import com.ctre.phoenix6.sim.TalonFXSimState;
 import edu.wpi.first.math.system.plant.DCMotor;

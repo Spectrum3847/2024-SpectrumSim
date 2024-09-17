@@ -2,10 +2,12 @@ package frc.robot.elevator;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Robot;
+import frc.robot.elevator.Elevator.ElevatorConfig;
 import java.util.function.DoubleSupplier;
 
 public class ElevatorCommands {
     private static Elevator elevator = Robot.elevator;
+    private static ElevatorConfig config = Robot.config.elevator;
 
     public static void setupDefaultCommand() {
         elevator.setDefaultCommand(
@@ -21,19 +23,19 @@ public class ElevatorCommands {
     }
 
     public static Command fullExtend() {
-        return elevator.runPosition(elevator.config.fullExtend).withName("Elevator.fullExtend");
+        return elevator.runPosition(config.fullExtend).withName("Elevator.fullExtend");
     }
 
     public static Command amp() {
-        return elevator.runPosition(elevator.config.amp).withName("Elevator.amp");
+        return elevator.runPosition(config.amp).withName("Elevator.amp");
     }
 
     public static Command trap() {
-        return elevator.runPosition(elevator.config.trap).withName("Elevator.trap");
+        return elevator.runPosition(config.trap).withName("Elevator.trap");
     }
 
     public static Command home() {
-        return elevator.runPosition(elevator.config.home).withName("Elevator.home");
+        return elevator.runPosition(config.home).withName("Elevator.home");
     }
 
     public static Command zero() {

@@ -11,8 +11,8 @@ import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import frc.robot.RobotConfig.DEFAULT;
 import frc.robot.RobotSim;
-import frc.spectrumLib.mechanism.RollerSim;
-import frc.spectrumLib.mechanism.RollerSim.RollerConfig;
+import frc.spectrumLib.sim.RollerSim;
+import frc.spectrumLib.sim.RollerSim.RollerConfig;
 
 public class IntakeSim {
 
