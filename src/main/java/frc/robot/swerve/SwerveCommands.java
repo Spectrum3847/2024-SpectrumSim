@@ -24,7 +24,7 @@ public class SwerveCommands {
                                     * RobotConfig.Drivetrain.kDeadband)
                     .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
 
-    //Uses m/s and rad/s
+    // Uses m/s and rad/s
     public static Command drive(
             DoubleSupplier fwdPositive, DoubleSupplier leftPositive, DoubleSupplier ccwPositive) {
         return Robot.swerve
