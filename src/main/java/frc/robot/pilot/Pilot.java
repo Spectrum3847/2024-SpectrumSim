@@ -1,6 +1,7 @@
 package frc.robot.pilot;
 
 import frc.robot.RobotTelemetry;
+import frc.robot.elevator.ElevatorCommands;
 import frc.robot.intake.IntakeCommands;
 import frc.spectrumLib.gamepads.Gamepad;
 import frc.spectrumLib.util.ExpCurve;
@@ -56,6 +57,11 @@ public class Pilot extends Gamepad {
     /*  A, B, X, Y, Left Bumper, Right Bumper = Buttons 1 to 6 in simualation */
     public void setupTeleopButtons() {
         controller.a().whileTrue(IntakeCommands.intake());
+
+        controller.b().whileTrue(ElevatorCommands.fullExtend());
+        controller.x().whileTrue(ElevatorCommands.home());
+
+        controller.y().whileTrue(ElevatorCommands.runElevator(() -> controller.getLeftY()));
     };
 
     /** Setup the Buttons for Disabled mode. */

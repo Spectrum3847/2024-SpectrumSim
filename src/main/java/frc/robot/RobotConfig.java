@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.configs.ULTRAVIOLET2024;
 import frc.robot.elevator.Elevator.ElevatorConfig;
+import frc.robot.launcher.LauncherFix.LauncherConfig;
 import frc.robot.swerve.TunerConstants;
 
 public class RobotConfig {
@@ -27,9 +28,10 @@ public class RobotConfig {
     private RobotType robotType = null;
     public boolean intakeAttached = true;
 
-    public DefaultConfig config;
+    public DEFAULT config;
 
     public RobotConfig() {
+
         if (Robot.isReal()) {
             Timer.delay(RobotConfig.robotInitDelay); // Wait for the robot to fully boot up
         }
@@ -41,12 +43,13 @@ public class RobotConfig {
         }
 
         checkRobotType();
+        // Set Config based on which robot we are on
         switch (getRobotType()) {
             case ALPHA:
-                config = new DefaultConfig();
+                config = new DEFAULT();
                 break;
             case PM:
-                config = new DefaultConfig();
+                config = new DEFAULT();
                 break;
             case SIM:
             case ULTRAVIOLET:
@@ -94,13 +97,15 @@ public class RobotConfig {
         SIM
     }
 
-    public static class DefaultConfig {
+    public static class DEFAULT {
         public Drivetrain drivetrain;
         public ElevatorConfig elevator;
+        public LauncherConfig launcher;
 
-        public DefaultConfig() {
+        public DEFAULT() {
             drivetrain = new Drivetrain();
             elevator = new ElevatorConfig();
+            launcher = new LauncherConfig();
         }
 
         public class Drivetrain {

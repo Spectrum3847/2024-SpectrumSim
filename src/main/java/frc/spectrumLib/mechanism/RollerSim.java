@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
-import frc.robot.RobotConfig.DefaultConfig;
+import frc.robot.RobotConfig.DEFAULT;
 
 public class RollerSim {
     private FlywheelSim rollerSim;
@@ -26,8 +26,8 @@ public class RollerSim {
         rollerSim =
                 new FlywheelSim(
                         DCMotor.getKrakenX60Foc(1),
-                        DefaultConfig.Intake.Roller.ratio,
-                        DefaultConfig.Intake.Roller.simMOI);
+                        DEFAULT.Intake.Roller.ratio,
+                        DEFAULT.Intake.Roller.simMOI);
 
         rollerAxle = mech.getRoot(name + " Axle", 0.0, 0.0);
 

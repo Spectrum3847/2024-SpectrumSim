@@ -89,6 +89,7 @@ public class RobotTelemetry extends Telemetry {
 
     public RobotTelemetry() {
         super();
+        enablePrints();
         df.setMaximumFractionDigits(2);
     }
 

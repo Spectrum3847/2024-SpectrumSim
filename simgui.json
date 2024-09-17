@@ -1,32 +1,12 @@
 {
   "HALProvider": {
     "Other Devices": {
-      "Talon FX (v6)[4]": {
+      "Talon FX (v6)[52]": {
         "header": {
           "open": true
         }
       },
-      "Talon FX (v6)[4]/Rotor Sensor": {
-        "header": {
-          "open": true
-        }
-      },
-      "Talon FX (v6)[5]": {
-        "header": {
-          "open": true
-        }
-      },
-      "Talon FX (v6)[5]/Fwd Limit": {
-        "header": {
-          "open": true
-        }
-      },
-      "Talon FX (v6)[5]/Rev Limit": {
-        "header": {
-          "open": true
-        }
-      },
-      "Talon FX (v6)[5]/Rotor Sensor": {
+      "Talon FX (v6)[52]/Rotor Sensor": {
         "header": {
           "open": true
         }
@@ -38,14 +18,10 @@
       "/FMSInfo": "FMSInfo",
       "/SmartDashboard/Arm Viz": "Mechanism2d",
       "/SmartDashboard/Scheduler": "Scheduler",
-      "/SmartDashboard/VisionSystemSim-main/Sim Field": "Field2d"
+      "/SmartDashboard/VisionSystemSim-main/Sim Field": "Field2d",
+      "/SmartDashboard/Viz": "Mechanism2d"
     },
     "windows": {
-      "/SmartDashboard/Arm Viz": {
-        "window": {
-          "visible": true
-        }
-      },
       "/SmartDashboard/Scheduler": {
         "window": {
           "visible": true
@@ -72,6 +48,11 @@
           "image": "./images/tag-green.png"
         },
         "width": 16.541748046875,
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/Viz": {
         "window": {
           "visible": true
         }

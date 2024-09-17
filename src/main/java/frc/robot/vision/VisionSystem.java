@@ -5,7 +5,7 @@ import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.RobotConfig.DefaultConfig;
+import frc.robot.RobotConfig.DEFAULT;
 import java.io.IOException;
 import org.photonvision.PhotonCamera;
 import org.photonvision.simulation.PhotonCameraSim;
@@ -38,7 +38,7 @@ public class VisionSystem extends SubsystemBase {
         cameraSim.enableDrawWireframe(true);
 
         // Add simulated camera to vision sim
-        visionSim.addCamera(cameraSim, DefaultConfig.Transforms.robotToCamera);
+        visionSim.addCamera(cameraSim, DEFAULT.Transforms.robotToCamera);
 
         // Add AprilTags to vision sim
         try {

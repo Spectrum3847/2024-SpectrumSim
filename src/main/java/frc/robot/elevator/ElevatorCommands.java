@@ -2,6 +2,7 @@ package frc.robot.elevator;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Robot;
+import java.util.function.DoubleSupplier;
 
 public class ElevatorCommands {
     private static Elevator elevator = Robot.elevator;
@@ -9,6 +10,10 @@ public class ElevatorCommands {
     public static void setupDefaultCommand() {
         elevator.setDefaultCommand(
                 holdPosition().ignoringDisable(true).withName("Elevator.default"));
+    }
+
+    public static Command runElevator(DoubleSupplier speed) {
+        return elevator.runPercentage(speed).withName("Elevator.runElevator");
     }
 
     public static Command holdPosition() {
@@ -31,11 +36,15 @@ public class ElevatorCommands {
         return elevator.runPosition(elevator.config.home).withName("Elevator.home");
     }
 
+    public static Command zero() {
+        return elevator.zeroElevatorRoutine().withName("Zero Elevator");
+    }
+
     public static Command coastMode() {
-        return elevator.coastMode();
+        return elevator.coastMode().withName("Elevator.CoastMode");
     }
 
     public static Command ensureBrakeMode() {
-        return elevator.ensureBrakeMode();
+        return elevator.ensureBrakeMode().withName("Elevator.BrakeMode");
     }
 }

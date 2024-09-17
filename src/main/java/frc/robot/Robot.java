@@ -6,9 +6,12 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.RobotConfig.DEFAULT;
 import frc.robot.elevator.Elevator;
 import frc.robot.intake.Intake;
 import frc.robot.intake.IntakeCommands;
+import frc.robot.launcher.LauncherCommands;
+import frc.robot.launcher.LauncherFix;
 import frc.robot.leds.LEDs;
 import frc.robot.leds.LEDsCommands;
 import frc.robot.pilot.Pilot;
@@ -21,6 +24,7 @@ import frc.spectrumLib.util.CrashTracker;
 
 public class Robot extends TimedRobot {
     public static RobotConfig robotConfig;
+    public static DEFAULT config;
 
     /** Create a single static instance of all of your subsystems */
     public static RobotTelemetry telemetry;
@@ -28,6 +32,7 @@ public class Robot extends TimedRobot {
     public static Swerve swerve;
     public static Elevator elevator;
     public static Intake intake;
+    public static LauncherFix launcher;
     public static LEDs leds;
     public static Pilot pilot;
     public static VisionSystem visionSystem;
@@ -61,7 +66,8 @@ public class Robot extends TimedRobot {
             RobotTelemetry.print("--- Robot Init Starting ---");
 
             /** Set up the config */
-            robotConfig = new RobotConfig();
+            robotConfig = new RobotConfig(); // Setup the robot config and choose which robot
+            config = robotConfig.config; // This just makes it easier to access the config
 
             /**
              * Intialize the Subsystems of the robot. Subsystems are how we divide up the robot
@@ -72,7 +78,9 @@ public class Robot extends TimedRobot {
             Timer.delay(0.1);
             intake = new Intake(); // new Intake(config.intakeAttached);
             Timer.delay(0.1);
-            elevator = new Elevator(robotConfig.config.elevator, true);
+            elevator = new Elevator(config.elevator);
+            Timer.delay(0.1);
+            launcher = new LauncherFix(config.launcher);
             pilot = new Pilot();
             leds = new LEDs();
             visionSystem = new VisionSystem(() -> swerve.getState().Pose);
@@ -86,6 +94,7 @@ public class Robot extends TimedRobot {
              */
             SwerveCommands.setupDefaultCommand();
             IntakeCommands.setupDefaultCommand();
+            LauncherCommands.setupDefaultCommand();
             LEDsCommands.setupDefaultCommand();
             PilotCommands.setupDefaultCommand();
 

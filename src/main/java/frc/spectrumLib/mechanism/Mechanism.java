@@ -16,6 +16,8 @@ import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.spectrumLib.util.CanDeviceId;
 import frc.spectrumLib.util.Conversions;
@@ -28,35 +30,132 @@ import java.util.function.DoubleSupplier;
  * https://pro.docs.ctr-electronics.com/en/latest/docs/migration/migration-guide/closed-loop-guide.html
  */
 public abstract class Mechanism implements Subsystem {
-    protected boolean attached = false;
     protected TalonFX motor;
     public Config config;
 
-    public Mechanism(boolean attached) {
-        this.attached = attached;
-        this.config = setConfig();
+    public Mechanism(Config config) {
+        this.config = config;
+        CommandScheduler.getInstance().registerSubsystem(this);
     }
 
     public Mechanism(Config config, boolean attached) {
-        this.attached = attached;
-        this.config = config;
+        this(config);
+        config.attached = attached;
     }
 
-    protected abstract Config setConfig();
+    @Override
+    public void periodic() {}
 
-    protected void setConfig(Config config) {
-        this.config = config;
-    };
+    @Override
+    public void simulationPeriodic() {}
+
+    @Override
+    public String getName() {
+        return config.name;
+    }
+
+    public boolean isAttached() {
+        return config.attached;
+    }
+
+    /* Commands: see method in lambda for more information */
+    /**
+     * Runs the Mechanism at a given velocity
+     *
+     * @param velocity in revolutions per minute
+     */
+    public Command runVelocity(double velocity) {
+        return run(() -> setVelocity(Conversions.RPMtoRPS(velocity)))
+                .withName(getName() + ".runVelocity");
+    }
+
+    /**
+     * Run the mechanism at given velocity rpm in TorqueCurrentFOC mode
+     *
+     * @param velocityRPM
+     * @return
+     */
+    public Command runVelocityTCFOCrpm(double velocityRPM) {
+        return run(() -> setVelocityTorqueCurrentFOC(Conversions.RPMtoRPS(velocityRPM)))
+                .withName(getName() + ".runVelocityFOCrpm");
+    }
+
+    public Command runManualOutput(DoubleSupplier percentSupplier) {
+        return run(() -> setPercentOutput(percentSupplier.getAsDouble()))
+                .withName(getName() + ".runManualOutput");
+    }
+
+    /**
+     * Runs the mechanism at a specified percentage of its maximum output.
+     *
+     * @param percent fractional units between -1 and +1
+     */
+    public Command runPercentage(double percent) {
+        return run(() -> setPercentOutput(percent)).withName(getName() + ".runPercentage");
+    }
+
+    public Command runPercentage(DoubleSupplier percentSupplier) {
+        return run(() -> setPercentOutput(percentSupplier.getAsDouble()))
+                .withName(getName() + ".runPercentage");
+    }
+
+    /**
+     * Run to the specified position.
+     *
+     * @param position position in revolutions
+     */
+    public Command runPosition(double position) {
+        return run(() -> setMMPosition(position)).withName(getName() + ".runPosition");
+    }
+
+    /**
+     * Runs to the specified position using FOC control. Will require different PID and feedforward
+     * configs
+     *
+     * @param position position in revolutions
+     */
+    public Command runFOCPosition(double position) {
+        return run(() -> setMMPositionFOC(position)).withName(getName() + ".runFOCPosition");
+    }
+
+    public Command runStop() {
+        return run(() -> stop()).withName(getName() + ".runStop");
+    }
+
+    /**
+     * Temporarily sets the mechanism to coast mode. The configuration is applied when the command
+     * is started and reverted when the command is ended.
+     */
+    public Command coastMode() {
+        return startEnd(() -> setBrakeMode(false), () -> setBrakeMode(true))
+                .ignoringDisable(true)
+                .withName(getName() + ".coastMode");
+    }
+
+    /** Sets the motor to brake mode if it is in coast mode */
+    public Command ensureBrakeMode() {
+        return runOnce(
+                        () -> {
+                            setBrakeMode(true);
+                        })
+                .onlyIf(
+                        () ->
+                                config.attached
+                                        && config.talonConfig.MotorOutput.NeutralMode
+                                                == NeutralModeValue.Coast)
+                .ignoringDisable(true)
+                .withName(config.name + ".ensureBrakeMode");
+    }
 
     public void stop() {
-        if (attached) {
+        if (isAttached()) {
             motor.stopMotor();
         }
     }
 
     /** Sets the mechanism position of the motor to 0 */
     public void tareMotor() {
-        if (attached) {
+        if (isAttached()) {
             setMotorPosition(0);
         }
     }
@@ -67,9 +166,21 @@ public abstract class Mechanism implements Subsystem {
      * @param position rotations
      */
     public void setMotorPosition(double position) {
-        if (attached) {
+        if (isAttached()) {
             motor.setPosition(position);
         }
+    }
+
+    /**
+     * Gets the position of the motor
+     *
+     * @return motor position in rotations
+     */
+    public double getMotorPosition() {
+        if (config.attached) {
+            return motor.getPosition().getValueAsDouble();
+        }
+        return 0;
     }
 
     /**
@@ -78,7 +189,7 @@ public abstract class Mechanism implements Subsystem {
      * @param velocity rotations per second
      */
     public void setMMVelocityFOC(double velocity) {
-        if (attached) {
+        if (isAttached()) {
             MotionMagicVelocityTorqueCurrentFOC mm = config.mmVelocityFOC.withVelocity(velocity);
             motor.setControl(mm);
         }
@@ -90,7 +201,7 @@ public abstract class Mechanism implements Subsystem {
      * @param velocity rotations per second
      */
     public void setVelocityTorqueCurrentFOC(double velocity) {
-        if (attached) {
+        if (isAttached()) {
             VelocityTorqueCurrentFOC output =
                     config.velocityTorqueCurrentFOC.withVelocity(velocity);
             motor.setControl(output);
@@ -98,7 +209,7 @@ public abstract class Mechanism implements Subsystem {
     }
 
     public void setVelocityTorqueCurrentFOC(DoubleSupplier velocity) {
-        if (attached) {
+        if (isAttached()) {
             VelocityTorqueCurrentFOC output =
                     config.velocityTorqueCurrentFOC.withVelocity(velocity.getAsDouble());
             motor.setControl(output);
@@ -111,7 +222,7 @@ public abstract class Mechanism implements Subsystem {
      * @param velocity rotations per second
      */
     public void setVelocityTCFOCrpm(DoubleSupplier velocityRPM) {
-        if (attached) {
+        if (isAttached()) {
             VelocityTorqueCurrentFOC output =
                     config.velocityTorqueCurrentFOC.withVelocity(
                             Conversions.RPMtoRPS(velocityRPM.getAsDouble()));
@@ -125,7 +236,7 @@ public abstract class Mechanism implements Subsystem {
      * @param velocity rotations per second
      */
     public void setVelocity(double velocity) {
-        if (attached) {
+        if (isAttached()) {
             VelocityVoltage output = config.velocityControl.withVelocity(velocity);
             motor.setControl(output);
         }
@@ -137,7 +248,7 @@ public abstract class Mechanism implements Subsystem {
      * @param position rotations
      */
     public void setMMPositionFOC(double position) {
-        if (attached) {
+        if (isAttached()) {
             MotionMagicTorqueCurrentFOC mm = config.mmPositionFOC.withPosition(position);
             motor.setControl(mm);
         }
@@ -149,7 +260,7 @@ public abstract class Mechanism implements Subsystem {
      * @param position rotations
      */
     public void setMMPosition(double position) {
-        if (attached) {
+        if (isAttached()) {
             MotionMagicVoltage mm = config.mmPositionVoltage.withPosition(position);
             motor.setControl(mm);
         }
@@ -161,7 +272,7 @@ public abstract class Mechanism implements Subsystem {
      * @param position rotations
      */
     public void setMMPosition(DoubleSupplier position) {
-        if (attached) {
+        if (isAttached()) {
             MotionMagicVoltage mm = config.mmPositionVoltage.withPosition(position.getAsDouble());
             motor.setControl(mm);
         }
@@ -174,7 +285,7 @@ public abstract class Mechanism implements Subsystem {
      * @param slot gains slot
      */
     public void setMMPosition(double position, int slot) {
-        if (attached) {
+        if (isAttached()) {
             MotionMagicVoltage mm =
                     config.mmPositionVoltageSlot.withSlot(slot).withPosition(position);
             motor.setControl(mm);
@@ -187,7 +298,7 @@ public abstract class Mechanism implements Subsystem {
      * @param percent fractional units between -1 and +1
      */
     public void setPercentOutput(double percent) {
-        if (attached) {
+        if (isAttached()) {
             VoltageOut output =
                     config.voltageControl.withOutput(config.voltageCompSaturation * percent);
             motor.setControl(output);
@@ -195,14 +306,14 @@ public abstract class Mechanism implements Subsystem {
     }
 
     public void setBrakeMode(boolean isInBrake) {
-        if (attached) {
+        if (isAttached()) {
             config.configNeutralBrakeMode(isInBrake);
             config.applyTalonConfig(motor);
         }
     }
 
     public void toggleReverseSoftLimit(boolean enabled) {
-        if (attached) {
+        if (isAttached()) {
             double threshold = config.talonConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold;
             config.configReverseSoftLimit(threshold, enabled);
             config.applyTalonConfig(motor);
@@ -210,14 +321,14 @@ public abstract class Mechanism implements Subsystem {
     }
 
     public void toggleTorqueCurrentLimit(double enabledLimit, boolean enabled) {
-        if (attached) {
+        if (isAttached()) {
             if (enabled) {
                 config.configForwardTorqueCurrentLimit(enabledLimit);
                 config.configReverseTorqueCurrentLimit(enabledLimit);
                 config.applyTalonConfig(motor);
             } else {
-                config.configForwardTorqueCurrentLimit(800);
-                config.configReverseTorqueCurrentLimit(800);
+                config.configForwardTorqueCurrentLimit(400);
+                config.configReverseTorqueCurrentLimit(400);
                 config.applyTalonConfig(motor);
             }
         }
@@ -225,6 +336,7 @@ public abstract class Mechanism implements Subsystem {
 
     public static class Config {
         public String name;
+        public boolean attached = false;
         public CanDeviceId id;
         public TalonFXConfiguration talonConfig;
         public double voltageCompSaturation; // 12V by default
@@ -252,6 +364,10 @@ public abstract class Mechanism implements Subsystem {
             /* Put default config settings for all mechanisms here */
             talonConfig.HardwareLimitSwitch.ForwardLimitEnable = false;
             talonConfig.HardwareLimitSwitch.ReverseLimitEnable = false;
+        }
+
+        public void attached(boolean attached) {
+            this.attached = attached;
         }
 
         public void applyTalonConfig(TalonFX talon) {

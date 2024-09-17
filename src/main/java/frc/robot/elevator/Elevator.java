@@ -1,17 +1,16 @@
 package frc.robot.elevator;
 
-import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import frc.robot.RobotConfig;
+import frc.robot.RobotSim;
+import frc.robot.RobotTelemetry;
 import frc.spectrumLib.mechanism.Mechanism;
 import frc.spectrumLib.mechanism.TalonFXFactory;
-import java.util.function.DoubleSupplier;
 
 public class Elevator extends Mechanism {
     public static class ElevatorConfig extends Config {
-
         /* Elevator constants in rotations */
         public double maxHeight = 29.8;
         public double minHeight = 0;
@@ -42,10 +41,10 @@ public class Elevator extends Mechanism {
             configForwardSoftLimit(maxHeight, true);
             configReverseSoftLimit(minHeight, true);
             configNeutralBrakeMode(true);
-            // configMotionMagicPosition(0.12);
             configClockwise_Positive();
         }
 
+        /** Use these method to set the config for the mechanism on each robot */
         public void configSupplyCurrentLimit(double currentLimit) {
             this.currentLimit = currentLimit;
             configSupplyCurrentLimit(currentLimit, threshold, true);
@@ -53,84 +52,39 @@ public class Elevator extends Mechanism {
     }
 
     public ElevatorConfig config;
+    public ElevatorSim sim;
 
-    public Elevator(ElevatorConfig config, boolean attached) {
-        super(config, attached);
-        this.config = config;
-        if (attached) {
+    public Elevator(ElevatorConfig config) {
+        super(config);
+        this.config = config; // unsure if we need this, may delete and test
+        if (isAttached()) {
             motor = TalonFXFactory.createConfigTalon(config.id, config.talonConfig);
         }
+        sim = new ElevatorSim(config, motor.getSimState(), RobotSim.mech);
+
+        RobotTelemetry.print("TEST elevator constructor");
     }
 
     @Override
     public void periodic() {}
 
-    /* Commands: see method in lambda for more information */
-
-    /**
-     * Runs the elevator to the specified position.
-     *
-     * @param position position in revolutions
-     */
-    public Command runPosition(double position) {
-        return run(() -> setMMPosition(position)).withName("Elevator.runPosition");
+    @Override
+    public void simulationPeriodic() {
+        sim.simulationPeriodic(motor.getSimState());
     }
+
+    /* Check Elevator States */
 
     // Is Amp Height
     public Boolean isAtAmpHeight() {
         return getMotorPosition() > config.amp * 0.8;
     }
 
-    /**
-     * Runs the elevator to the specified position using FOC control. Will require different PID and
-     * feedforward configs
-     *
-     * @param position position in revolutions
-     */
-    public Command runFOCPosition(double position) {
-        return run(() -> setMMPositionFOC(position)).withName("Elevator.runFOCPosition");
-    }
-
-    /**
-     * Runs the elevator at a specified percentage of its maximum output.
-     *
-     * @param percent fractional units between -1 and +1
-     */
-    public Command runPercentage(double percent) {
-        return run(() -> setPercentOutput(percent)).withName("Elevator.runPercentage");
-    }
-
-    public Command runPercentage(DoubleSupplier percentSupplier) {
-        return run(() -> setPercentOutput(percentSupplier.getAsDouble()))
-                .withName("Elevator.runPercentage");
-    }
-
-    public Command runStop() {
-        return run(() -> stop()).withName("Elevator.runStop");
-    }
-
-    /**
-     * Temporarily sets the elevator to coast mode. The configuration is applied when the command is
-     * started and reverted when the command is ended.
-     */
-    public Command coastMode() {
-        return startEnd(() -> setBrakeMode(false), () -> setBrakeMode(true))
-                .ignoringDisable(true)
-                .withName("Elevator.coastMode");
-    }
-
-    /** Sets the motor to brake mode if it is in coast mode */
-    public Command ensureBrakeMode() {
-        return runOnce(
-                        () -> {
-                            setBrakeMode(true);
-                        })
-                .onlyIf(
-                        () ->
-                                attached
-                                        && config.talonConfig.MotorOutput.NeutralMode
-                                                == NeutralModeValue.Coast)
-                .ignoringDisable(true);
+    public boolean isElevatorUp() {
+        if (config.attached) {
+            return getMotorPosition() >= 5;
+        }
+        return false;
     }
 
     /* Custom Commands */
@@ -185,25 +139,5 @@ public class Elevator extends Mechanism {
                         () -> false, // isFinished
                         this) // requirement
                 .withName("Elevator.zeroElevatorRoutine");
-    }
-
-    public boolean isElevatorUp() {
-        if (attached) {
-            return getMotorPosition() >= 5;
-        }
-        return false;
-    }
-
-    public double getMotorPosition() {
-        if (attached) {
-            return motor.getPosition().getValueAsDouble();
-        }
-        return 0;
-    }
-
-    @Override
-    protected Config setConfig() {
-        config = new ElevatorConfig();
-        return config;
     }
 }
