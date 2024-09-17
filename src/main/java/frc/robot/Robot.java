@@ -10,8 +10,8 @@ import frc.robot.RobotConfig.DEFAULT;
 import frc.robot.elevator.Elevator;
 import frc.robot.intake.Intake;
 import frc.robot.intake.IntakeCommands;
+import frc.robot.launcher.Launcher;
 import frc.robot.launcher.LauncherCommands;
-import frc.robot.launcher.LauncherFix;
 import frc.robot.leds.LEDs;
 import frc.robot.leds.LEDsCommands;
 import frc.robot.pilot.Pilot;
@@ -32,7 +32,7 @@ public class Robot extends TimedRobot {
     public static Swerve swerve;
     public static Elevator elevator;
     public static Intake intake;
-    public static LauncherFix launcher;
+    public static Launcher launcher;
     public static LEDs leds;
     public static Pilot pilot;
     public static VisionSystem visionSystem;
@@ -80,7 +80,7 @@ public class Robot extends TimedRobot {
             Timer.delay(0.1);
             elevator = new Elevator(config.elevator);
             Timer.delay(0.1);
-            launcher = new LauncherFix(config.launcher);
+            launcher = new Launcher(config.launcher);
             pilot = new Pilot();
             leds = new LEDs();
             visionSystem = new VisionSystem(() -> swerve.getState().Pose);

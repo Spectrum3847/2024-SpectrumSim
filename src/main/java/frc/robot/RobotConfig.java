@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.configs.ULTRAVIOLET2024;
 import frc.robot.elevator.Elevator.ElevatorConfig;
-import frc.robot.launcher.LauncherFix.LauncherConfig;
+import frc.robot.launcher.Launcher.LauncherConfig;
 import frc.robot.swerve.TunerConstants;
 
 public class RobotConfig {

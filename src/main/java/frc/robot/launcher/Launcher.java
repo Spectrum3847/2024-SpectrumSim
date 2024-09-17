@@ -4,7 +4,7 @@ import frc.robot.RobotConfig;
 import frc.spectrumLib.mechanism.Mechanism;
 import frc.spectrumLib.mechanism.TalonFXFactory;
 
-public class LauncherFix extends Mechanism {
+public class Launcher extends Mechanism {
 
     public static class LauncherConfig extends Config {
         public double maxVelocity = 5600;
@@ -34,7 +34,7 @@ public class LauncherFix extends Mechanism {
 
     public LauncherConfig config;
 
-    public LauncherFix(LauncherConfig config) {
+    public Launcher(LauncherConfig config) {
         super(config);
         this.config = config;
         if (isAttached()) {
