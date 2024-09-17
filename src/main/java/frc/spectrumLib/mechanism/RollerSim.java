@@ -10,13 +10,14 @@ import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
-import frc.robot.RobotConfig.DEFAULT;
 
 public class RollerSim {
 
     public static class RollerConfig {
         public double rollerDiameterInches = 2;
         public int backgroundLines = 36;
+        public double gearRatio = 5;
+        public double simMOI = 0.01;
         public Color8Bit offColor = new Color8Bit(Color.kBlack);
         public Color8Bit fwdColor = new Color8Bit(Color.kGreen);
         public Color8Bit revColor = new Color8Bit(Color.kRed);
@@ -25,6 +26,16 @@ public class RollerSim {
 
         public RollerConfig setDiameter(double diameter) {
             rollerDiameterInches = diameter;
+            return this;
+        }
+
+        public RollerConfig setGearRatio(double ratio) {
+            gearRatio = ratio;
+            return this;
+        }
+
+        public RollerConfig setSimMOI(double moi) {
+            simMOI = moi;
             return this;
         }
     }
@@ -41,11 +52,7 @@ public class RollerSim {
             Mechanism2d mech, TalonFXSimState rollerMotorSim, RollerConfig config, String name) {
         this.config = config;
         this.rollerMotorSim = rollerMotorSim;
-        rollerSim =
-                new FlywheelSim(
-                        DCMotor.getKrakenX60Foc(1),
-                        DEFAULT.Intake.Roller.ratio,
-                        DEFAULT.Intake.Roller.simMOI);
+        rollerSim = new FlywheelSim(DCMotor.getKrakenX60Foc(1), config.gearRatio, config.simMOI);
 
         rollerAxle = mech.getRoot(name + " Axle", 0.0, 0.0);
 

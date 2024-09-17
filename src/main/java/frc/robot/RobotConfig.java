@@ -90,6 +90,8 @@ public class RobotConfig {
         return robotType;
     }
 
+    // Add aditional robot types here, need to add them to the checkRobotType method and
+    // the config switch statement
     public enum RobotType {
         ALPHA,
         PM,

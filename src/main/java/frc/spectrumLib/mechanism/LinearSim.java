@@ -19,11 +19,11 @@ public class LinearSim {
 
     public class LinearConfig {
         public int numMotors = 1;
-        public double kElevatorGearing = 1.0 / 10.0;
+        public double kElevatorGearing = 1;
         public double kCarriageMass = 5.0;
         public double kElevatorDrumRadius = Units.inchesToMeters(1);
-        public double kMinElevatorHeight = 0.0;
-        public double kMaxElevatorHeight = Units.inchesToMeters(30);
+        public double kMinElevatorHeight = 0;
+        public double kMaxElevatorHeight = 100;
 
         // Display Config
         public double angle = 90;
@@ -45,7 +45,7 @@ public class LinearSim {
                         false,
                         0);
 
-        m_mech2dRoot = mech.getRoot("Elevator Root", 0.5, 0);
+        m_mech2dRoot = mech.getRoot("Elevator Root", 0.1, 0);
 
         m_elevatorMech2d =
                 m_mech2dRoot.append(
@@ -64,6 +64,6 @@ public class LinearSim {
         linearMotorSim.setRotorVelocity(elevatorSim.getVelocityMetersPerSecond());
         linearMotorSim.addRotorPosition(elevatorSim.getPositionMeters());
 
-        m_mech2dRoot.setPosition(0.5, Units.inchesToMeters(elevatorSim.getPositionMeters()));
+        m_mech2dRoot.setPosition(0.1, Units.inchesToMeters(elevatorSim.getPositionMeters()));
     }
 }

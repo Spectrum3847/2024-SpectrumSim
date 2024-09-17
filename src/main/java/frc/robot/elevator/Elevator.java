@@ -24,7 +24,7 @@ public class Elevator extends Mechanism {
         /* Elevator config settings */
         public final double zeroSpeed = -0.2;
         public final double positionKp = 0.86; // 20 FOC // 10 Regular
-        public final double positionKv = 0.013; // .12 FOC // .15 regular
+        public final double positionKv = 0.13; // .12 FOC // .15 regular
         public double currentLimit = 20;
         public final double torqueCurrentLimit = 100;
         public final double threshold = 20;
@@ -38,8 +38,8 @@ public class Elevator extends Mechanism {
             configStatorCurrentLimit(torqueCurrentLimit, true);
             configForwardTorqueCurrentLimit(torqueCurrentLimit);
             configReverseTorqueCurrentLimit(torqueCurrentLimit);
-            configForwardSoftLimit(maxHeight, true);
-            configReverseSoftLimit(minHeight, true);
+            configForwardSoftLimit(maxHeight, false);
+            configReverseSoftLimit(minHeight, false);
             configNeutralBrakeMode(true);
             configCounterClockwise_Positive();
         }
