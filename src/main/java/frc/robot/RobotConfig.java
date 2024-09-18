@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.Timer;
 import frc.robot.configs.ULTRAVIOLET2024;
 import frc.robot.elevator.Elevator.ElevatorConfig;
 import frc.robot.launcher.Launcher.LauncherConfig;
+import frc.robot.leds.LEDsConfig;
 import frc.robot.swerve.SwerveConfig;
 
 public class RobotConfig {
@@ -103,21 +104,25 @@ public class RobotConfig {
         public SwerveConfig swerve;
         public ElevatorConfig elevator;
         public LauncherConfig launcher;
+        public LEDsConfig leds;
 
         public DEFAULT() {
             swerve = new SwerveConfig();
             elevator = new ElevatorConfig();
             launcher = new LauncherConfig();
+            leds = new LEDsConfig();
         }
 
+        // None of the below should exist in the final version of our code, should all be inside
+        // their mechanism classes as config classes
         public static class Intake {
             public class Arm {
                 public static int deviceID = 20;
                 public static double ratio = 50.0; // 50:1 reduction
 
                 // Hard-stop limits
-                public static double minAngle = Math.toRadians(-60);
-                public static double maxAngle = Math.toRadians(90);
+                // public static double minAngle = Math.toRadians(-60);
+                // public static double maxAngle = Math.toRadians(90);
                 public static double startingAngle = Math.toRadians(90);
 
                 // Setpoints
@@ -125,17 +130,17 @@ public class RobotConfig {
                 public static double deployAngle = Math.toRadians(0);
 
                 // For simulation
-                public static double simMOI = 0.2; // kgMetersSquared
-                public static double simCGLength = 0.3; // m
+                // public static double simMOI = 0.2; // kgMetersSquared
+                // public static double simCGLength = 0.3; // m
             }
 
             public class Roller {
                 public static int deviceID = 21;
-                public static double ratio = 5.0; // 5:1 reduction
+                // Spublic static double ratio = 5.0; // 5:1 reduction
 
                 // For simulation
-                public static final double simMOI = 0.01; // kgMetersSquared
-                public static final double angularVelocityScalar = 0.03;
+                // public static final double simMOI = 0.01; // kgMetersSquared
+                // public static final double angularVelocityScalar = 0.03;
             }
         }
 

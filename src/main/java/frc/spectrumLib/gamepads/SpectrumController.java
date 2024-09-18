@@ -30,6 +30,10 @@ public class SpectrumController {
         }
     }
 
+    public boolean isConnected() {
+        return this.getHID().isConnected();
+    }
+
     /* Basic Controller Buttons */
 
     public Trigger a() {
@@ -112,30 +116,48 @@ public class SpectrumController {
     }
 
     public double getRightTriggerAxis() {
+        if (!isConnected()) {
+            return 0.0;
+        }
         return (isXbox)
                 ? xboxController.getRightTriggerAxis()
                 : Math.min(Math.abs(ps5Controller.getR2Axis()), 0.99);
     }
 
     public double getLeftTriggerAxis() {
+        if (!isConnected()) {
+            return 0.0;
+        }
         return (isXbox)
                 ? xboxController.getLeftTriggerAxis()
                 : Math.min(Math.abs(ps5Controller.getL2Axis()), 0.99);
     }
 
     public double getLeftX() {
+        if (!isConnected()) {
+            return 0.0;
+        }
         return (isXbox) ? xboxController.getLeftX() : ps5Controller.getLeftX();
     }
 
     public double getLeftY() {
+        if (!isConnected()) {
+            return 0.0;
+        }
         return (isXbox) ? xboxController.getLeftY() : ps5Controller.getLeftY();
     }
 
     public double getRightX() {
+        if (!isConnected()) {
+            return 0.0;
+        }
         return (isXbox) ? xboxController.getRightX() : ps5Controller.getRightX();
     }
 
     public double getRightY() {
+        if (!isConnected()) {
+            return 0.0;
+        }
         return (isXbox) ? xboxController.getRightY() : ps5Controller.getRightY();
     }
 

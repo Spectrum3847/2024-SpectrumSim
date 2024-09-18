@@ -3,24 +3,28 @@ package frc.robot.leds;
 import edu.wpi.first.wpilibj.util.Color;
 
 public class LEDsConfig {
-    public static final int port = 0;
-    public static final int length = 29;
-    public static final double strobeFastDuration = 0.1;
-    public static final double strobeSlowDuration = 0.2;
-    public static final double breathDuration = 1.0;
-    public static final double rainbowCycleLength = 25.0;
-    public static final double rainbowDuration = 0.25;
-    public static final double waveExponent = 0.4;
-    public static final double waveFastCycleLength = 25.0;
-    public static final double waveFastDuration = 0.25;
-    public static final double waveSlowCycleLength = 25.0;
-    public static final double waveSlowDuration = 3.0;
-    public static final double waveAllianceCycleLength = 15.0;
-    public static final double waveAllianceDuration = 2.0;
-    public static final double autoFadeTime = 2.5;
-    public static final double autoFadeMaxTime = 5.0;
+    // Length has to be static to make the enums work, it would be nice if there was another way
+    public static int length = 29;
 
-    public static final Color SPECTRUM_COLOR = new Color(130, 103, 185);
+    public final int port = 0;
+    public final double strobeFastDuration = 0.1;
+    public final double strobeSlowDuration = 0.2;
+    public final double breathDuration = 1.0;
+    public final double rainbowCycleLength = 25.0;
+    public final double rainbowDuration = 0.25;
+    public final double waveExponent = 0.4;
+    public final double waveFastCycleLength = 25.0;
+    public final double waveFastDuration = 0.25;
+    public final double waveSlowCycleLength = 25.0;
+    public final double waveSlowDuration = 3.0;
+    public final double waveAllianceCycleLength = 15.0;
+    public final double waveAllianceDuration = 2.0;
+    public final double autoFadeTime = 2.5;
+    public final double autoFadeMaxTime = 5.0;
+
+    public final Color SPECTRUM_COLOR = new Color(130, 103, 185);
+
+    public LEDsConfig() {}
 
     public enum Section {
         FULL,

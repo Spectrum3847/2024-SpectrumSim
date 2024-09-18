@@ -8,6 +8,7 @@ import frc.robot.leds.LEDsConfig.Section;
 import frc.spectrumLib.leds.SpectrumLEDs;
 import java.util.List;
 
+// This file is too long we should probably move some of it to the SpectrumLib
 public class LEDs extends SpectrumLEDs {
     public LEDsConfig config;
 
@@ -16,9 +17,9 @@ public class LEDs extends SpectrumLEDs {
     public static boolean coastModeLED = false;
     public static boolean launchReadyLED = false;
 
-    public LEDs() {
-        super(LEDsConfig.port, LEDsConfig.length * 2);
-        config = new LEDsConfig();
+    public LEDs(LEDsConfig config) {
+        super(config.port, LEDsConfig.length * 2);
+        this.config = config;
 
         RobotTelemetry.print("LEDs Subsystem Initialized: ");
     }
@@ -109,9 +110,7 @@ public class LEDs extends SpectrumLEDs {
             Section section, Color c1, Color c2, double duration, double timestamp, int priority) {
         if (getUpdate()) {
             double x =
-                    ((timestamp % LEDsConfig.breathDuration) / LEDsConfig.breathDuration)
-                            * 2.0
-                            * Math.PI;
+                    ((timestamp % config.breathDuration) / config.breathDuration) * 2.0 * Math.PI;
             double ratio = (Math.sin(x) + 1.0) / 2.0;
             double red = (c1.red * (1 - ratio)) + (c2.red * ratio);
             double green = (c1.green * (1 - ratio)) + (c2.green * ratio);
@@ -161,9 +160,9 @@ public class LEDs extends SpectrumLEDs {
             for (int i = section.start(); i < section.end(); i++) {
                 x += xDiffPerLed;
 
-                double ratio = (Math.pow(Math.sin(x), LEDsConfig.waveExponent) + 1.0) / 2.0;
+                double ratio = (Math.pow(Math.sin(x), config.waveExponent) + 1.0) / 2.0;
                 if (Double.isNaN(ratio)) {
-                    ratio = (-Math.pow(Math.sin(x + Math.PI), LEDsConfig.waveExponent) + 1.0) / 2.0;
+                    ratio = (-Math.pow(Math.sin(x + Math.PI), config.waveExponent) + 1.0) / 2.0;
                 }
                 if (Double.isNaN(ratio)) {
                     ratio = 0.5;
@@ -198,7 +197,7 @@ public class LEDs extends SpectrumLEDs {
                 strobe(Section.FULL, Color.kOrangeRed, 1, defaultPriority);
             } else if (DriverStation.isDisabled()) {
                 // solid(Section.FULL, Color.kWhite, defaultPriority);
-                ombre(Section.FULL, LEDsConfig.SPECTRUM_COLOR, Color.kWhite, defaultPriority);
+                ombre(Section.FULL, config.SPECTRUM_COLOR, Color.kWhite, defaultPriority);
             } else if (DriverStation.isAutonomousEnabled()) {
                 solid(Section.FULL, Color.kBlack, defaultPriority);
             } else if (DriverStation.isTestEnabled()) {

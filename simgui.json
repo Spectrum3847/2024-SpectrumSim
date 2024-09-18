@@ -1,5 +1,13 @@
 {
   "HALProvider": {
+    "Addressable LEDs": {
+      "0": {
+        "columns": 29
+      },
+      "window": {
+        "visible": true
+      }
+    },
     "Other Devices": {
       "Talon FX (v6)[20]": {
         "header": {

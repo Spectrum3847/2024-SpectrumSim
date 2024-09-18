@@ -8,8 +8,10 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Robot;
 import frc.robot.leds.LEDsConfig.Section;
 
+// This file is too long we should probably move some of it to the SpectrumLib
 public class LEDsCommands {
     private static LEDs leds = Robot.leds;
+    private static LEDsConfig config = Robot.config.leds;
 
     public static void setupDefaultCommand() {
         leds.setDefaultCommand(defaultCommand());
@@ -48,7 +50,7 @@ public class LEDsCommands {
     }
 
     public static Command solidPurpleLED() {
-        return LEDsCommands.solid(Section.FULL, LEDsConfig.SPECTRUM_COLOR, 2)
+        return LEDsCommands.solid(Section.FULL, config.SPECTRUM_COLOR, 2)
                 .withName("LEDs.solidPurpleLED");
     }
 
@@ -99,7 +101,7 @@ public class LEDsCommands {
     }
 
     public static Command launchReadyStrobe() {
-        return customStrobe(Section.FULL, LEDsConfig.SPECTRUM_COLOR, 5, 5)
+        return customStrobe(Section.FULL, config.SPECTRUM_COLOR, 5, 5)
                 .withName("LEDs.launchReadyStrobe");
     }
 
