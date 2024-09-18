@@ -74,7 +74,8 @@ public class Pilot extends Gamepad {
     /** Setup the Buttons for Test mode. */
     public void setupTestButtons() {
         // This is just for training, robots may have different buttons during test
-        setupTeleopButtons();
+        // setupTeleopButtons();
+        xbox.b().whileTrue(ElevatorCommands.tuneElevator());
     };
 
     public void setMaxVelocity(double maxVelocity) {

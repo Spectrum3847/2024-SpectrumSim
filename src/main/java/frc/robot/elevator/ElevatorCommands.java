@@ -3,6 +3,7 @@ package frc.robot.elevator;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Robot;
 import frc.robot.elevator.Elevator.ElevatorConfig;
+import frc.spectrumLib.util.TuneValue;
 import java.util.function.DoubleSupplier;
 
 public class ElevatorCommands {
@@ -21,6 +22,8 @@ public class ElevatorCommands {
     public static Command holdPosition() {
         return elevator.holdPosition().withName("Elevator.holdPosition");
     }
+
+    // public static TuneValue ElevatorExtension = new TuneValue("Elevator L", config.fullExtend);
 
     public static Command fullExtend() {
         return elevator.runPosition(config.fullExtend).withName("Elevator.fullExtend");
@@ -48,5 +51,10 @@ public class ElevatorCommands {
 
     public static Command ensureBrakeMode() {
         return elevator.ensureBrakeMode().withName("Elevator.BrakeMode");
+    }
+
+    public static Command tuneElevator() {
+        return elevator.runPosition(new TuneValue("Tune Elevator", 0).getSupplier())
+                .withName("Elevator.Tune");
     }
 }
