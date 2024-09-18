@@ -76,7 +76,7 @@ public class Elevator extends Mechanism {
 
     @Override
     public void simulationPeriodic() {
-        sim.simulationPeriodic(motor.getSimState());
+        sim.simulationPeriodic();
     }
 
     /* Check Elevator States */

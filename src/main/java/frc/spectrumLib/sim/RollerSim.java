@@ -22,7 +22,7 @@ public class RollerSim {
     private RollerConfig config;
 
     public RollerSim(
-            Mechanism2d mech, TalonFXSimState rollerMotorSim, RollerConfig config, String name) {
+            RollerConfig config, Mechanism2d mech, TalonFXSimState rollerMotorSim, String name) {
         this.config = config;
         this.rollerMotorSim = rollerMotorSim;
         rollerSim = new FlywheelSim(DCMotor.getKrakenX60Foc(1), config.gearRatio, config.simMOI);

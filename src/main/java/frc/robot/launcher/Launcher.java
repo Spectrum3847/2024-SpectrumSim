@@ -48,7 +48,7 @@ public class Launcher extends Mechanism {
         // Create a new RollerSim with the left view, the motor's sim state, and a 6 in diameter
         sim =
                 new RollerSim(
-                        RobotSim.leftView, motor.getSimState(), new LauncherSimConfig(), getName());
+                        new LauncherSimConfig(), RobotSim.leftView, motor.getSimState(), getName());
     }
 
     // Must be called to enable the simulation

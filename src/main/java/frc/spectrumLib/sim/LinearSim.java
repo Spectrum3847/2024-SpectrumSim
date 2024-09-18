@@ -14,13 +14,15 @@ import edu.wpi.first.wpilibj.util.Color8Bit;
 public class LinearSim {
     private ElevatorSim elevatorSim;
 
-    private final MechanismRoot2d m_mech2dRoot;
+    private final MechanismRoot2d root;
     private final MechanismLigament2d m_elevatorMech2d;
     LinearConfig config;
+    private TalonFXSimState linearMotorSim;
 
     public LinearSim(
             LinearConfig config, Mechanism2d mech, TalonFXSimState linearMotorSim, String name) {
         this.config = config;
+        this.linearMotorSim = linearMotorSim;
 
         this.elevatorSim =
                 new ElevatorSim(
@@ -34,10 +36,10 @@ public class LinearSim {
                         0);
 
         MechanismRoot2d staticRoot = mech.getRoot("SaticRoot", config.initialX, config.initialY);
-        m_mech2dRoot = mech.getRoot("Elevator Root", config.initialX, config.initialY);
+        root = mech.getRoot("Elevator Root", config.initialX, config.initialY);
 
         m_elevatorMech2d =
-                m_mech2dRoot.append(
+                root.append(
                         new MechanismLigament2d(
                                 "Elevator",
                                 Units.inchesToMeters(20),
@@ -68,7 +70,7 @@ public class LinearSim {
                 * config.kElevatorGearing;
     }
 
-    public void simulationPeriodic(TalonFXSimState linearMotorSim) {
+    public void simulationPeriodic() {
         elevatorSim.setInput(linearMotorSim.getMotorVoltage());
         elevatorSim.update(TimedRobot.kDefaultPeriod);
 
@@ -76,7 +78,7 @@ public class LinearSim {
         linearMotorSim.setRawRotorPosition(getRotations());
 
         double displacement = elevatorSim.getPositionMeters();
-        m_mech2dRoot.setPosition(
+        root.setPosition(
                 config.initialX + (displacement * Math.cos(Math.toRadians(config.angle))),
                 config.initialY + (displacement * Math.sin(Math.toRadians(config.angle))));
     }

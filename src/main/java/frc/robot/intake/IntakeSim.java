@@ -1,95 +1,35 @@
 package frc.robot.intake;
 
 import com.ctre.phoenix6.sim.TalonFXSimState;
-import edu.wpi.first.math.system.plant.DCMotor;
-import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
-import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
-import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
-import edu.wpi.first.wpilibj.util.Color;
-import edu.wpi.first.wpilibj.util.Color8Bit;
-import frc.robot.RobotConfig.DEFAULT;
 import frc.robot.RobotSim;
+import frc.spectrumLib.sim.ArmConfig;
+import frc.spectrumLib.sim.ArmSim;
 import frc.spectrumLib.sim.RollerConfig;
 import frc.spectrumLib.sim.RollerSim;
 
 public class IntakeSim {
 
-    public static class IntakeSimConfig extends RollerConfig {
-        public IntakeSimConfig() {
-            super();
-            this.setDiameter(3);
-        }
-    }
+    public ArmConfig armConfig = new ArmConfig(0.7, 0.3, 5, 0.5, -60, 90).setStartingAngle(90);
 
-    // --- BEGIN STUFF FOR SIMULATION ---
-    private static final SingleJointedArmSim armSim =
-            new SingleJointedArmSim(
-                    DCMotor.getKrakenX60Foc(1),
-                    DEFAULT.Intake.Arm.ratio,
-                    DEFAULT.Intake.Arm.simMOI,
-                    DEFAULT.Intake.Arm.simCGLength,
-                    DEFAULT.Intake.Arm.minAngle,
-                    DEFAULT.Intake.Arm.maxAngle,
-                    true, // Simulate gravity
-                    DEFAULT.Intake.Arm.startingAngle);
+    private ArmSim armSim;
+    private RollerSim rollerSim;
 
-    // Mechanism2d Visualization
-    // See https://docs.wpilib.org/en/stable/docs/software/dashboards/glass/mech2d-widget.html
-
-    private static final double kArmPivotX = 0.7;
-    private static final double kArmPivotY = 0.3;
-    private static final MechanismRoot2d armPivot =
-            RobotSim.leftView.getRoot("Intake Arm Pivot", kArmPivotX, kArmPivotY);
-    private static final double kIntakeLength = 0.5;
-    private static final MechanismLigament2d armViz =
-            armPivot.append(
-                    new MechanismLigament2d(
-                            "Intake Arm", kIntakeLength, 0.0, 5.0, new Color8Bit(Color.kBlue)));
-
-    private RollerSim rollerSim2;
-
-    public IntakeSim(TalonFXSimState rollerMotorSim) {
-        rollerSim2 =
+    public IntakeSim(TalonFXSimState rollerMotorSim, TalonFXSimState armMotorSim) {
+        rollerSim =
                 new RollerSim(
-                        RobotSim.leftView, rollerMotorSim, new IntakeSimConfig(), "Intake Roller");
+                        new RollerConfig().setDiameter(3),
+                        RobotSim.leftView,
+                        rollerMotorSim,
+                        "Intake Roller");
+
+        armSim = new ArmSim(armConfig, RobotSim.leftView, armMotorSim, "Intake Arm");
     }
 
     public void simulationPeriodic(TalonFXSimState armMotorSim) {
-        // RobotTelemetry.print("TEST intake sim periodic");
-        // ------ Update sim based on motor output
-        armSim.setInput(armMotorSim.getMotorVoltage());
-        armSim.update(TimedRobot.kDefaultPeriod);
-
-        // ------ Update motor based on sim
-        // Make sure to convert radians at the mechanism to rotations at the motor
-        // Subtracting out the starting angle is necessary so the simulation can't "cheat" and use
-        // the
-        // sim as an absolute encoder.
-        armMotorSim.setRawRotorPosition(
-                (armSim.getAngleRads() - DEFAULT.Intake.Arm.startingAngle)
-                        * DEFAULT.Intake.Arm.ratio
-                        * 2.0
-                        * Math.PI);
-        armMotorSim.setRotorVelocity(
-                armSim.getVelocityRadPerSec() * DEFAULT.Intake.Arm.ratio / (2.0 * Math.PI));
-
-        // ------ Update viz based on sim
-        armViz.setAngle(Math.toDegrees(armSim.getAngleRads()));
-
-        // Update the axle as the arm moves
-        /* rollerAxle.setPosition(
-                kArmPivotX + kIntakeLength * Math.cos(armSim.getAngleRads()),
-                kArmPivotY + kIntakeLength * Math.sin(armSim.getAngleRads()));
-        // Scale down the angular velocity so we can actually see what is happening
-        rollerViz.setAngle(
-                rollerViz.getAngle()
-                        + Math.toDegrees(rollerSim.getAngularVelocityRPM())
-                                * TimedRobot.kDefaultPeriod
-                                * DEFAULT.Intake.Roller.angularVelocityScalar);*/
-        rollerSim2.simulationPeriodic(
-                kArmPivotX + kIntakeLength * Math.cos(armSim.getAngleRads()),
-                kArmPivotY + kIntakeLength * Math.sin(armSim.getAngleRads()));
+        armSim.simulationPeriodic();
+        rollerSim.simulationPeriodic(
+                armConfig.pivotX + armConfig.length * Math.cos(armSim.getAngleRads()),
+                armConfig.pivotY + armConfig.length * Math.sin(armSim.getAngleRads()));
     }
     // --- END STUFF FOR SIMULATION ---
 }

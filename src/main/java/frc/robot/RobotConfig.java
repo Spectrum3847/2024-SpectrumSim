@@ -128,7 +128,7 @@ public class RobotConfig {
 
                 // Setpoints
                 public static double stowAngle = Math.toRadians(80);
-                public static double deployAngle = Math.toRadians(-30);
+                public static double deployAngle = Math.toRadians(0);
 
                 // For simulation
                 public static double simMOI = 0.2; // kgMetersSquared
