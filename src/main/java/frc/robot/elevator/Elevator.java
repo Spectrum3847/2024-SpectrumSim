@@ -68,7 +68,7 @@ public class Elevator extends Mechanism {
         }
         sim = new ElevatorSim(config, motor.getSimState(), RobotSim.leftView);
 
-        RobotTelemetry.print("TEST elevator constructor");
+        RobotTelemetry.print(getName() + " Subsystem Initialized: ");
     }
 
     @Override

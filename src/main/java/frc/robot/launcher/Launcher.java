@@ -2,6 +2,7 @@ package frc.robot.launcher;
 
 import frc.robot.RobotConfig;
 import frc.robot.RobotSim;
+import frc.robot.RobotTelemetry;
 import frc.robot.launcher.LauncherSim.LauncherSimConfig;
 import frc.spectrumLib.mechanism.Mechanism;
 import frc.spectrumLib.mechanism.TalonFXFactory;
@@ -49,6 +50,7 @@ public class Launcher extends Mechanism {
         sim =
                 new RollerSim(
                         new LauncherSimConfig(), RobotSim.leftView, motor.getSimState(), getName());
+        RobotTelemetry.print(getName() + " Subsystem Initialized: ");
     }
 
     // Must be called to enable the simulation

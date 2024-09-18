@@ -8,6 +8,7 @@ import com.ctre.phoenix6.sim.TalonFXSimState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotConfig.DEFAULT;
+import frc.robot.RobotTelemetry;
 
 public class Intake extends SubsystemBase {
     private static final TalonFX armMotor = new TalonFX(DEFAULT.Intake.Arm.deviceID);
@@ -37,6 +38,7 @@ public class Intake extends SubsystemBase {
         armMotor.setPosition(DEFAULT.Intake.Arm.startingAngle);
         retract();
         intakeSim = new IntakeSim(rollerMotorSim, armMotorSim);
+        RobotTelemetry.print("Intake Subsystem Initialized: ");
     }
 
     public void deploy() {
