@@ -12,11 +12,8 @@ public class RollerConfig {
     public Color8Bit fwdColor = new Color8Bit(Color.kGreen);
     public Color8Bit revColor = new Color8Bit(Color.kRed);
 
-    public RollerConfig() {}
-
-    public RollerConfig setDiameter(double diameter) {
-        rollerDiameterInches = diameter;
-        return this;
+    public RollerConfig(double diameterInches) {
+        rollerDiameterInches = diameterInches;
     }
 
     public RollerConfig setGearRatio(double ratio) {

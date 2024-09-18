@@ -18,7 +18,6 @@ import frc.robot.pilot.Pilot;
 import frc.robot.pilot.PilotCommands;
 import frc.robot.swerve.Swerve;
 import frc.robot.swerve.SwerveCommands;
-import frc.robot.swerve.TunerConstants;
 import frc.robot.vision.VisionSystem;
 import frc.spectrumLib.util.CrashTracker;
 
@@ -77,7 +76,7 @@ public class Robot extends TimedRobot {
              * code. Anything with an output that needs to be independently controlled is a
              * subsystem Something that don't have an output are alos subsystems.
              */
-            swerve = TunerConstants.DriveTrain;
+            swerve = new Swerve(config.swerve);
             Timer.delay(0.1);
             intake = new Intake(); // new Intake(config.intakeAttached);
             Timer.delay(0.1);

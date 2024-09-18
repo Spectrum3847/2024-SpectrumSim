@@ -4,8 +4,6 @@ package frc.robot.swerve;
 
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveDrivetrain;
-import com.ctre.phoenix6.mechanisms.swerve.SwerveDrivetrainConstants;
-import com.ctre.phoenix6.mechanisms.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
@@ -30,6 +28,7 @@ import java.util.function.Supplier;
  * in command-based projects easily.
  */
 public class Swerve extends SwerveDrivetrain implements Subsystem {
+    private SwerveConfig config;
     private static final double kSimLoopPeriod = 0.005; // 5 ms
     private Notifier m_simNotifier = null;
     private double m_lastSimTime;
@@ -44,19 +43,9 @@ public class Swerve extends SwerveDrivetrain implements Subsystem {
     private final SwerveRequest.ApplyChassisSpeeds AutoRequest =
             new SwerveRequest.ApplyChassisSpeeds();
 
-    public Swerve(
-            SwerveDrivetrainConstants driveTrainConstants,
-            double OdometryUpdateFrequency,
-            SwerveModuleConstants... modules) {
-        super(driveTrainConstants, OdometryUpdateFrequency, modules);
-        configurePathPlanner();
-        if (Utils.isSimulation()) {
-            startSimThread();
-        }
-    }
-
-    public Swerve(SwerveDrivetrainConstants driveTrainConstants, SwerveModuleConstants... modules) {
-        super(driveTrainConstants, modules);
+    public Swerve(SwerveConfig config) {
+        super(config.DrivetrainConstants, config.getModules());
+        this.config = config;
         configurePathPlanner();
         if (Utils.isSimulation()) {
             startSimThread();
@@ -91,7 +80,7 @@ public class Swerve extends SwerveDrivetrain implements Subsystem {
                 new HolonomicPathFollowerConfig(
                         new PIDConstants(10, 0, 0),
                         new PIDConstants(10, 0, 0),
-                        TunerConstants.kSpeedAt12VoltsMps,
+                        config.kSpeedAt12VoltsMps,
                         driveBaseRadius,
                         new ReplanningConfig()),
                 () ->

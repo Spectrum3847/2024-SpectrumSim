@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj.Timer;
 import frc.robot.configs.ULTRAVIOLET2024;
 import frc.robot.elevator.Elevator.ElevatorConfig;
 import frc.robot.launcher.Launcher.LauncherConfig;
-import frc.robot.swerve.TunerConstants;
+import frc.robot.swerve.SwerveConfig;
 
 public class RobotConfig {
 
@@ -100,20 +100,14 @@ public class RobotConfig {
     }
 
     public static class DEFAULT {
-        public Drivetrain drivetrain;
+        public SwerveConfig swerve;
         public ElevatorConfig elevator;
         public LauncherConfig launcher;
 
         public DEFAULT() {
-            drivetrain = new Drivetrain();
+            swerve = new SwerveConfig();
             elevator = new ElevatorConfig();
             launcher = new LauncherConfig();
-        }
-
-        public class Drivetrain {
-            public static double kMaxSpeed = TunerConstants.kSpeedAt12VoltsMps; // m/s
-            public static double kMaxAngularRate = 1.5 * Math.PI; // rad/s
-            public static double kDeadband = 0.1;
         }
 
         public static class Intake {

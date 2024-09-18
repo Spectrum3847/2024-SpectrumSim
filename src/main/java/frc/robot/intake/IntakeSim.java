@@ -17,10 +17,7 @@ public class IntakeSim {
     public IntakeSim(TalonFXSimState rollerMotorSim, TalonFXSimState armMotorSim) {
         rollerSim =
                 new RollerSim(
-                        new RollerConfig().setDiameter(3),
-                        RobotSim.leftView,
-                        rollerMotorSim,
-                        "Intake Roller");
+                        new RollerConfig(3), RobotSim.leftView, rollerMotorSim, "Intake Roller");
 
         armSim = new ArmSim(armConfig, RobotSim.leftView, armMotorSim, "Intake Arm");
     }
