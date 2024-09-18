@@ -21,7 +21,7 @@ public class RobotSim {
             new Mechanism2d(Units.inchesToMeters(width) * 2, Units.inchesToMeters(height));
 
     public RobotSim() {
-        SmartDashboard.putData("Viz", RobotSim.leftView);
+        SmartDashboard.putData("LeftView", RobotSim.leftView);
         leftView.setBackgroundColor(new Color8Bit(Color.kLightGray));
     }
 }
