@@ -7,9 +7,8 @@ public class ULTRAVIOLET2024 extends DEFAULT {
     public ULTRAVIOLET2024() {
         super();
         swerve.configEncoderOffsets(0, 0, 0, 0);
-        // Eleavtor
+        // Attached Mechanisms
         elevator.attached(true);
-        elevator.configSupplyCurrentLimit(20);
         launcher.attached(true);
     }
 }
