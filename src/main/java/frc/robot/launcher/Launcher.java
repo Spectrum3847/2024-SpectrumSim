@@ -1,11 +1,13 @@
 package frc.robot.launcher;
 
+import com.ctre.phoenix6.sim.TalonFXSimState;
+import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import frc.robot.RobotConfig;
 import frc.robot.RobotSim;
 import frc.robot.RobotTelemetry;
-import frc.robot.launcher.LauncherSim.LauncherSimConfig;
 import frc.spectrumLib.mechanism.Mechanism;
 import frc.spectrumLib.mechanism.TalonFXFactory;
+import frc.spectrumLib.sim.RollerConfig;
 import frc.spectrumLib.sim.RollerSim;
 
 public class Launcher extends Mechanism {
@@ -20,6 +22,9 @@ public class Launcher extends Mechanism {
         public double velocityKp = 6;
         public double velocityKv = 0.12;
         public double velocityKs = 0.24;
+
+        /* Sim Configs */
+        public double wheelDiameter = 6.0;
 
         public LauncherConfig() {
             super("Launcher", 42, RobotConfig.CANIVORE);
@@ -36,7 +41,7 @@ public class Launcher extends Mechanism {
         }
     }
 
-    public LauncherConfig config;
+    private LauncherConfig config;
     public RollerSim sim;
 
     public Launcher(LauncherConfig config) {
@@ -45,17 +50,31 @@ public class Launcher extends Mechanism {
         if (isAttached()) {
             motor = TalonFXFactory.createConfigTalon(config.id, config.talonConfig);
         }
-
-        // Create a new RollerSim with the left view, the motor's sim state, and a 6 in diameter
-        sim =
-                new RollerSim(
-                        new LauncherSimConfig(), RobotSim.leftView, motor.getSimState(), getName());
+        simulationInit();
         RobotTelemetry.print(getName() + " Subsystem Initialized: ");
+    }
+
+    // --------------------------------------------------------------------------------
+    // Simulation
+    // --------------------------------------------------------------------------------
+    public void simulationInit() {
+        if (isAttached()) {
+            // Create a new RollerSim with the left view, the motor's sim state, and a 6 in diameter
+            sim = new LauncherSim(RobotSim.leftView, motor.getSimState());
+        }
     }
 
     // Must be called to enable the simulation
     // if roller position changes configure x and y to set position.
     public void simulationPeriodic() {
-        sim.simulationPeriodic(0.5, 0.5);
+        if (isAttached()) {
+            sim.simulationPeriodic(0.5, 0.5);
+        }
+    }
+
+    public class LauncherSim extends RollerSim {
+        public LauncherSim(Mechanism2d mech, TalonFXSimState rollerMotorSim) {
+            super(new RollerConfig(config.wheelDiameter), mech, rollerMotorSim, config.name);
+        }
     }
 }

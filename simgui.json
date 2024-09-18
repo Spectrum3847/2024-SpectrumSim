@@ -55,11 +55,17 @@
     "types": {
       "/FMSInfo": "FMSInfo",
       "/SmartDashboard/Arm Viz": "Mechanism2d",
+      "/SmartDashboard/LeftView": "Mechanism2d",
       "/SmartDashboard/Scheduler": "Scheduler",
       "/SmartDashboard/VisionSystemSim-main/Sim Field": "Field2d",
       "/SmartDashboard/Viz": "Mechanism2d"
     },
     "windows": {
+      "/SmartDashboard/LeftView": {
+        "window": {
+          "visible": true
+        }
+      },
       "/SmartDashboard/Scheduler": {
         "window": {
           "visible": true
@@ -86,11 +92,6 @@
           "image": "./images/tag-green.png"
         },
         "width": 16.541748046875,
-        "window": {
-          "visible": true
-        }
-      },
-      "/SmartDashboard/Viz": {
         "window": {
           "visible": true
         }

@@ -1,7 +1,9 @@
 package frc.robot.elevator;
 
+import com.ctre.phoenix6.sim.TalonFXSimState;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import frc.robot.RobotConfig;
@@ -9,6 +11,8 @@ import frc.robot.RobotSim;
 import frc.robot.RobotTelemetry;
 import frc.spectrumLib.mechanism.Mechanism;
 import frc.spectrumLib.mechanism.TalonFXFactory;
+import frc.spectrumLib.sim.LinearConfig;
+import frc.spectrumLib.sim.LinearSim;
 
 public class Elevator extends Mechanism {
     public static class ElevatorConfig extends Config {
@@ -34,6 +38,9 @@ public class Elevator extends Mechanism {
         public double kElevatorGearing = 5;
         public double kCarriageMass = 1;
         public double kElevatorDrumRadiusMeters = Units.inchesToMeters(0.955 / 2);
+        public double initialX = 0.5;
+        public double initialY = 0.0;
+        public double angle = 180 - 72;
 
         public ElevatorConfig() {
             super("Elevator", 52, RobotConfig.CANIVORE);
@@ -66,31 +73,21 @@ public class Elevator extends Mechanism {
         if (isAttached()) {
             motor = TalonFXFactory.createConfigTalon(config.id, config.talonConfig);
         }
-        sim = new ElevatorSim(config, motor.getSimState(), RobotSim.leftView);
-
+        simulationInit();
         RobotTelemetry.print(getName() + " Subsystem Initialized: ");
     }
 
     @Override
     public void periodic() {}
 
-    @Override
-    public void simulationPeriodic() {
-        sim.simulationPeriodic();
-    }
-
     /* Check Elevator States */
-
     // Is Amp Height
     public Boolean isAtAmpHeight() {
         return getMotorPosition() > config.amp * 0.8;
     }
 
     public boolean isElevatorUp() {
-        if (config.attached) {
-            return getMotorPosition() >= 5;
-        }
-        return false;
+        return getMotorPosition() >= 5;
     }
 
     /* Custom Commands */
@@ -146,5 +143,36 @@ public class Elevator extends Mechanism {
                         () -> false, // isFinished
                         this) // requirement
                 .withName("Elevator.zeroElevatorRoutine");
+    }
+
+    // --------------------------------------------------------------------------------
+    // Simulation
+    // --------------------------------------------------------------------------------
+    public void simulationInit() {
+        if (isAttached()) { // Only run simulation if it's attached
+            sim = new ElevatorSim(motor.getSimState(), RobotSim.leftView);
+        }
+    }
+
+    @Override
+    public void simulationPeriodic() {
+        if (isAttached()) { // Only run if it's attached
+            sim.simulationPeriodic();
+        }
+    }
+
+    public class ElevatorSim extends LinearSim {
+        public ElevatorSim(TalonFXSimState elevatorMotorSim, Mechanism2d mech) {
+            super(
+                    new LinearConfig(
+                                    config.initialX,
+                                    config.initialY,
+                                    config.kElevatorGearing,
+                                    config.kElevatorDrumRadiusMeters)
+                            .setAngle(config.angle),
+                    mech,
+                    elevatorMotorSim,
+                    config.name);
+        }
     }
 }
