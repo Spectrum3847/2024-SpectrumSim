@@ -63,6 +63,6 @@ public class Intake extends SubsystemBase {
     }
 
     public void simulationPeriodic() {
-        intakeSim.simulationPeriodic(armMotorSim, rollerMotorSim);
+        intakeSim.simulationPeriodic(armMotorSim);
     }
 }

@@ -10,12 +10,11 @@ public class ElevatorSim extends LinearSim {
 
     public ElevatorSim(ElevatorConfig config, TalonFXSimState elevatorMotorSim, Mechanism2d mech) {
         super(
+                new LinearConfig(
+                                0.5, 0.0, config.kElevatorGearing, config.kElevatorDrumRadiusMeters)
+                        .setAngle(180 - 72),
                 mech,
                 elevatorMotorSim,
-                new LinearConfig(
-                        config.kElevatorGearing,
-                        config.kElevatorDrumRadiusMeters,
-                        config.kCarriageMass),
                 config.name);
     }
 }

@@ -3,7 +3,6 @@ package frc.robot.intake;
 import com.ctre.phoenix6.sim.TalonFXSimState;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
@@ -11,8 +10,8 @@ import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import frc.robot.RobotConfig.DEFAULT;
 import frc.robot.RobotSim;
+import frc.spectrumLib.sim.RollerConfig;
 import frc.spectrumLib.sim.RollerSim;
-import frc.spectrumLib.sim.RollerSim.RollerConfig;
 
 public class IntakeSim {
 
@@ -35,12 +34,6 @@ public class IntakeSim {
                     true, // Simulate gravity
                     DEFAULT.Intake.Arm.startingAngle);
 
-    private static final FlywheelSim rollerSim =
-            new FlywheelSim(
-                    DCMotor.getKrakenX60Foc(1),
-                    DEFAULT.Intake.Roller.ratio,
-                    DEFAULT.Intake.Roller.simMOI);
-
     // Mechanism2d Visualization
     // See https://docs.wpilib.org/en/stable/docs/software/dashboards/glass/mech2d-widget.html
 
@@ -54,13 +47,6 @@ public class IntakeSim {
                     new MechanismLigament2d(
                             "Intake Arm", kIntakeLength, 0.0, 5.0, new Color8Bit(Color.kBlue)));
 
-    /*private static final MechanismRoot2d rollerAxle =
-                RobotSim.leftView.getRoot("Intake Roller Axle", 0.0, 0.0);
-        private static final MechanismLigament2d rollerViz =
-                rollerAxle.append(
-                        new MechanismLigament2d(
-                                "Intake Roller", 0.1, 0.0, 5.0, new Color8Bit(Color.kYellow)));
-    */
     private RollerSim rollerSim2;
 
     public IntakeSim(TalonFXSimState rollerMotorSim) {
@@ -69,14 +55,11 @@ public class IntakeSim {
                         RobotSim.leftView, rollerMotorSim, new IntakeSimConfig(), "Intake Roller");
     }
 
-    public void simulationPeriodic(TalonFXSimState armMotorSim, TalonFXSimState rollerMotorSim) {
+    public void simulationPeriodic(TalonFXSimState armMotorSim) {
         // RobotTelemetry.print("TEST intake sim periodic");
         // ------ Update sim based on motor output
         armSim.setInput(armMotorSim.getMotorVoltage());
         armSim.update(TimedRobot.kDefaultPeriod);
-
-        // rollerSim.setInput(rollerMotorSim.getMotorVoltage());
-        // rollerSim.update(TimedRobot.kDefaultPeriod);
 
         // ------ Update motor based on sim
         // Make sure to convert radians at the mechanism to rotations at the motor
@@ -90,10 +73,6 @@ public class IntakeSim {
                         * Math.PI);
         armMotorSim.setRotorVelocity(
                 armSim.getVelocityRadPerSec() * DEFAULT.Intake.Arm.ratio / (2.0 * Math.PI));
-
-        double rotationsPerSecond = rollerSim.getAngularVelocityRadPerSec() / (2.0 * Math.PI);
-        rollerMotorSim.setRotorVelocity(rotationsPerSecond);
-        rollerMotorSim.addRotorPosition(rotationsPerSecond * TimedRobot.kDefaultPeriod);
 
         // ------ Update viz based on sim
         armViz.setAngle(Math.toDegrees(armSim.getAngleRads()));
