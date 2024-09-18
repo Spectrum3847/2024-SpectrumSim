@@ -108,6 +108,10 @@ public abstract class Mechanism implements Subsystem {
         return run(() -> setMMPosition(position)).withName(getName() + ".runPosition");
     }
 
+    public Command runPosition(DoubleSupplier position) {
+        return run(() -> setMMPosition(position)).withName(getName() + ".runPosition");
+    }
+
     /**
      * Runs to the specified position using FOC control. Will require different PID and feedforward
      * configs

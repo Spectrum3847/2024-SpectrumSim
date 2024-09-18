@@ -114,6 +114,9 @@
       },
       "Pose": {
         "open": true
+      },
+      "SmartDashboard": {
+        "open": true
       }
     }
   },
