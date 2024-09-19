@@ -42,7 +42,7 @@ public class Launcher extends Mechanism {
     }
 
     private LauncherConfig config;
-    public RollerSim sim;
+    private RollerSim sim;
 
     public Launcher(LauncherConfig config) {
         super(config);
@@ -57,7 +57,7 @@ public class Launcher extends Mechanism {
     // --------------------------------------------------------------------------------
     // Simulation
     // --------------------------------------------------------------------------------
-    public void simulationInit() {
+    private void simulationInit() {
         if (isAttached()) {
             // Create a new RollerSim with the left view, the motor's sim state, and a 6 in diameter
             sim = new LauncherSim(RobotSim.leftView, motor.getSimState());
@@ -72,7 +72,7 @@ public class Launcher extends Mechanism {
         }
     }
 
-    public class LauncherSim extends RollerSim {
+    class LauncherSim extends RollerSim {
         public LauncherSim(Mechanism2d mech, TalonFXSimState rollerMotorSim) {
             super(new RollerConfig(config.wheelDiameter), mech, rollerMotorSim, config.name);
         }

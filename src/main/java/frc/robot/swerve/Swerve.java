@@ -30,16 +30,12 @@ import java.util.function.Supplier;
  */
 public class Swerve extends SwerveDrivetrain implements Subsystem {
     private SwerveConfig config;
-    private static final double kSimLoopPeriod = 0.005; // 5 ms
     private Notifier m_simNotifier = null;
     private double m_lastSimTime;
+    private RotationController rotationController;
 
-    /* Blue alliance sees forward as 0 degrees (toward red alliance wall) */
-    private final Rotation2d BlueAlliancePerspectiveRotation = Rotation2d.fromDegrees(0);
-    /* Red alliance sees forward as 180 degrees (toward blue alliance wall) */
-    private final Rotation2d RedAlliancePerspectiveRotation = Rotation2d.fromDegrees(180);
     /* Keep track if we've ever applied the operator perspective before or not */
-    private boolean hasAppliedOperatorPerspective = false;
+    private boolean hasAppliedPilotPerspective = false;
 
     private final SwerveRequest.ApplyChassisSpeeds AutoRequest =
             new SwerveRequest.ApplyChassisSpeeds();
@@ -48,6 +44,9 @@ public class Swerve extends SwerveDrivetrain implements Subsystem {
         super(config.DrivetrainConstants, config.getModules());
         this.config = config;
         configurePathPlanner();
+
+        rotationController = new RotationController(config);
+
         if (Utils.isSimulation()) {
             startSimThread();
         }
@@ -57,16 +56,79 @@ public class Swerve extends SwerveDrivetrain implements Subsystem {
 
     @Override
     public void periodic() {
-        setDriverPerspective();
+        setPilotPerspective();
     }
 
+    // This allows us to keep the robot pose on the sim field
+    // May need to make this only change the pose if we are in Sim
+    public Pose2d getRobotPose() {
+        Pose2d pose = getState().Pose;
+
+        double halfRobot = config.robotLength / 2;
+        if (pose.getX() < halfRobot) {
+            seedFieldRelative(
+                    new Pose2d(new Translation2d(halfRobot, pose.getY()), pose.getRotation()));
+        }
+
+        return getState().Pose;
+    }
+
+    Command applyRequest(Supplier<SwerveRequest> requestSupplier) {
+        return run(() -> this.setControl(requestSupplier.get()));
+    }
+
+    private ChassisSpeeds getCurrentRobotChassisSpeeds() {
+        return m_kinematics.toChassisSpeeds(getState().ModuleStates);
+    }
+
+    private void setPilotPerspective() {
+        /* Periodically try to apply the operator perspective */
+        /* If we haven't applied the operator perspective before, then we should apply it regardless of DS state */
+        /* This allows us to correct the perspective in case the robot code restarts mid-match */
+        /* Otherwise, only check and apply the operator perspective if the DS is disabled */
+        /* This ensures driving behavior doesn't change until an explicit disable event occurs during testing*/
+        if (!hasAppliedPilotPerspective || DriverStation.isDisabled()) {
+            DriverStation.getAlliance()
+                    .ifPresent(
+                            (allianceColor) -> {
+                                this.setOperatorPerspectiveForward(
+                                        allianceColor == Alliance.Red
+                                                ? config.RedAlliancePerspectiveRotation
+                                                : config.BlueAlliancePerspectiveRotation);
+                                hasAppliedPilotPerspective = true;
+                            });
+        }
+    }
+
+    // --------------------------------------------------------------------------------
+    // Rotation Controller
+    // --------------------------------------------------------------------------------
+    double getRotationControl(double goalRadians) {
+        return rotationController.calculate(goalRadians, getRotationRadians());
+    }
+
+    void resetRotationController() {
+        rotationController.reset(getRotationRadians());
+    }
+
+    Rotation2d getRotation() {
+        return getRobotPose().getRotation();
+    }
+
+    double getRotationRadians() {
+        return getRobotPose().getRotation().getRadians();
+    }
+
+    // --------------------------------------------------------------------------------
+    // Path Planner
+    // --------------------------------------------------------------------------------
     private void configurePathPlanner() {
         // Seed robot to mid field at start (Paths will change this starting position)
         seedFieldRelative(
                 new Pose2d(
                         Units.feetToMeters(27),
                         Units.feetToMeters(27 / 2),
-                        BlueAlliancePerspectiveRotation));
+                        config.BlueAlliancePerspectiveRotation));
         double driveBaseRadius = 0;
         for (var moduleLocation : m_moduleLocations) {
             driveBaseRadius = Math.max(driveBaseRadius, moduleLocation.getNorm());
@@ -94,30 +156,13 @@ public class Swerve extends SwerveDrivetrain implements Subsystem {
                 this); // Subsystem for requirements
     }
 
-    // This allows us to keep the robot pose on the sim field
-    // May need to make this only change the pose if we are in Sim
-    public Pose2d getRobotPose() {
-        Pose2d pose = getState().Pose;
-
-        if (pose.getX() < 0) {
-            seedFieldRelative(new Pose2d(new Translation2d(0, pose.getY()), pose.getRotation()));
-        }
-
-        return getState().Pose;
-    }
-
-    public Command applyRequest(Supplier<SwerveRequest> requestSupplier) {
-        return run(() -> this.setControl(requestSupplier.get()));
-    }
-
     public Command getAutoPath(String pathName) {
         return new PathPlannerAuto(pathName);
     }
 
-    public ChassisSpeeds getCurrentRobotChassisSpeeds() {
-        return m_kinematics.toChassisSpeeds(getState().ModuleStates);
-    }
-
+    // --------------------------------------------------------------------------------
+    // Simulation
+    // --------------------------------------------------------------------------------
     private void startSimThread() {
         m_lastSimTime = Utils.getCurrentTimeSeconds();
 
@@ -132,25 +177,6 @@ public class Swerve extends SwerveDrivetrain implements Subsystem {
                             /* use the measured time delta, get battery voltage from WPILib */
                             updateSimState(deltaTime, RobotController.getBatteryVoltage());
                         });
-        m_simNotifier.startPeriodic(kSimLoopPeriod);
-    }
-
-    public void setDriverPerspective() {
-        /* Periodically try to apply the operator perspective */
-        /* If we haven't applied the operator perspective before, then we should apply it regardless of DS state */
-        /* This allows us to correct the perspective in case the robot code restarts mid-match */
-        /* Otherwise, only check and apply the operator perspective if the DS is disabled */
-        /* This ensures driving behavior doesn't change until an explicit disable event occurs during testing*/
-        if (!hasAppliedOperatorPerspective || DriverStation.isDisabled()) {
-            DriverStation.getAlliance()
-                    .ifPresent(
-                            (allianceColor) -> {
-                                this.setOperatorPerspectiveForward(
-                                        allianceColor == Alliance.Red
-                                                ? RedAlliancePerspectiveRotation
-                                                : BlueAlliancePerspectiveRotation);
-                                hasAppliedOperatorPerspective = true;
-                            });
-        }
+        m_simNotifier.startPeriodic(config.kSimLoopPeriod);
     }
 }
