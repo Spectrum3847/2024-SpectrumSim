@@ -33,6 +33,7 @@ public class Swerve extends SwerveDrivetrain implements Subsystem {
     private static final double kSimLoopPeriod = 0.005; // 5 ms
     private Notifier m_simNotifier = null;
     private double m_lastSimTime;
+    private RotationController rotationController;
 
     /* Blue alliance sees forward as 0 degrees (toward red alliance wall) */
     private final Rotation2d BlueAlliancePerspectiveRotation = Rotation2d.fromDegrees(0);
@@ -48,6 +49,9 @@ public class Swerve extends SwerveDrivetrain implements Subsystem {
         super(config.DrivetrainConstants, config.getModules());
         this.config = config;
         configurePathPlanner();
+
+        rotationController = new RotationController(config);
+
         if (Utils.isSimulation()) {
             startSimThread();
         }
@@ -58,6 +62,22 @@ public class Swerve extends SwerveDrivetrain implements Subsystem {
     @Override
     public void periodic() {
         setDriverPerspective();
+    }
+
+    public double getRotationControl(double goalRadians) {
+        return rotationController.calculate(goalRadians, getRotationRadians());
+    }
+
+    public void resetRotationController() {
+        rotationController.reset(getRotationRadians());
+    }
+
+    public Rotation2d getRotation() {
+        return getRobotPose().getRotation();
+    }
+
+    public double getRotationRadians() {
+        return getRobotPose().getRotation().getRadians();
     }
 
     private void configurePathPlanner() {

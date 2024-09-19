@@ -17,6 +17,17 @@ public class SwerveConfig {
     public double kMaxAngularRate = 1.5 * Math.PI; // rad/s
     public double kDeadband = 0.1;
 
+    public double maxAngularVelocity = 2 * Math.PI; // rad/s
+    public double maxAngularAcceleration = Math.pow(maxAngularVelocity, 2); // rad/s^2
+    public double kPRotationController = 8.0;
+    public double kIRotationController = 2.5;
+    public double kDRotationController = 0.3;
+    public double rotationTolerance = (Math.PI / 360); // rads
+
+    public double kPHoldController = 10.0;
+    public double kIHoldController = 0.0;
+    public double kDHoldController = 0.0;
+
     // Both sets of gains need to be tuned to your individual robot.
 
     // The steer motor uses any SwerveModule.SteerRequestType control request with the
