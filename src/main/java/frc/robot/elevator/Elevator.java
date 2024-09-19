@@ -65,7 +65,7 @@ public class Elevator extends Mechanism {
     }
 
     private ElevatorConfig config;
-    public ElevatorSim sim;
+    private ElevatorSim sim;
 
     public Elevator(ElevatorConfig config) {
         super(config);
@@ -90,7 +90,9 @@ public class Elevator extends Mechanism {
         return getMotorPosition() >= 5;
     }
 
-    /* Custom Commands */
+    //--------------------------------------------------------------------------------
+    // Custom Commands
+    //--------------------------------------------------------------------------------
 
     /** Holds the position of the elevator. */
     public Command holdPosition() {
@@ -148,7 +150,7 @@ public class Elevator extends Mechanism {
     // --------------------------------------------------------------------------------
     // Simulation
     // --------------------------------------------------------------------------------
-    public void simulationInit() {
+    private void simulationInit() {
         if (isAttached()) { // Only run simulation if it's attached
             sim = new ElevatorSim(motor.getSimState(), RobotSim.leftView);
         }
@@ -161,7 +163,7 @@ public class Elevator extends Mechanism {
         }
     }
 
-    public class ElevatorSim extends LinearSim {
+    class ElevatorSim extends LinearSim {
         public ElevatorSim(TalonFXSimState elevatorMotorSim, Mechanism2d mech) {
             super(
                     new LinearConfig(

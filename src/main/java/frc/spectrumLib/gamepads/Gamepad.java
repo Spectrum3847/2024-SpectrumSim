@@ -238,6 +238,10 @@ public abstract class Gamepad extends SubsystemBase {
     }
 
     /** Setup modifier bumper and trigger buttons */
+    public Trigger noModifers() {
+        return noBumpers().and(noTriggers());
+    }
+    
     public Trigger noBumpers() {
         return xbox.rightBumper().negate().and(xbox.leftBumper().negate());
     }

@@ -10,13 +10,21 @@ import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.ClosedLoopOutputType;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModuleConstants.SteerFeedbackType;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModuleConstantsFactory;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 
 public class SwerveConfig {
 
+    public final double kSimLoopPeriod = 0.005; // 5 ms
+    public double robotWidth = Units.inchesToMeters(29.5);
+    public double robotLength = Units.inchesToMeters(29.5);
+
     public double kMaxAngularRate = 1.5 * Math.PI; // rad/s
     public double kDeadband = 0.1;
 
+    // -----------------------------------------------------------------------
+    // Rotation Controller Constants
+    // -----------------------------------------------------------------------
     public double maxAngularVelocity = 2 * Math.PI; // rad/s
     public double maxAngularAcceleration = Math.pow(maxAngularVelocity, 2); // rad/s^2
     public double kPRotationController = 8.0;
@@ -27,6 +35,11 @@ public class SwerveConfig {
     public double kPHoldController = 10.0;
     public double kIHoldController = 0.0;
     public double kDHoldController = 0.0;
+
+    /* Blue alliance sees forward as 0 degrees (toward red alliance wall) */
+    public final Rotation2d BlueAlliancePerspectiveRotation = Rotation2d.fromDegrees(0);
+    /* Red alliance sees forward as 180 degrees (toward blue alliance wall) */
+    public final Rotation2d RedAlliancePerspectiveRotation = Rotation2d.fromDegrees(180);
 
     // Both sets of gains need to be tuned to your individual robot.
 
@@ -85,7 +98,7 @@ public class SwerveConfig {
     public boolean kInvertLeftSide = false;
     public boolean kInvertRightSide = true;
 
-    public String kCANbusName = "rio";
+    public String kCANbusName = "*";
     public int kPigeonId = 1;
 
     // These are only used for simulation
