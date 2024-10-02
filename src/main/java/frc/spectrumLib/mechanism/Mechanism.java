@@ -50,6 +50,8 @@ public abstract class Mechanism implements Subsystem, NTSendable {
         config.attached = attached;
     }
 
+    // Setup the telemetry values, has to be called at the end of the implemetned mechanism
+    // constructor
     protected void telemetryInit() {
         SendableRegistry.add(this, getName());
         SmartDashboard.putData(this);

@@ -79,6 +79,10 @@ public class Elevator extends Mechanism {
     @Override
     public void periodic() {}
 
+    /*-------------------
+    initSendable
+    Use ! to denote items that are settable
+    ------------*/
     @Override
     public void initSendable(NTSendableBuilder builder) {
         if (isAttached()) {
