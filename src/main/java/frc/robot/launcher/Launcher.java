@@ -9,17 +9,18 @@ import frc.robot.RobotTelemetry;
 import frc.spectrumLib.mechanism.Mechanism;
 import frc.spectrumLib.sim.RollerConfig;
 import frc.spectrumLib.sim.RollerSim;
+import lombok.Getter;
 
 public class Launcher extends Mechanism {
 
     public static class LauncherConfig extends Config {
-        public double maxVelocity = 5600;
+        @Getter private double maxVelocity = 5600;
 
         /* LeftLauncher config values */
         public double currentLimit = 60;
         public double torqueCurrentLimit = 300;
         public double threshold = 80;
-        public double velocityKp = 6;
+        @Getter private double velocityKp = 6;
         public double velocityKv = 0.12;
         public double velocityKs = 0.24;
 
@@ -28,7 +29,7 @@ public class Launcher extends Mechanism {
 
         public LauncherConfig() {
             super("Launcher", 42, RobotConfig.CANIVORE);
-            configPIDGains(0, velocityKp, 0, 0);
+            configPIDGains(0, velocityKp, 0.0, 0.0);
             configFeedForwardGains(velocityKs, velocityKv, 0, 0);
             configGearRatio(1 / 2); // TODO: configure
             configSupplyCurrentLimit(currentLimit, threshold, true);
@@ -83,7 +84,7 @@ public class Launcher extends Mechanism {
 
     class LauncherSim extends RollerSim {
         public LauncherSim(Mechanism2d mech, TalonFXSimState rollerMotorSim) {
-            super(new RollerConfig(config.wheelDiameter), mech, rollerMotorSim, config.name);
+            super(new RollerConfig(config.wheelDiameter), mech, rollerMotorSim, config.getName());
         }
     }
 }

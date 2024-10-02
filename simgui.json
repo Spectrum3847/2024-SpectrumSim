@@ -126,6 +126,12 @@
         "Elevator": {
           "open": true
         },
+        "Elevator:TEST": {
+          "open": true
+        },
+        "ElevatorT": {
+          "open": true
+        },
         "Launcher": {
           "open": true
         },

@@ -26,6 +26,7 @@ import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.spectrumLib.util.CanDeviceId;
 import frc.spectrumLib.util.Conversions;
 import java.util.function.DoubleSupplier;
+import lombok.*;
 
 /**
  * Control Modes Docs:
@@ -52,7 +53,7 @@ public abstract class Mechanism implements Subsystem, NTSendable {
 
     // Setup the telemetry values, has to be called at the end of the implemetned mechanism
     // constructor
-    protected void telemetryInit() {
+    public void telemetryInit() {
         SendableRegistry.add(this, getName());
         SmartDashboard.putData(this);
     }
@@ -65,7 +66,7 @@ public abstract class Mechanism implements Subsystem, NTSendable {
 
     @Override
     public String getName() {
-        return config.name;
+        return config.getName();
     }
 
     public boolean isAttached() {
@@ -83,8 +84,8 @@ public abstract class Mechanism implements Subsystem, NTSendable {
      *
      * @param velocity in revolutions per minute
      */
-    public Command runVelocity(double velocity) {
-        return run(() -> setVelocity(Conversions.RPMtoRPS(velocity)))
+    public Command runVelocity(DoubleSupplier velocity) {
+        return run(() -> setVelocity(() -> Conversions.RPMtoRPS(velocity)))
                 .withName(getName() + ".runVelocity");
     }
 
@@ -94,28 +95,13 @@ public abstract class Mechanism implements Subsystem, NTSendable {
      * @param velocityRPM
      * @return
      */
-    public Command runVelocityTCFOCrpm(double velocityRPM) {
-        return run(() -> setVelocityTorqueCurrentFOC(Conversions.RPMtoRPS(velocityRPM)))
+    public Command runVelocityTCFOCrpm(DoubleSupplier velocityRPM) {
+        return run(() -> setVelocityTorqueCurrentFOC(() -> Conversions.RPMtoRPS(velocityRPM)))
                 .withName(getName() + ".runVelocityFOCrpm");
     }
 
-    public Command runManualOutput(DoubleSupplier percentSupplier) {
-        return run(() -> setPercentOutput(percentSupplier.getAsDouble()))
-                .withName(getName() + ".runManualOutput");
-    }
-
-    /**
-     * Runs the mechanism at a specified percentage of its maximum output.
-     *
-     * @param percent fractional units between -1 and +1
-     */
-    public Command runPercentage(double percent) {
-        return run(() -> setPercentOutput(percent)).withName(getName() + ".runPercentage");
-    }
-
     public Command runPercentage(DoubleSupplier percentSupplier) {
-        return run(() -> setPercentOutput(percentSupplier.getAsDouble()))
-                .withName(getName() + ".runPercentage");
+        return run(() -> setPercentOutput(percentSupplier)).withName(getName() + ".runPercentage");
     }
 
     /**
@@ -123,10 +109,6 @@ public abstract class Mechanism implements Subsystem, NTSendable {
      *
      * @param position position in revolutions
      */
-    public Command runPosition(double position) {
-        return run(() -> setMMPosition(position)).withName(getName() + ".runPosition");
-    }
-
     public Command runPosition(DoubleSupplier position) {
         return run(() -> setMMPosition(position)).withName(getName() + ".runPosition");
     }
@@ -137,7 +119,7 @@ public abstract class Mechanism implements Subsystem, NTSendable {
      *
      * @param position position in revolutions
      */
-    public Command runFOCPosition(double position) {
+    public Command runFOCPosition(DoubleSupplier position) {
         return run(() -> setMMPositionFOC(position)).withName(getName() + ".runFOCPosition");
     }
 
@@ -179,7 +161,7 @@ public abstract class Mechanism implements Subsystem, NTSendable {
     /** Sets the mechanism position of the motor to 0 */
     public void tareMotor() {
         if (isAttached()) {
-            setMotorPosition(0);
+            setMotorPosition(() -> 0);
         }
     }
 
@@ -188,9 +170,9 @@ public abstract class Mechanism implements Subsystem, NTSendable {
      *
      * @param position rotations
      */
-    public void setMotorPosition(double position) {
+    public void setMotorPosition(DoubleSupplier position) {
         if (isAttached()) {
-            motor.setPosition(position);
+            motor.setPosition(position.getAsDouble());
         }
     }
 
@@ -211,9 +193,10 @@ public abstract class Mechanism implements Subsystem, NTSendable {
      *
      * @param velocity rotations per second
      */
-    public void setMMVelocityFOC(double velocity) {
+    public void setMMVelocityFOC(DoubleSupplier velocity) {
         if (isAttached()) {
-            MotionMagicVelocityTorqueCurrentFOC mm = config.mmVelocityFOC.withVelocity(velocity);
+            MotionMagicVelocityTorqueCurrentFOC mm =
+                    config.mmVelocityFOC.withVelocity(velocity.getAsDouble());
             motor.setControl(mm);
         }
     }
@@ -223,14 +206,6 @@ public abstract class Mechanism implements Subsystem, NTSendable {
      *
      * @param velocity rotations per second
      */
-    public void setVelocityTorqueCurrentFOC(double velocity) {
-        if (isAttached()) {
-            VelocityTorqueCurrentFOC output =
-                    config.velocityTorqueCurrentFOC.withVelocity(velocity);
-            motor.setControl(output);
-        }
-    }
-
     public void setVelocityTorqueCurrentFOC(DoubleSupplier velocity) {
         if (isAttached()) {
             VelocityTorqueCurrentFOC output =
@@ -258,9 +233,9 @@ public abstract class Mechanism implements Subsystem, NTSendable {
      *
      * @param velocity rotations per second
      */
-    public void setVelocity(double velocity) {
+    public void setVelocity(DoubleSupplier velocity) {
         if (isAttached()) {
-            VelocityVoltage output = config.velocityControl.withVelocity(velocity);
+            VelocityVoltage output = config.velocityControl.withVelocity(velocity.getAsDouble());
             motor.setControl(output);
         }
     }
@@ -270,21 +245,10 @@ public abstract class Mechanism implements Subsystem, NTSendable {
      *
      * @param position rotations
      */
-    public void setMMPositionFOC(double position) {
+    public void setMMPositionFOC(DoubleSupplier position) {
         if (isAttached()) {
-            MotionMagicTorqueCurrentFOC mm = config.mmPositionFOC.withPosition(position);
-            motor.setControl(mm);
-        }
-    }
-
-    /**
-     * Closed-loop Position Motion Magic
-     *
-     * @param position rotations
-     */
-    public void setMMPosition(double position) {
-        if (isAttached()) {
-            MotionMagicVoltage mm = config.mmPositionVoltage.withPosition(position);
+            MotionMagicTorqueCurrentFOC mm =
+                    config.mmPositionFOC.withPosition(position.getAsDouble());
             motor.setControl(mm);
         }
     }
@@ -320,10 +284,11 @@ public abstract class Mechanism implements Subsystem, NTSendable {
      *
      * @param percent fractional units between -1 and +1
      */
-    public void setPercentOutput(double percent) {
+    public void setPercentOutput(DoubleSupplier percent) {
         if (isAttached()) {
             VoltageOut output =
-                    config.voltageControl.withOutput(config.voltageCompSaturation * percent);
+                    config.voltageControl.withOutput(
+                            config.voltageCompSaturation * percent.getAsDouble());
             motor.setControl(output);
         }
     }
@@ -343,11 +308,11 @@ public abstract class Mechanism implements Subsystem, NTSendable {
         }
     }
 
-    public void toggleTorqueCurrentLimit(double enabledLimit, boolean enabled) {
+    public void toggleTorqueCurrentLimit(DoubleSupplier enabledLimit, boolean enabled) {
         if (isAttached()) {
             if (enabled) {
-                config.configForwardTorqueCurrentLimit(enabledLimit);
-                config.configReverseTorqueCurrentLimit(enabledLimit);
+                config.configForwardTorqueCurrentLimit(enabledLimit.getAsDouble());
+                config.configReverseTorqueCurrentLimit(enabledLimit.getAsDouble());
                 config.applyTalonConfig(motor);
             } else {
                 config.configForwardTorqueCurrentLimit(400);
@@ -358,9 +323,9 @@ public abstract class Mechanism implements Subsystem, NTSendable {
     }
 
     public static class Config {
-        public String name;
-        public boolean attached = true;
-        public CanDeviceId id;
+        @Getter private String name;
+        @Getter boolean attached = true;
+        @Getter CanDeviceId id;
         public TalonFXConfiguration talonConfig;
         public double voltageCompSaturation; // 12V by default
 

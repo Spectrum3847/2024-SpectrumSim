@@ -64,8 +64,11 @@ public class Pilot extends Gamepad {
         xbox.x().whileTrue(ElevatorCommands.home());
         xbox.y().whileTrue(ElevatorCommands.runElevator(() -> xbox.getLeftY()));
 
-        xbox.b().whileTrue(LauncherCommands.runVelocity(Robot.config.launcher.maxVelocity));
-        xbox.x().whileTrue(LauncherCommands.runVelocity(-1 * Robot.config.launcher.maxVelocity));
+        xbox.b().whileTrue(LauncherCommands.runVelocity(Robot.config.launcher::getMaxVelocity));
+        xbox.x()
+                .whileTrue(
+                        LauncherCommands.runVelocity(
+                                () -> -1 * Robot.config.launcher.getMaxVelocity()));
     };
 
     /** Setup the Buttons for Disabled mode. */
