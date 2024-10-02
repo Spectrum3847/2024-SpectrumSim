@@ -26,7 +26,7 @@ public class ElevatorCommands {
     // public static TuneValue ElevatorExtension = new TuneValue("Elevator L", config.fullExtend);
 
     public static Command fullExtend() {
-        return elevator.runPosition(config.fullExtend).withName("Elevator.fullExtend");
+        return elevator.runPosition(() -> config.fullExtend).withName("Elevator.fullExtend");
     }
 
     public static Command amp() {

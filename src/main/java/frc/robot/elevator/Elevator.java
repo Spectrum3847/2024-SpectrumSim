@@ -72,6 +72,7 @@ public class Elevator extends Mechanism {
         this.config = config; // unsure if we need this, may delete and test
 
         simulationInit();
+        telemetryInit();
         RobotTelemetry.print(getName() + " Subsystem Initialized: ");
     }
 
@@ -83,11 +84,20 @@ public class Elevator extends Mechanism {
         if (isAttached()) {
             builder.addDoubleProperty("Position", this::getMotorPosition, null);
             builder.addDoubleProperty("Velocity", this::getVelocity, null);
+            builder.addDoubleProperty("!MaxHeight", this::getMaxHeight, this::setMaxHeight);
         }
     }
 
     private double getVelocity() {
         return motor.getVelocity().getValue();
+    }
+
+    public double getMaxHeight() {
+        return config.fullExtend;
+    }
+
+    public void setMaxHeight(double maxHeight) {
+        config.fullExtend = maxHeight;
     }
 
     /* Check Elevator States */

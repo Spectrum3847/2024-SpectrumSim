@@ -42,14 +42,17 @@ public abstract class Mechanism implements Subsystem, NTSendable {
         if (isAttached()) {
             motor = TalonFXFactory.createConfigTalon(config.id, config.talonConfig);
         }
-        SendableRegistry.add(this, getName());
         CommandScheduler.getInstance().registerSubsystem(this);
-        SmartDashboard.putData(this);
     }
 
     public Mechanism(Config config, boolean attached) {
         this(config);
         config.attached = attached;
+    }
+
+    protected void telemetryInit() {
+        SendableRegistry.add(this, getName());
+        SmartDashboard.putData(this);
     }
 
     @Override
