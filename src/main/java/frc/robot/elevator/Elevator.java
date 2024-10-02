@@ -2,6 +2,7 @@ package frc.robot.elevator;
 
 import com.ctre.phoenix6.sim.TalonFXSimState;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.networktables.NTSendableBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -10,7 +11,6 @@ import frc.robot.RobotConfig;
 import frc.robot.RobotSim;
 import frc.robot.RobotTelemetry;
 import frc.spectrumLib.mechanism.Mechanism;
-import frc.spectrumLib.mechanism.TalonFXFactory;
 import frc.spectrumLib.sim.LinearConfig;
 import frc.spectrumLib.sim.LinearSim;
 
@@ -70,15 +70,39 @@ public class Elevator extends Mechanism {
     public Elevator(ElevatorConfig config) {
         super(config);
         this.config = config; // unsure if we need this, may delete and test
-        if (isAttached()) {
-            motor = TalonFXFactory.createConfigTalon(config.id, config.talonConfig);
-        }
+
         simulationInit();
+        telemetryInit();
         RobotTelemetry.print(getName() + " Subsystem Initialized: ");
     }
 
     @Override
     public void periodic() {}
+
+    /*-------------------
+    initSendable
+    Use ! to denote items that are settable
+    ------------*/
+    @Override
+    public void initSendable(NTSendableBuilder builder) {
+        if (isAttached()) {
+            builder.addDoubleProperty("Position", this::getMotorPosition, null);
+            builder.addDoubleProperty("Velocity", this::getVelocity, null);
+            builder.addDoubleProperty("!MaxHeight", this::getMaxHeight, this::setMaxHeight);
+        }
+    }
+
+    private double getVelocity() {
+        return motor.getVelocity().getValue();
+    }
+
+    public double getMaxHeight() {
+        return config.fullExtend;
+    }
+
+    public void setMaxHeight(double maxHeight) {
+        config.fullExtend = maxHeight;
+    }
 
     /* Check Elevator States */
     // Is Amp Height
@@ -90,9 +114,9 @@ public class Elevator extends Mechanism {
         return getMotorPosition() >= 5;
     }
 
-    //--------------------------------------------------------------------------------
+    // --------------------------------------------------------------------------------
     // Custom Commands
-    //--------------------------------------------------------------------------------
+    // --------------------------------------------------------------------------------
 
     /** Holds the position of the elevator. */
     public Command holdPosition() {

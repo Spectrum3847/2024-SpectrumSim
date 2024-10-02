@@ -1,12 +1,12 @@
 package frc.robot.launcher;
 
 import com.ctre.phoenix6.sim.TalonFXSimState;
+import edu.wpi.first.networktables.NTSendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import frc.robot.RobotConfig;
 import frc.robot.RobotSim;
 import frc.robot.RobotTelemetry;
 import frc.spectrumLib.mechanism.Mechanism;
-import frc.spectrumLib.mechanism.TalonFXFactory;
 import frc.spectrumLib.sim.RollerConfig;
 import frc.spectrumLib.sim.RollerSim;
 
@@ -47,11 +47,20 @@ public class Launcher extends Mechanism {
     public Launcher(LauncherConfig config) {
         super(config);
         this.config = config;
-        if (isAttached()) {
-            motor = TalonFXFactory.createConfigTalon(config.id, config.talonConfig);
-        }
         simulationInit();
         RobotTelemetry.print(getName() + " Subsystem Initialized: ");
+    }
+
+    @Override
+    public void initSendable(NTSendableBuilder builder) {
+        if (isAttached()) {
+            builder.addDoubleProperty("Position", this::getMotorPosition, null);
+            builder.addDoubleProperty("Velocity", this::getVelocity, null);
+        }
+    }
+
+    private double getVelocity() {
+        return motor.getVelocity().getValue();
     }
 
     // --------------------------------------------------------------------------------

@@ -2,6 +2,16 @@
 
 Uses 604's Simulation Example as a base and brings in our 2024 SpectrumLib with updates
 
+General Guidelines
+
+* Each Mechanism (motor that is following another) has it's own folder
+* All values that can be tuned or configured should live in a mechanismConfig file, NO MAGIC NUMBERS inside of mechanisms
+* Values that need to be configued for different robots should have a setter method in the mechanismConfig file so the robotConfigs can update them
+* Publish triggers in Mechanism classes that allow you to check mechanism state like Trigger = elevator is at a specific height for scoring, etc.
+* Mechanism methods should not be public when possible unless they return a Command or Trigger.
+
+
+#### Check Issues for improvements that we still need to make
 
 ## Key Elements
 

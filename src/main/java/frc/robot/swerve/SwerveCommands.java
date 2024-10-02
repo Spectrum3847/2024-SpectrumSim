@@ -3,6 +3,7 @@ package frc.robot.swerve;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Robot;
 import frc.robot.pilot.PilotCommands;
 import java.util.function.DoubleSupplier;
@@ -32,5 +33,10 @@ public class SwerveCommands {
                                         .withVelocityY(leftPositive.getAsDouble())
                                         .withRotationalRate(ccwPositive.getAsDouble()))
                 .ignoringDisable(true);
+    }
+
+    public static Command test() {
+        swerve.getRotation();
+        return new WaitCommand(2);
     }
 }

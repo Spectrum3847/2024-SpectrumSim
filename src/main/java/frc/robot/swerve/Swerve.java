@@ -15,6 +15,9 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.networktables.NTSendable;
+import edu.wpi.first.networktables.NTSendableBuilder;
+import edu.wpi.first.util.sendable.SendableRegistry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
@@ -28,7 +31,7 @@ import java.util.function.Supplier;
  * Class that extends the Phoenix SwerveDrivetrain class and implements subsystem so it can be used
  * in command-based projects easily.
  */
-public class Swerve extends SwerveDrivetrain implements Subsystem {
+public class Swerve extends SwerveDrivetrain implements Subsystem, NTSendable {
     private SwerveConfig config;
     private Notifier m_simNotifier = null;
     private double m_lastSimTime;
@@ -50,13 +53,21 @@ public class Swerve extends SwerveDrivetrain implements Subsystem {
         if (Utils.isSimulation()) {
             startSimThread();
         }
-        RobotTelemetry.print(
-                getName() + " Subsystem Initialized: " + config.kFrontLeftEncoderOffset);
+
+        SendableRegistry.add(this, "SwerveDrive");
+        RobotTelemetry.print(getName() + " Subsystem Initialized: ");
     }
 
     @Override
     public void periodic() {
         setPilotPerspective();
+    }
+
+    @Override
+    public void initSendable(NTSendableBuilder builder) {
+        builder.setSmartDashboardType("SwerveDrive");
+        builder.addDoubleProperty("Position", () -> 2, null);
+        builder.addDoubleProperty("Velocity", () -> 4, null);
     }
 
     // This allows us to keep the robot pose on the sim field

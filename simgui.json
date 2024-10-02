@@ -99,6 +99,9 @@
     }
   },
   "NetworkTables": {
+    "Retained Values": {
+      "open": false
+    },
     "transitory": {
       "CameraPublisher": {
         "cameraName-processed": {
@@ -109,14 +112,30 @@
           "string[]##v_/CameraPublisher/cameraName-raw/streams": {
             "open": true
           }
-        },
-        "open": true
+        }
       },
-      "Pose": {
+      "LiveWindow": {
+        ".status": {
+          "open": true
+        }
+      },
+      "Shuffleboard": {
         "open": true
       },
       "SmartDashboard": {
-        "open": true
+        "Elevator": {
+          "open": true
+        },
+        "Launcher": {
+          "open": true
+        },
+        "VisionSystemSim-main": {
+          "open": true
+        },
+        "open": true,
+        "robot launcher": {
+          "open": true
+        }
       }
     }
   },

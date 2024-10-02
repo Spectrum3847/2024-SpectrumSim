@@ -23,10 +23,8 @@ public class ElevatorCommands {
         return elevator.holdPosition().withName("Elevator.holdPosition");
     }
 
-    // public static TuneValue ElevatorExtension = new TuneValue("Elevator L", config.fullExtend);
-
     public static Command fullExtend() {
-        return elevator.runPosition(config.fullExtend).withName("Elevator.fullExtend");
+        return elevator.runPosition(() -> config.fullExtend).withName("Elevator.fullExtend");
     }
 
     public static Command amp() {
@@ -53,6 +51,7 @@ public class ElevatorCommands {
         return elevator.ensureBrakeMode().withName("Elevator.BrakeMode");
     }
 
+    // Example of a TuneValue that is used to tune a single value in the code
     public static Command tuneElevator() {
         return elevator.runPosition(new TuneValue("Tune Elevator", 0).getSupplier())
                 .withName("Elevator.Tune");
