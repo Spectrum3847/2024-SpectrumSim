@@ -99,6 +99,9 @@
     }
   },
   "NetworkTables": {
+    "Retained Values": {
+      "open": false
+    },
     "transitory": {
       "CameraPublisher": {
         "cameraName-processed": {
@@ -114,17 +117,25 @@
       "LiveWindow": {
         ".status": {
           "open": true
-        },
-        "open": true
-      },
-      "Pose": {
-        "open": true
+        }
       },
       "Shuffleboard": {
         "open": true
       },
       "SmartDashboard": {
-        "open": true
+        "Elevator": {
+          "open": true
+        },
+        "Launcher": {
+          "open": true
+        },
+        "VisionSystemSim-main": {
+          "open": true
+        },
+        "open": true,
+        "robot launcher": {
+          "open": true
+        }
       }
     }
   },

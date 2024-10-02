@@ -2,17 +2,15 @@ package frc.robot.elevator;
 
 import com.ctre.phoenix6.sim.TalonFXSimState;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.networktables.NTSendableBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import frc.robot.RobotConfig;
 import frc.robot.RobotSim;
 import frc.robot.RobotTelemetry;
 import frc.spectrumLib.mechanism.Mechanism;
-import frc.spectrumLib.mechanism.TalonFXFactory;
 import frc.spectrumLib.sim.LinearConfig;
 import frc.spectrumLib.sim.LinearSim;
 
@@ -72,23 +70,24 @@ public class Elevator extends Mechanism {
     public Elevator(ElevatorConfig config) {
         super(config);
         this.config = config; // unsure if we need this, may delete and test
-        if (isAttached()) {
-            motor = TalonFXFactory.createConfigTalon(config.id, config.talonConfig);
-        }
-        simulationInit();
 
+        simulationInit();
         RobotTelemetry.print(getName() + " Subsystem Initialized: ");
     }
 
     @Override
-    public void periodic() {
-        SmartDashboard.putData(this);
-    }
+    public void periodic() {}
 
     @Override
-    public void initSendable(SendableBuilder builder) {
-        builder.setSmartDashboardType(config.name);
-        builder.addDoubleProperty("Position", this::getMotorPosition, null);
+    public void initSendable(NTSendableBuilder builder) {
+        if (isAttached()) {
+            builder.addDoubleProperty("Position", this::getMotorPosition, null);
+            builder.addDoubleProperty("Velocity", this::getVelocity, null);
+        }
+    }
+
+    private double getVelocity() {
+        return motor.getVelocity().getValue();
     }
 
     /* Check Elevator States */

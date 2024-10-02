@@ -89,7 +89,6 @@ public class Robot extends TimedRobot {
 
             /** Intialize Telemetry */
             telemetry = new RobotTelemetry();
-
             /**
              * Set Default Commands this method should exist for each subsystem that has default
              * command these must be done after all the subsystems are intialized
