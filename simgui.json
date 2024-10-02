@@ -109,10 +109,18 @@
           "string[]##v_/CameraPublisher/cameraName-raw/streams": {
             "open": true
           }
+        }
+      },
+      "LiveWindow": {
+        ".status": {
+          "open": true
         },
         "open": true
       },
       "Pose": {
+        "open": true
+      },
+      "Shuffleboard": {
         "open": true
       },
       "SmartDashboard": {

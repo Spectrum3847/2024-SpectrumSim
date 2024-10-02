@@ -2,8 +2,10 @@ package frc.robot.elevator;
 
 import com.ctre.phoenix6.sim.TalonFXSimState;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import frc.robot.RobotConfig;
@@ -74,11 +76,20 @@ public class Elevator extends Mechanism {
             motor = TalonFXFactory.createConfigTalon(config.id, config.talonConfig);
         }
         simulationInit();
+
         RobotTelemetry.print(getName() + " Subsystem Initialized: ");
     }
 
     @Override
-    public void periodic() {}
+    public void periodic() {
+        SmartDashboard.putData(this);
+    }
+
+    @Override
+    public void initSendable(SendableBuilder builder) {
+        builder.setSmartDashboardType(config.name);
+        builder.addDoubleProperty("Position", this::getMotorPosition, null);
+    }
 
     /* Check Elevator States */
     // Is Amp Height
@@ -90,9 +101,9 @@ public class Elevator extends Mechanism {
         return getMotorPosition() >= 5;
     }
 
-    //--------------------------------------------------------------------------------
+    // --------------------------------------------------------------------------------
     // Custom Commands
-    //--------------------------------------------------------------------------------
+    // --------------------------------------------------------------------------------
 
     /** Holds the position of the elevator. */
     public Command holdPosition() {

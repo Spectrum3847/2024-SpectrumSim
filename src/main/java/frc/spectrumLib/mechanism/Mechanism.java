@@ -15,6 +15,8 @@ import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import edu.wpi.first.util.sendable.Sendable;
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -29,7 +31,7 @@ import java.util.function.DoubleSupplier;
  * Closed-loop & Motion Magic Docs:
  * https://pro.docs.ctr-electronics.com/en/latest/docs/migration/migration-guide/closed-loop-guide.html
  */
-public abstract class Mechanism implements Subsystem {
+public abstract class Mechanism implements Subsystem, Sendable {
     protected TalonFX motor;
     public Config config;
 
@@ -52,6 +54,11 @@ public abstract class Mechanism implements Subsystem {
     @Override
     public String getName() {
         return config.name;
+    }
+
+    @Override
+    public void initSendable(SendableBuilder builder) {
+        builder.setSmartDashboardType(config.name);
     }
 
     public boolean isAttached() {
