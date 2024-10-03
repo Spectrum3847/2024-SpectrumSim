@@ -17,15 +17,15 @@ public class Launcher extends Mechanism {
         @Getter private double maxVelocity = 5600;
 
         /* LeftLauncher config values */
-        public double currentLimit = 60;
-        public double torqueCurrentLimit = 300;
-        public double threshold = 80;
+        @Getter private double currentLimit = 60;
+        @Getter private double torqueCurrentLimit = 300;
+        @Getter private double threshold = 80;
         @Getter private double velocityKp = 6;
-        public double velocityKv = 0.12;
-        public double velocityKs = 0.24;
+        @Getter private double velocityKv = 0.12;
+        @Getter private double velocityKs = 0.24;
 
         /* Sim Configs */
-        public double wheelDiameter = 6.0;
+        @Getter private double wheelDiameter = 6.0;
 
         public LauncherConfig() {
             super("Launcher", 42, RobotConfig.CANIVORE);
@@ -49,19 +49,16 @@ public class Launcher extends Mechanism {
         super(config);
         this.config = config;
         simulationInit();
-        RobotTelemetry.print(getName() + " Subsystem Initialized: ");
+        telemetryInit();
+        RobotTelemetry.print(getName() + " Subsystem Initialized");
     }
 
     @Override
     public void initSendable(NTSendableBuilder builder) {
         if (isAttached()) {
             builder.addDoubleProperty("Position", this::getMotorPosition, null);
-            builder.addDoubleProperty("Velocity", this::getVelocity, null);
+            builder.addDoubleProperty("Velocity", this::getMotorVelocityRPS, null);
         }
-    }
-
-    private double getVelocity() {
-        return motor.getVelocity().getValue();
     }
 
     // --------------------------------------------------------------------------------

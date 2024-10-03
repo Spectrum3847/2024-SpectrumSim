@@ -70,12 +70,41 @@ public abstract class Mechanism implements Subsystem, NTSendable {
     }
 
     public boolean isAttached() {
-        return config.attached;
+        return config.isAttached();
     }
 
     @Override
     public void initSendable(NTSendableBuilder builder) {
         builder.setSmartDashboardType(getName());
+    }
+
+    /**
+     * Gets the position of the motor
+     *
+     * @return motor position in rotations
+     */
+    public double getMotorPosition() {
+        if (config.attached) {
+            return motor.getPosition().getValueAsDouble();
+        }
+        return 0;
+    }
+
+    /**
+     * Gets the velocity of the motor
+     *
+     * @return motor velocity in rotations/sec which are the CTRE native units
+     */
+    public double getMotorVelocityRPS() {
+        if (config.attached) {
+            return motor.getVelocity().getValueAsDouble();
+        }
+        return 0;
+    }
+
+    // Get Velocity in RPM
+    public double getMotorVelocityRPM() {
+        return Conversions.RPStoRPM(getMotorVelocityRPS());
     }
 
     /* Commands: see method in lambda for more information */
@@ -174,18 +203,6 @@ public abstract class Mechanism implements Subsystem, NTSendable {
         if (isAttached()) {
             motor.setPosition(position.getAsDouble());
         }
-    }
-
-    /**
-     * Gets the position of the motor
-     *
-     * @return motor position in rotations
-     */
-    public double getMotorPosition() {
-        if (config.attached) {
-            return motor.getPosition().getValueAsDouble();
-        }
-        return 0;
     }
 
     /**
@@ -324,38 +341,46 @@ public abstract class Mechanism implements Subsystem, NTSendable {
 
     public static class Config {
         @Getter private String name;
-        @Getter boolean attached = true;
-        @Getter CanDeviceId id;
-        public TalonFXConfiguration talonConfig;
-        public double voltageCompSaturation; // 12V by default
+        @Getter @Setter private boolean attached = true;
+        @Getter private CanDeviceId id;
+        @Getter private TalonFXConfiguration talonConfig;
+        @Getter private double voltageCompSaturation = 12.0; // 12V by default
 
-        public MotionMagicVelocityTorqueCurrentFOC mmVelocityFOC =
+        @Getter
+        private MotionMagicVelocityTorqueCurrentFOC mmVelocityFOC =
                 new MotionMagicVelocityTorqueCurrentFOC(0);
-        public MotionMagicTorqueCurrentFOC mmPositionFOC = new MotionMagicTorqueCurrentFOC(0);
-        public MotionMagicVelocityVoltage mmVelocityVoltage = new MotionMagicVelocityVoltage(0);
-        public MotionMagicVoltage mmPositionVoltage = new MotionMagicVoltage(0);
-        public MotionMagicVoltage mmPositionVoltageSlot = new MotionMagicVoltage(0).withSlot(1);
-        public VoltageOut voltageControl = new VoltageOut(0);
-        public VelocityVoltage velocityControl = new VelocityVoltage(0);
-        public VelocityTorqueCurrentFOC velocityTorqueCurrentFOC = new VelocityTorqueCurrentFOC(0);
-        public DutyCycleOut percentOutput =
+
+        @Getter
+        private MotionMagicTorqueCurrentFOC mmPositionFOC = new MotionMagicTorqueCurrentFOC(0);
+
+        @Getter
+        private MotionMagicVelocityVoltage mmVelocityVoltage = new MotionMagicVelocityVoltage(0);
+
+        @Getter private MotionMagicVoltage mmPositionVoltage = new MotionMagicVoltage(0);
+
+        @Getter
+        private MotionMagicVoltage mmPositionVoltageSlot = new MotionMagicVoltage(0).withSlot(1);
+
+        @Getter private VoltageOut voltageControl = new VoltageOut(0);
+        @Getter private VelocityVoltage velocityControl = new VelocityVoltage(0);
+
+        @Getter
+        private VelocityTorqueCurrentFOC velocityTorqueCurrentFOC = new VelocityTorqueCurrentFOC(0);
+
+        @Getter
+        private DutyCycleOut percentOutput =
                 new DutyCycleOut(
                         0); // Percent Output control using percentage of supply voltage //Should
         // normally use VoltageOut
 
         public Config(String name, int id, String canbus) {
             this.name = name;
-            this.voltageCompSaturation = 12.0;
             this.id = new CanDeviceId(id, canbus);
             talonConfig = new TalonFXConfiguration();
 
             /* Put default config settings for all mechanisms here */
             talonConfig.HardwareLimitSwitch.ForwardLimitEnable = false;
             talonConfig.HardwareLimitSwitch.ReverseLimitEnable = false;
-        }
-
-        public void attached(boolean attached) {
-            this.attached = attached;
         }
 
         public void applyTalonConfig(TalonFX talon) {

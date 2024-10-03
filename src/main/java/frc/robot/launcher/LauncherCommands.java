@@ -11,7 +11,7 @@ public class LauncherCommands {
         launcher.setDefaultCommand(launcher.runStop());
     }
 
-    public static Command runVelocity(DoubleSupplier velocity) {
-        return launcher.runVelocityTCFOCrpm(velocity).withName("Launcher.runVelocity");
+    public static Command runVelocity(DoubleSupplier velocityRPM) {
+        return launcher.runVelocityTCFOCrpm(velocityRPM).withName("Launcher.runVelocity");
     }
 }
