@@ -35,6 +35,7 @@ public class SysID {
                             null,
                             swerve));
 
+    @SuppressWarnings("unused")
     private final SysIdRoutine SysIdRoutineRotation =
             new SysIdRoutine(
                     new SysIdRoutine.Config(
@@ -47,6 +48,7 @@ public class SysID {
                             null,
                             swerve));
 
+    @SuppressWarnings("unused")
     private final SysIdRoutine SysIdRoutineSteer =
             new SysIdRoutine(
                     new SysIdRoutine.Config(

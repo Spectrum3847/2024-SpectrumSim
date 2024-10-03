@@ -30,6 +30,7 @@ public class CrashTracker {
     }
 
     // used to just log a message to the file
+    @SuppressWarnings("unused")
     private static void logMarker(String mark) {
         logMarker(mark, null);
     }

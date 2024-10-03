@@ -38,6 +38,7 @@ public class Robot extends TimedRobot {
     public static Pilot pilot;
     public static VisionSystem visionSystem;
 
+    @SuppressWarnings("unused")
     private Command m_autonomousCommand;
 
     /**
