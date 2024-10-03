@@ -25,6 +25,40 @@ public class LEDs extends SpectrumLEDs {
     }
 
     // LED Patterns
+
+    public void defaultPattern() {
+        final int defaultPriority = 0;
+        if (getUpdate()) {
+            // DS check takes priority
+            if (!DriverStation.isDSAttached()) {
+                strobe(Section.FULL, Color.kOrangeRed, 1, defaultPriority);
+            } else if (DriverStation.isDisabled()) {
+                // solid(Section.FULL, Color.kWhite, defaultPriority);
+                ombre(Section.FULL, config.SPECTRUM_COLOR, Color.kWhite, defaultPriority);
+            } else if (DriverStation.isAutonomousEnabled()) {
+                solid(Section.FULL, Color.kBlack, defaultPriority);
+            } else if (DriverStation.isTestEnabled()) {
+                bounce(
+                        Section.FULL,
+                        Color.kWhite,
+                        new Color(205, 205, 205),
+                        new Color(155, 155, 155),
+                        new Color(130, 103, 185),
+                        0.58,
+                        defaultPriority);
+            } else {
+                bounce(
+                        Section.FULL,
+                        new Color(130, 103, 185),
+                        new Color(80, 53, 135),
+                        new Color(30, 3, 85),
+                        Color.kBlack,
+                        0.58,
+                        0);
+            }
+        }
+    }
+    
     // Many of these were borrowed from 6328-2023 code
     public void solid(Section section, Color color, int priority) {
         if (getUpdate()) {
@@ -189,38 +223,7 @@ public class LEDs extends SpectrumLEDs {
         }
     }
 
-    public void defaultPattern() {
-        final int defaultPriority = 0;
-        if (getUpdate()) {
-            // DS check takes priority
-            if (!DriverStation.isDSAttached()) {
-                strobe(Section.FULL, Color.kOrangeRed, 1, defaultPriority);
-            } else if (DriverStation.isDisabled()) {
-                // solid(Section.FULL, Color.kWhite, defaultPriority);
-                ombre(Section.FULL, config.SPECTRUM_COLOR, Color.kWhite, defaultPriority);
-            } else if (DriverStation.isAutonomousEnabled()) {
-                solid(Section.FULL, Color.kBlack, defaultPriority);
-            } else if (DriverStation.isTestEnabled()) {
-                bounce(
-                        Section.FULL,
-                        Color.kWhite,
-                        new Color(205, 205, 205),
-                        new Color(155, 155, 155),
-                        new Color(130, 103, 185),
-                        0.58,
-                        defaultPriority);
-            } else {
-                bounce(
-                        Section.FULL,
-                        new Color(130, 103, 185),
-                        new Color(80, 53, 135),
-                        new Color(30, 3, 85),
-                        Color.kBlack,
-                        0.58,
-                        0);
-            }
-        }
-    }
+
 
     public void bounce(
             Section section,

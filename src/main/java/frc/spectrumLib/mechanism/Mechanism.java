@@ -178,7 +178,7 @@ public abstract class Mechanism implements Subsystem, NTSendable {
                                         && config.talonConfig.MotorOutput.NeutralMode
                                                 == NeutralModeValue.Coast)
                 .ignoringDisable(true)
-                .withName(config.name + ".ensureBrakeMode");
+                .withName(getName() + ".ensureBrakeMode");
     }
 
     public void stop() {
@@ -276,10 +276,7 @@ public abstract class Mechanism implements Subsystem, NTSendable {
      * @param position rotations
      */
     public void setMMPosition(DoubleSupplier position) {
-        if (isAttached()) {
-            MotionMagicVoltage mm = config.mmPositionVoltage.withPosition(position.getAsDouble());
-            motor.setControl(mm);
-        }
+        setMMPosition(position, 0);
     }
 
     /**
@@ -288,10 +285,10 @@ public abstract class Mechanism implements Subsystem, NTSendable {
      * @param position rotations
      * @param slot gains slot
      */
-    public void setMMPosition(double position, int slot) {
+    public void setMMPosition(DoubleSupplier position, int slot) {
         if (isAttached()) {
             MotionMagicVoltage mm =
-                    config.mmPositionVoltageSlot.withSlot(slot).withPosition(position);
+                    config.mmPositionVoltageSlot.withSlot(slot).withPosition(position.getAsDouble());
             motor.setControl(mm);
         }
     }
