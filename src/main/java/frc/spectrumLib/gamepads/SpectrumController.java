@@ -13,25 +13,33 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  */
 public class SpectrumController {
     private boolean isXbox;
+    private boolean attached;
     private CommandXboxController xboxController;
     private CommandPS5Controller ps5Controller;
     private CommandGenericHID abstractedController;
     private CommandXboxController emulatedController;
 
-    public SpectrumController(int port, boolean isXbox, int emulatedPort) {
+    public SpectrumController(int port, boolean isXbox, int emulatedPort, boolean attached) {
         this.isXbox = isXbox;
-        if (isXbox) {
-            xboxController = new CommandXboxController(port);
-            abstractedController = xboxController;
-        } else {
-            ps5Controller = new CommandPS5Controller(port);
-            emulatedController = new CommandXboxController(emulatedPort);
-            abstractedController = ps5Controller;
+        this.attached = attached;
+        if (attached) {
+            if (isXbox) {
+                xboxController = new CommandXboxController(port);
+                abstractedController = xboxController;
+            } else {
+                ps5Controller = new CommandPS5Controller(port);
+                emulatedController = new CommandXboxController(emulatedPort);
+                abstractedController = ps5Controller;
+            }
         }
     }
 
     public boolean isConnected() {
-        return this.getHID().isConnected();
+        if (attached) {
+            return this.getHID().isConnected();
+        } else {
+            return false;
+        }
     }
 
     /* Basic Controller Buttons */
@@ -133,6 +141,13 @@ public class SpectrumController {
                 : Math.min(Math.abs(ps5Controller.getL2Axis()), 0.99);
     }
 
+    public double getTwist() {
+        double right = getRightTriggerAxis();
+        double left = getLeftTriggerAxis();
+        double value = right - left;
+        return value;
+    }
+
     public double getLeftX() {
         if (!isConnected()) {
             return 0.0;
@@ -162,14 +177,23 @@ public class SpectrumController {
     }
 
     public GenericHID getHID() {
+        if (!attached) {
+            return null;
+        }
         return (isXbox) ? xboxController.getHID() : ps5Controller.getHID();
     }
 
     public GenericHID getRumbleHID() {
+        if (!isConnected()) {
+            return null;
+        }
         return (isXbox) ? xboxController.getHID() : emulatedController.getHID();
     }
 
     public void rumbleController(double leftIntensity, double rightIntensity) {
+        if (!isConnected()) {
+            return;
+        }
         getRumbleHID().setRumble(RumbleType.kLeftRumble, leftIntensity);
         getRumbleHID().setRumble(RumbleType.kRightRumble, rightIntensity);
     }
