@@ -83,7 +83,7 @@ public class Robot extends TimedRobot {
             elevator = new Elevator(config.elevator);
             Timer.delay(0.1);
             launcher = new Launcher(config.launcher);
-            pilot = new Pilot();
+            pilot = new Pilot(config.pilot);
             leds = new LEDs(config.leds);
             visionSystem = new VisionSystem(() -> swerve.getRobotPose());
 

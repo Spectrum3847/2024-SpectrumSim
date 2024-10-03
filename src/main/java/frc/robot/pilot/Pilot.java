@@ -7,43 +7,45 @@ import frc.robot.intake.IntakeCommands;
 import frc.robot.launcher.LauncherCommands;
 import frc.spectrumLib.gamepads.Gamepad;
 import frc.spectrumLib.util.ExpCurve;
+import lombok.Getter;
+import lombok.Setter;
 
 public class Pilot extends Gamepad {
-    public class PilotConfig {
-        public static final String name = "Pilot";
-        public static final int port = 0;
+    public static class PilotConfig {
+        @Getter final String name = "Pilot";
+        @Getter final int port = 0;
         /**
          * in order to run a PS5 controller, you must use DS4Windows to emulate a XBOX controller as
          * well and move the controller to emulatedPS5Port
          */
-        public static final boolean isXbox = true;
+        @Getter final boolean isXbox = true;
 
-        public static final int emulatedPS5Port = 4;
+        @Getter final int emulatedPS5Port = 4;
 
-        public static final double slowModeScalor = 0.45;
-        public static final double turboModeScalor = 1;
+        @Getter @Setter double slowModeScalor = 0.45;
+        @Getter @Setter double turboModeScalor = 1;
 
-        public final double leftStickDeadzone = 0; // TODO: reivew
-        public final double leftStickExp = 2.0;
-        public final double leftStickScalor = 6;
+        @Getter @Setter double leftStickDeadzone = 0; // TODO: reivew
+        @Getter @Setter double leftStickExp = 2.0;
+        @Getter @Setter double leftStickScalor = 6;
 
-        public final double triggersDeadzone = 0; // TODO: review
-        public final double triggersExp = 2.0;
-        public final double triggersScalor = leftStickScalor * 0.5;
-        public final double rotationScalor = 0.8; // original was 0.8
+        @Getter @Setter double triggersDeadzone = 0; // TODO: review
+        @Getter @Setter double triggersExp = 2.0;
+        @Getter @Setter double triggersScalor = leftStickScalor * 0.5;
+        @Getter @Setter double rotationScalor = 0.8; // original was 0.8
     }
 
-    public PilotConfig config;
-    private boolean isSlowMode = false;
-    private boolean isTurboMode = false;
-    private boolean isFieldOriented = true;
+    private PilotConfig config;
+    @Getter @Setter private boolean isSlowMode = false;
+    @Getter @Setter private boolean isTurboMode = false;
+    @Getter @Setter private boolean isFieldOriented = true;
     private ExpCurve LeftStickCurve;
     private ExpCurve TriggersCurve;
 
     /** Create a new Pilot with the default name and port. */
-    public Pilot() {
-        super(PilotConfig.name, PilotConfig.port, PilotConfig.isXbox, PilotConfig.emulatedPS5Port);
-        config = new PilotConfig();
+    public Pilot(PilotConfig config) {
+        super(config.getName(), config.getPort(), config.isXbox(), config.getEmulatedPS5Port());
+        this.config = config;
 
         // Curve objects that we use to configure the controller axis ojbects
         LeftStickCurve =
@@ -64,8 +66,11 @@ public class Pilot extends Gamepad {
         xbox.x().whileTrue(ElevatorCommands.home());
         xbox.y().whileTrue(ElevatorCommands.runElevator(() -> xbox.getLeftY()));
 
-        xbox.b().whileTrue(LauncherCommands.runVelocity(Robot.config.launcher.maxVelocity));
-        xbox.x().whileTrue(LauncherCommands.runVelocity(-1 * Robot.config.launcher.maxVelocity));
+        xbox.b().whileTrue(LauncherCommands.runVelocity(Robot.config.launcher::getMaxVelocity));
+        xbox.x()
+                .whileTrue(
+                        LauncherCommands.runVelocity(
+                                () -> -1 * Robot.config.launcher.getMaxVelocity()));
     };
 
     /** Setup the Buttons for Disabled mode. */
@@ -84,22 +89,6 @@ public class Pilot extends Gamepad {
 
     public void setMaxRotationalVelocity(double maxRotationalVelocity) {
         TriggersCurve.setScalar(maxRotationalVelocity);
-    }
-
-    public void setSlowMode(boolean isSlowMode) {
-        this.isSlowMode = isSlowMode;
-    }
-
-    public void setTurboMode(boolean isTurboMode) {
-        this.isTurboMode = isTurboMode;
-    }
-
-    public void setFieldOriented(boolean isFieldOriented) {
-        this.isFieldOriented = isFieldOriented;
-    }
-
-    public boolean getFieldOriented() {
-        return isFieldOriented;
     }
 
     // Positive is forward, up on the left stick is positive
@@ -127,9 +116,9 @@ public class Pilot extends Gamepad {
     public double getDriveCCWPositive() {
         double ccwPositive = TriggersCurve.calculate(getTwist());
         if (isSlowMode) {
-            ccwPositive *= Math.abs(PilotConfig.slowModeScalor);
+            ccwPositive *= Math.abs(config.getSlowModeScalor());
         } else if (isTurboMode) {
-            ccwPositive *= Math.abs(PilotConfig.turboModeScalor);
+            ccwPositive *= Math.abs(config.getTurboModeScalor());
         } else {
             ccwPositive *= config.rotationScalor;
         }

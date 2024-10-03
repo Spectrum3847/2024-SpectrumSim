@@ -123,13 +123,13 @@
         "open": true
       },
       "SmartDashboard": {
-        "Elevator": {
+        "Elevator:TEST": {
+          "open": true
+        },
+        "ElevatorT": {
           "open": true
         },
         "Launcher": {
-          "open": true
-        },
-        "VisionSystemSim-main": {
           "open": true
         },
         "open": true,

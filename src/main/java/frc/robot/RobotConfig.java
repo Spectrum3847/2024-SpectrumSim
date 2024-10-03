@@ -10,6 +10,7 @@ import frc.robot.configs.ULTRAVIOLET2024;
 import frc.robot.elevator.Elevator.ElevatorConfig;
 import frc.robot.launcher.Launcher.LauncherConfig;
 import frc.robot.leds.LEDsConfig;
+import frc.robot.pilot.Pilot.PilotConfig;
 import frc.robot.swerve.SwerveConfig;
 
 public class RobotConfig {
@@ -105,12 +106,14 @@ public class RobotConfig {
         public ElevatorConfig elevator;
         public LauncherConfig launcher;
         public LEDsConfig leds;
+        public PilotConfig pilot;
 
         public DEFAULT() {
             swerve = new SwerveConfig();
             elevator = new ElevatorConfig();
             launcher = new LauncherConfig();
             leds = new LEDsConfig();
+            pilot = new PilotConfig();
         }
 
         // None of the below should exist in the final version of our code, should all be inside

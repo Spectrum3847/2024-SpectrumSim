@@ -13,34 +13,35 @@ import frc.robot.RobotTelemetry;
 import frc.spectrumLib.mechanism.Mechanism;
 import frc.spectrumLib.sim.LinearConfig;
 import frc.spectrumLib.sim.LinearSim;
+import lombok.*;
 
 public class Elevator extends Mechanism {
     public static class ElevatorConfig extends Config {
         /* Elevator constants in rotations */
-        public double maxHeight = 29.8;
-        public double minHeight = 0;
+        @Getter private double maxHeight = 29.8;
+        @Getter private double minHeight = 0;
 
         /* Elevator positions in rotations */
-        public double fullExtend = maxHeight;
-        public double home = minHeight;
-        public double amp = 15;
-        public double trap = 5;
+        @Getter @Setter private double fullExtend = maxHeight;
+        @Getter private double home = minHeight;
+        @Getter private double amp = 15;
+        @Getter private double trap = 5;
 
         /* Elevator config settings */
-        public final double zeroSpeed = -0.2;
-        public final double positionKp = 0.86; // 20 FOC // 10 Regular
-        public final double positionKv = 0.13; // .12 FOC // .15 regular
-        public double currentLimit = 20;
-        public final double torqueCurrentLimit = 100;
-        public final double threshold = 20;
+        @Getter private final double zeroSpeed = -0.2;
+        @Getter private final double positionKp = 0.86; // 20 FOC // 10 Regular
+        @Getter private final double positionKv = 0.13; // .12 FOC // .15 regular
+        @Getter private double currentLimit = 20;
+        @Getter private final double torqueCurrentLimit = 100;
+        @Getter private final double threshold = 20;
 
         /* Sim properties */
-        public double kElevatorGearing = 5;
-        public double kCarriageMass = 1;
-        public double kElevatorDrumRadiusMeters = Units.inchesToMeters(0.955 / 2);
-        public double initialX = 0.5;
-        public double initialY = 0.0;
-        public double angle = 180 - 72;
+        @Getter private double kElevatorGearing = 5;
+        @Getter private double kCarriageMass = 1;
+        @Getter private double kElevatorDrumRadiusMeters = Units.inchesToMeters(0.955 / 2);
+        @Getter private double initialX = 0.5;
+        @Getter private double initialY = 0.0;
+        @Getter private double angle = 180 - 72;
 
         public ElevatorConfig() {
             super("Elevator", 52, RobotConfig.CANIVORE);
@@ -73,7 +74,7 @@ public class Elevator extends Mechanism {
 
         simulationInit();
         telemetryInit();
-        RobotTelemetry.print(getName() + " Subsystem Initialized: ");
+        RobotTelemetry.print(getName() + " Subsystem Initialized");
     }
 
     @Override
@@ -81,27 +82,19 @@ public class Elevator extends Mechanism {
 
     /*-------------------
     initSendable
-    Use ! to denote items that are settable
+    Use # to denote items that are settable
     ------------*/
     @Override
     public void initSendable(NTSendableBuilder builder) {
         if (isAttached()) {
             builder.addDoubleProperty("Position", this::getMotorPosition, null);
             builder.addDoubleProperty("Velocity", this::getVelocity, null);
-            builder.addDoubleProperty("!MaxHeight", this::getMaxHeight, this::setMaxHeight);
+            builder.addDoubleProperty("#FullExtend", config::getFullExtend, config::setFullExtend);
         }
     }
 
     private double getVelocity() {
         return motor.getVelocity().getValue();
-    }
-
-    public double getMaxHeight() {
-        return config.fullExtend;
-    }
-
-    public void setMaxHeight(double maxHeight) {
-        config.fullExtend = maxHeight;
     }
 
     /* Check Elevator States */
@@ -139,7 +132,7 @@ public class Elevator extends Mechanism {
             public void execute() {
                 double currentPosition = getMotorPosition();
                 if (Math.abs(holdPosition - currentPosition) <= 5) {
-                    setMMPosition(holdPosition);
+                    setMMPosition(() -> holdPosition);
                 } else {
                     stop();
                     DriverStation.reportError(
@@ -161,7 +154,7 @@ public class Elevator extends Mechanism {
     public Command zeroElevatorRoutine() {
         return new FunctionalCommand(
                         () -> toggleReverseSoftLimit(false), // init
-                        () -> setPercentOutput(config.zeroSpeed), // execute
+                        () -> setPercentOutput(config::getZeroSpeed), // execute
                         (b) -> {
                             tareMotor();
                             toggleReverseSoftLimit(true); // end
@@ -198,7 +191,7 @@ public class Elevator extends Mechanism {
                             .setAngle(config.angle),
                     mech,
                     elevatorMotorSim,
-                    config.name);
+                    config.getName());
         }
     }
 }

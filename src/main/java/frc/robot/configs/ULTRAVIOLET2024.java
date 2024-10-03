@@ -8,7 +8,7 @@ public class ULTRAVIOLET2024 extends DEFAULT {
         super();
         swerve.configEncoderOffsets(0, 0, 0, 0);
         // Attached Mechanisms
-        elevator.attached(true);
-        launcher.attached(true);
+        elevator.setAttached(true);
+        launcher.setAttached(true);
     }
 }

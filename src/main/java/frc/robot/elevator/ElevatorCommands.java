@@ -24,19 +24,19 @@ public class ElevatorCommands {
     }
 
     public static Command fullExtend() {
-        return elevator.runPosition(() -> config.fullExtend).withName("Elevator.fullExtend");
+        return elevator.runPosition(config::getFullExtend).withName("Elevator.fullExtend");
     }
 
     public static Command amp() {
-        return elevator.runPosition(config.amp).withName("Elevator.amp");
+        return elevator.runPosition(config::getAmp).withName("Elevator.amp");
     }
 
     public static Command trap() {
-        return elevator.runPosition(config.trap).withName("Elevator.trap");
+        return elevator.runPosition(config::getTrap).withName("Elevator.trap");
     }
 
     public static Command home() {
-        return elevator.runPosition(config.home).withName("Elevator.home");
+        return elevator.runPosition(config::getHome).withName("Elevator.home");
     }
 
     public static Command zero() {
