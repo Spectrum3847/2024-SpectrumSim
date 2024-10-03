@@ -123,6 +123,9 @@
         "open": true
       },
       "SmartDashboard": {
+        "Elevator": {
+          "open": true
+        },
         "Elevator:TEST": {
           "open": true
         },

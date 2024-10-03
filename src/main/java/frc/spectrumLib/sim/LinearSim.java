@@ -2,7 +2,6 @@ package frc.spectrumLib.sim;
 
 import com.ctre.phoenix6.sim.TalonFXSimState;
 import edu.wpi.first.math.system.plant.DCMotor;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.simulation.ElevatorSim;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
@@ -14,8 +13,10 @@ import edu.wpi.first.wpilibj.util.Color8Bit;
 public class LinearSim {
     private ElevatorSim elevatorSim;
 
+    private final MechanismRoot2d staticRoot;
     private final MechanismRoot2d root;
     private final MechanismLigament2d m_elevatorMech2d;
+    private final MechanismLigament2d m_staticMech2d;
     LinearConfig config;
     private TalonFXSimState linearMotorSim;
 
@@ -35,24 +36,25 @@ public class LinearSim {
                         true,
                         0);
 
-        MechanismRoot2d staticRoot = mech.getRoot("SaticRoot", config.initialX, config.initialY);
-        root = mech.getRoot("Elevator Root", config.initialX, config.initialY);
+        staticRoot = mech.getRoot("1StaticRoot", config.initialX, config.initialY);
+        m_staticMech2d =
+                staticRoot.append(
+                        new MechanismLigament2d(
+                                "1Static",
+                                config.staticLength,
+                                config.angle,
+                                config.lineWidth,
+                                new Color8Bit(Color.kOrange)));
 
+        root = mech.getRoot("Elevator Root", config.initialX, config.initialY);
         m_elevatorMech2d =
                 root.append(
                         new MechanismLigament2d(
                                 "Elevator",
-                                Units.inchesToMeters(20),
+                                config.movingLength,
                                 config.angle,
                                 config.lineWidth,
-                                new Color8Bit(Color.kOrange)));
-        staticRoot.append(
-                new MechanismLigament2d(
-                        "Static",
-                        Units.inchesToMeters(20),
-                        config.angle,
-                        config.lineWidth,
-                        new Color8Bit(Color.kBlack)));
+                                new Color8Bit(Color.kBlack)));
     }
 
     public MechanismLigament2d getElevatorMech2d() {

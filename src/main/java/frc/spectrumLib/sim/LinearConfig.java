@@ -19,6 +19,8 @@ public class LinearConfig {
     public double lineWidth = 10;
     public double initialX = 0.5;
     public double initialY = 0;
+    public double staticLength = 20;
+    public double movingLength = 20;
 
     public LinearConfig(double x, double y, double gearing, double drumRadius) {
         this.initialX = x;
@@ -49,6 +51,17 @@ public class LinearConfig {
 
     public LinearConfig setLineWidth(double lineWidth) {
         this.lineWidth = lineWidth;
+        return this;
+    }
+
+    public LinearConfig setStaticLength(double lengthInches) {
+        this.staticLength = Units.inchesToMeters(lengthInches);
+        ;
+        return this;
+    }
+
+    public LinearConfig setMovingLength(double lengthInches) {
+        this.movingLength = Units.inchesToMeters(lengthInches);
         return this;
     }
 }

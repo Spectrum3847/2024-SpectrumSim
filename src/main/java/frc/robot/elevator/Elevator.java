@@ -47,6 +47,8 @@ public class Elevator extends Mechanism {
         @Getter private double initialX = 0.5;
         @Getter private double initialY = 0.0;
         @Getter private double angle = 180 - 72;
+        @Getter private double staticLength = 20;
+        @Getter private double movingLength = 1;
 
         public ElevatorConfig() {
             super("Elevator", 52, RobotConfig.CANIVORE);
@@ -190,7 +192,9 @@ public class Elevator extends Mechanism {
                                     config.initialY,
                                     config.kElevatorGearing,
                                     config.kElevatorDrumRadiusMeters)
-                            .setAngle(config.angle),
+                            .setAngle(config.angle)
+                            .setMovingLength(config.getMovingLength())
+                            .setStaticLength(config.getStaticLength()),
                     mech,
                     elevatorMotorSim,
                     config.getName());
