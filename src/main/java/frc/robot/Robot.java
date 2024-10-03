@@ -101,7 +101,7 @@ public class Robot extends TimedRobot {
             LEDsCommands.setupDefaultCommand();
             PilotCommands.setupDefaultCommand();
 
-            pilot.setupTeleopButtons();
+            pilot.setupTeleopTriggers();
             RobotTelemetry.print("--- Robot Init Complete ---");
 
         } catch (Throwable t) {
@@ -273,6 +273,7 @@ public class Robot extends TimedRobot {
      */
 
     /** This method is called once when a simulation starts */
+    @Override
     public void simulationInit() {
         RobotTelemetry.print("$$$ Simulation Init Starting $$$ ");
 
@@ -280,5 +281,6 @@ public class Robot extends TimedRobot {
     }
 
     /** This method is called periodically during simulation. */
+    @Override
     public void simulationPeriodic() {}
 }

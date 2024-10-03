@@ -51,11 +51,11 @@ public abstract class Gamepad extends SubsystemBase {
 
             // Configure button bindings once the driver controller is connected
             if (DriverStation.isTest()) {
-                setupTestButtons();
+                setupTestTriggers();
             } else if (DriverStation.isDisabled()) {
-                setupDisabledButtons();
+                setupDisabledTriggers();
             } else {
-                setupTeleopButtons();
+                setupTeleopTriggers();
             }
             configured = true;
 
@@ -370,9 +370,9 @@ public abstract class Gamepad extends SubsystemBase {
         return command.alongWith(rumbleCommand(1, 0.5)).withName(command.getName());
     }
 
-    public abstract void setupTeleopButtons();
+    public abstract void setupTeleopTriggers();
 
-    public abstract void setupDisabledButtons();
+    public abstract void setupDisabledTriggers();
 
-    public abstract void setupTestButtons();
+    public abstract void setupTestTriggers();
 }

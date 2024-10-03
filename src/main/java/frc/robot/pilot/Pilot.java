@@ -59,7 +59,7 @@ public class Pilot extends Gamepad {
 
     /** Setup the Buttons for telop mode. */
     /*  A, B, X, Y, Left Bumper, Right Bumper = Buttons 1 to 6 in simualation */
-    public void setupTeleopButtons() {
+    public void setupTeleopTriggers() {
         xbox.a().whileTrue(IntakeCommands.intake());
 
         xbox.b().whileTrue(ElevatorCommands.fullExtend());
@@ -74,10 +74,10 @@ public class Pilot extends Gamepad {
     };
 
     /** Setup the Buttons for Disabled mode. */
-    public void setupDisabledButtons() {};
+    public void setupDisabledTriggers() {};
 
     /** Setup the Buttons for Test mode. */
-    public void setupTestButtons() {
+    public void setupTestTriggers() {
         // This is just for training, robots may have different buttons during test
         // setupTeleopButtons();
         xbox.b().whileTrue(ElevatorCommands.tuneElevator());

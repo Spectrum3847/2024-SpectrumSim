@@ -130,35 +130,38 @@ public class LEDsCommands {
 
     /* Solid */
 
-    public static Command solid(Color color, int priority) {
+    @SuppressWarnings("unused")
+    private static Command solid(Color color, int priority) {
         return solid(Section.FULL, color, priority);
     }
 
-    public static Command solid(Section section, Color color, int priority) {
+    private static Command solid(Section section, Color color, int priority) {
         return runLEDPattern(() -> leds.solid(section, color, priority)).withName("LEDs.solid");
     }
 
-    public static Command solid(double percent, Color color, int priority) {
+    @SuppressWarnings("unused")
+    private static Command solid(double percent, Color color, int priority) {
         return runLEDPattern(() -> leds.solid(percent, color, priority)).withName("LEDs.solid");
     }
 
     /* Strobe */
 
-    public static Command strobe(Color color, int priority) {
+    @SuppressWarnings("unused")
+    private static Command strobe(Color color, int priority) {
         return strobe(Section.FULL, color, 0.5, priority);
     }
 
-    public static Command strobe(Section section, Color color, double duration, int priority) {
+    private static Command strobe(Section section, Color color, double duration, int priority) {
         return runLEDPattern(() -> leds.strobe(section, color, duration, priority))
                 .withName("LEDs.strobe");
     }
 
-    public static Command limitedStrobe(int endLeds, Color color, double duration, int priority) {
+    private static Command limitedStrobe(int endLeds, Color color, double duration, int priority) {
         return runLEDPattern(() -> leds.limitedStrobe(endLeds, color, duration, priority))
                 .withName("Leds.limitedStrobe");
     }
 
-    public static Command customStrobe(
+    private static Command customStrobe(
             Section section, Color color, double frequency, int priority) {
         return runLEDPattern(() -> leds.customStrobe(section, color, frequency, priority))
                 .withName("Leds.customStrobe");
@@ -166,11 +169,12 @@ public class LEDsCommands {
 
     /* Breath */
 
-    public static Command breath(Color c1, Color c2, int priority) {
+    @SuppressWarnings("unused")
+    private static Command breath(Color c1, Color c2, int priority) {
         return breath(Section.FULL, c1, c2, 1, priority);
     }
 
-    public static Command breath(
+    private static Command breath(
             Section section, Color c1, Color c2, double duration, int priority) {
         return runLEDPattern(() -> leds.breath(section, c1, c2, duration, priority))
                 .withName("LEDs.breath");
@@ -182,7 +186,7 @@ public class LEDsCommands {
         return rainbow(Section.FULL, LEDsConfig.length, 1, priority);
     }
 
-    public static Command rainbow(
+    private static Command rainbow(
             Section section, double cycleLength, double duration, int priority) {
         return runLEDPattern(() -> leds.rainbow(section, cycleLength, duration, priority))
                 .withName("LEDs.rainbow");
@@ -190,26 +194,27 @@ public class LEDsCommands {
 
     /* Wave */
 
-    public static Command wave(Color c1, Color c2, int priority) {
+    @SuppressWarnings("unused")
+    private static Command wave(Color c1, Color c2, int priority) {
         return wave(Section.FULL, c1, c2, LEDsConfig.length, 1, priority);
     }
 
     /* Ombre */
 
-    public static Command ombre(Section section, Color c1, Color c2, int priority) {
+    private static Command ombre(Section section, Color c1, Color c2, int priority) {
         return runLEDPattern(() -> leds.ombre(section, c1, c2, priority)).withName("LEDs.ombre");
     }
 
     /* Gradient */
 
-    public static Command staticGradient(Section section, Color c1, Color c2, int priority) {
+    private static Command staticGradient(Section section, Color c1, Color c2, int priority) {
         return runLEDPattern(() -> leds.staticGradient(section, c1, c2, priority))
                 .withName("LEDs.staticGradient");
     }
 
     /* Bounce */
 
-    public static Command bounce(
+    private static Command bounce(
             Section section,
             Color primaryColor,
             Color secondaryColor,
@@ -232,7 +237,7 @@ public class LEDsCommands {
 
     /* Wave */
 
-    public static Command wave(
+    private static Command wave(
             Section section,
             Color c1,
             Color c2,

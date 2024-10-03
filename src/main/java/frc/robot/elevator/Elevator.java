@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.RobotConfig;
 import frc.robot.RobotSim;
 import frc.robot.RobotTelemetry;
@@ -16,6 +17,7 @@ import frc.spectrumLib.sim.LinearSim;
 import lombok.*;
 
 public class Elevator extends Mechanism {
+
     public static class ElevatorConfig extends Config {
         /* Elevator constants in rotations */
         @Getter private double maxHeight = 29.8;
@@ -26,6 +28,9 @@ public class Elevator extends Mechanism {
         @Getter private double home = minHeight;
         @Getter private double amp = 15;
         @Getter private double trap = 5;
+
+        @Getter private double ampTriggerHeightPct = 0.8;
+        @Getter private double elevatorUpHeight = 5;
 
         /* Elevator config settings */
         @Getter private final double zeroSpeed = -0.2;
@@ -88,23 +93,20 @@ public class Elevator extends Mechanism {
     public void initSendable(NTSendableBuilder builder) {
         if (isAttached()) {
             builder.addDoubleProperty("Position", this::getMotorPosition, null);
-            builder.addDoubleProperty("Velocity", this::getVelocity, null);
+            builder.addDoubleProperty("Velocity", this::getMotorVelocityRPM, null);
             builder.addDoubleProperty("#FullExtend", config::getFullExtend, config::setFullExtend);
         }
     }
 
-    private double getVelocity() {
-        return motor.getVelocity().getValue();
-    }
-
     /* Check Elevator States */
     // Is Amp Height
-    public Boolean isAtAmpHeight() {
-        return getMotorPosition() > config.amp * 0.8;
+    public Trigger isAtAmp() {
+        return new Trigger(
+                () -> (getMotorPosition() > config.getAmp() * config.getAmpTriggerHeightPct()));
     }
 
-    public boolean isElevatorUp() {
-        return getMotorPosition() >= 5;
+    public Trigger isUp() {
+        return new Trigger(() -> (getMotorPosition() >= config.getElevatorUpHeight()));
     }
 
     // --------------------------------------------------------------------------------
