@@ -31,14 +31,12 @@ public class SwerveCommands {
     // Uses m/s and rad/s
     public static Command drive(
             DoubleSupplier fwdPositive, DoubleSupplier leftPositive, DoubleSupplier ccwPositive) {
-        return Robot.swerve
-                .applyRequest(
-                        () ->
-                                fieldCentricDrive
-                                        .withVelocityX(fwdPositive.getAsDouble())
-                                        .withVelocityY(leftPositive.getAsDouble())
-                                        .withRotationalRate(ccwPositive.getAsDouble()))
-                .ignoringDisable(true);
+        return Robot.swerve.applyRequest(
+                () ->
+                        fieldCentricDrive
+                                .withVelocityX(fwdPositive.getAsDouble())
+                                .withVelocityY(leftPositive.getAsDouble())
+                                .withRotationalRate(ccwPositive.getAsDouble()));
     }
 
     public static Command test() {
