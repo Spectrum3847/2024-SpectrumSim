@@ -10,5 +10,6 @@ public class ULTRAVIOLET2024 extends DEFAULT {
         // Attached Mechanisms
         elevator.setAttached(true);
         launcher.setAttached(true);
+        pilot.setAttached(true);
     }
 }

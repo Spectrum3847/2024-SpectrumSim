@@ -96,7 +96,7 @@ public class Robot extends TimedRobot {
              * Set Default Commands this method should exist for each subsystem that has default
              * command these must be done after all the subsystems are intialized
              */
-            SwerveCommands.setupDefaultCommand();
+            SwerveCommands.setupDefaultCommand(robotConfig.getRobotType());
             IntakeCommands.setupDefaultCommand();
             LauncherCommands.setupDefaultCommand();
             LEDsCommands.setupDefaultCommand();

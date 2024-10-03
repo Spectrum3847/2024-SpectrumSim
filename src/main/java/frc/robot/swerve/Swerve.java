@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
+import frc.crescendo.Field;
 import frc.robot.RobotTelemetry;
 import java.util.function.Supplier;
 
@@ -74,18 +75,42 @@ public class Swerve extends SwerveDrivetrain implements Subsystem, NTSendable {
     // May need to make this only change the pose if we are in Sim
     public Pose2d getRobotPose() {
         Pose2d pose = getState().Pose;
-
-        double halfRobot = config.robotLength / 2;
-        if (pose.getX() < halfRobot) {
-            seedFieldRelative(
-                    new Pose2d(new Translation2d(halfRobot, pose.getY()), pose.getRotation()));
-        }
-
+        seedCheckedPose(pose);
         return getState().Pose;
     }
 
+    private void seedCheckedPose(Pose2d pose) {
+
+        double halfRobot = config.robotLength / 2;
+        double maxX = Field.fieldLength - halfRobot;
+        double x = pose.getX();
+        boolean update = false;
+        if (x < halfRobot) {
+            x = halfRobot;
+            update = true;
+        } else if (x > maxX) {
+            x = maxX;
+            update = true;
+        }
+
+        double maxY = Field.fieldWidth - halfRobot;
+        double y = pose.getY();
+        if (y < halfRobot) {
+            y = halfRobot;
+            update = true;
+        } else if (y > maxY) {
+            y = maxY;
+            update = true;
+        }
+        if (update) {
+            seedFieldRelative(new Pose2d(new Translation2d(x, y), pose.getRotation()));
+        }
+    }
+
+    // Used to set a control request to the swerve module, ignores disable so commands are
+    // continous.
     Command applyRequest(Supplier<SwerveRequest> requestSupplier) {
-        return run(() -> this.setControl(requestSupplier.get()));
+        return run(() -> this.setControl(requestSupplier.get())).ignoringDisable(true);
     }
 
     private ChassisSpeeds getCurrentRobotChassisSpeeds() {

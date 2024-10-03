@@ -5,19 +5,61 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.spectrumLib.Telemetry;
+import frc.spectrumLib.util.ExpCurve;
 import java.util.function.DoubleSupplier;
+import lombok.Getter;
+import lombok.Setter;
 
-public abstract class Gamepad extends SubsystemBase {
+public abstract class Gamepad extends SpectrumController implements Subsystem {
 
-    public boolean configured = false;
-    private boolean printed = false;
-    public SpectrumController xbox;
     private Rotation2d storedLeftStickDirection = new Rotation2d();
     private Rotation2d storedRightStickDirection = new Rotation2d();
+    private boolean configured =
+            false; // Used to determine if we detected the gamepad is plugged and we have configured
+    // it
+    private boolean printed = false; // Used to only print Gamepad Not Deteceted once
 
+    @Getter protected ExpCurve LeftStickCurve;
+    @Getter protected ExpCurve RightStickCurve;
+    @Getter protected ExpCurve TriggersCurve;
+
+    public static class Config {
+        @Getter private String name;
+        @Getter private int port; // USB port on the DriverStation app
+
+        // A configured value to say if we should use this controller on this robot
+        @Getter @Setter private Boolean attached;
+
+        /**
+         * in order to run a PS5 controller, you must use DS4Windows to emulate a XBOX controller as
+         * well and move the controller to emulatedPS5Port
+         */
+        @Getter @Setter boolean isXbox = true;
+
+        @Getter @Setter int emulatedPS5Port;
+
+        @Getter @Setter double leftStickDeadzone = 0.0; // TODO: reivew
+        @Getter @Setter double leftStickExp = 1.0;
+        @Getter @Setter double leftStickScalor = 1.0;
+
+        @Getter @Setter double rightStickDeadzone = 0.0; // TODO: reivew
+        @Getter @Setter double rightStickExp = 1.0;
+        @Getter @Setter double rightStickScalor = 1.0;
+
+        @Getter @Setter double triggersDeadzone = 0.0; // TODO: review
+        @Getter @Setter double triggersExp = 1.0;
+        @Getter @Setter double triggersScalor = 1.0;
+
+        public Config(String name, int port) {
+            this.name = name;
+            this.port = port;
+        }
+    }
+
+    private Config config;
     /**
      * Creates a new Gamepad.
      *
@@ -26,9 +68,28 @@ public abstract class Gamepad extends SubsystemBase {
      * @param isXbox Xbox or PS5 controller
      * @param emulatedPS5Port emulated port for PS5 controller so we can rumble PS5 controllers.
      */
-    public Gamepad(String name, int port, boolean isXbox, int emulatedPS5Port) {
-        super(name);
-        xbox = new SpectrumController(port, isXbox, emulatedPS5Port);
+    public Gamepad(Config config) {
+        super(config.getPort(), config.isXbox(), config.getEmulatedPS5Port(), config.getAttached());
+        this.config = config;
+        // Curve objects that we use to configure the controller axis ojbects
+        LeftStickCurve =
+                new ExpCurve(
+                        config.getLeftStickExp(),
+                        0,
+                        config.getLeftStickScalor(),
+                        config.getLeftStickDeadzone());
+        RightStickCurve =
+                new ExpCurve(
+                        config.getRightStickExp(),
+                        0,
+                        config.getRightStickScalor(),
+                        config.getRightStickDeadzone());
+        TriggersCurve =
+                new ExpCurve(
+                        config.getTriggersExp(),
+                        0,
+                        config.getTriggersScalor(),
+                        config.getTriggersDeadzone());
     }
 
     @Override
@@ -38,28 +99,29 @@ public abstract class Gamepad extends SubsystemBase {
 
     // Configure the pilot controller
     public void configure() {
-        // Detect whether the xbox controller has been plugged in after start-up
-        if (!configured) {
-            boolean isConnected = xbox.getHID().isConnected();
-            if (!isConnected) {
-                if (!printed) {
-                    Telemetry.print("##" + getName() + ": GAMEPAD NOT CONNECTED ##");
-                    printed = true;
+        if (config.getAttached()) {
+            // Detect whether the xbox controller has been plugged in after start-up
+            if (!configured) {
+                if (!isConnected()) {
+                    if (!printed) {
+                        Telemetry.print("##" + getName() + ": GAMEPAD NOT CONNECTED ##");
+                        printed = true;
+                    }
+                    return;
                 }
-                return;
-            }
 
-            // Configure button bindings once the driver controller is connected
-            if (DriverStation.isTest()) {
-                setupTestTriggers();
-            } else if (DriverStation.isDisabled()) {
-                setupDisabledTriggers();
-            } else {
-                setupTeleopTriggers();
-            }
-            configured = true;
+                // Configure button bindings once the driver controller is connected
+                if (DriverStation.isTest()) {
+                    setupTestTriggers();
+                } else if (DriverStation.isDisabled()) {
+                    setupDisabledTriggers();
+                } else {
+                    setupTeleopTriggers();
+                }
+                configured = true;
 
-            Telemetry.print("## " + getName() + ": gamepad is connected ##");
+                Telemetry.print("## " + getName() + ": gamepad is connected ##");
+            }
         }
     }
 
@@ -71,25 +133,25 @@ public abstract class Gamepad extends SubsystemBase {
         configure();
     }
 
-    public double getTwist() {
-        double right = xbox.getRightTriggerAxis();
-        double left = xbox.getLeftTriggerAxis();
-        double value = right - left;
-        if (xbox.getHID().isConnected()) {
-            return value;
-        }
-        return 0;
-    }
-
     /* Zero is stick up, 90 is stick to the left*/
     public Rotation2d getLeftStickDirection() {
-        double x = -1 * xbox.getLeftX();
-        double y = -1 * xbox.getLeftY();
+        double x = -1 * getLeftX();
+        double y = -1 * getLeftY();
         if (x != 0 || y != 0) {
             Rotation2d angle = new Rotation2d(y, x);
             storedLeftStickDirection = angle;
         }
         return storedLeftStickDirection;
+    }
+
+    public Rotation2d getRightStickDirection() {
+        double x = getRightX();
+        double y = getRightY();
+        if (x != 0 || y != 0) {
+            Rotation2d angle = new Rotation2d(y, x);
+            storedRightStickDirection = angle;
+        }
+        return storedRightStickDirection;
     }
 
     public double getLeftStickCardinals() {
@@ -105,20 +167,29 @@ public abstract class Gamepad extends SubsystemBase {
         }
     }
 
+    public double getRightStickCardinals() {
+        double stickAngle = getRightStickDirection().getRadians();
+        if (stickAngle > -Math.PI / 4 && stickAngle <= Math.PI / 4) {
+            return 0;
+        } else if (stickAngle > Math.PI / 4 && stickAngle <= 3 * Math.PI / 4) {
+            return Math.PI / 2;
+        } else if (stickAngle > 3 * Math.PI / 4 || stickAngle <= -3 * Math.PI / 4) {
+            return Math.PI;
+        } else {
+            return -Math.PI / 2;
+        }
+    }
+
     public double getLeftStickMagnitude() {
-        double x = -1 * xbox.getLeftX();
-        double y = -1 * xbox.getLeftY();
+        double x = -1 * getLeftX();
+        double y = -1 * getLeftY();
         return Math.sqrt(x * x + y * y);
     }
 
-    public Rotation2d getRightStickDirection() {
-        double x = xbox.getRightX();
-        double y = xbox.getRightY();
-        if (x != 0 || y != 0) {
-            Rotation2d angle = new Rotation2d(y, x);
-            storedRightStickDirection = angle;
-        }
-        return storedRightStickDirection;
+    public double getRightStickMagnitude() {
+        double x = getRightX();
+        double y = getRightY();
+        return Math.sqrt(x * x + y * y);
     }
 
     /**
@@ -231,76 +302,70 @@ public abstract class Gamepad extends SubsystemBase {
 
     // }
 
-    public double getRightStickMagnitude() {
-        double x = xbox.getRightX();
-        double y = xbox.getRightY();
-        return Math.sqrt(x * x + y * y);
-    }
-
     /** Setup modifier bumper and trigger buttons */
     public Trigger noModifers() {
         return noBumpers().and(noTriggers());
     }
 
     public Trigger noBumpers() {
-        return xbox.rightBumper().negate().and(xbox.leftBumper().negate());
+        return rightBumper().negate().and(leftBumper().negate());
     }
 
     public Trigger leftBumperOnly() {
-        return xbox.leftBumper().and(xbox.rightBumper().negate());
+        return leftBumper().and(rightBumper().negate());
     }
 
     public Trigger rightBumperOnly() {
-        return xbox.rightBumper().and(xbox.leftBumper().negate());
+        return rightBumper().and(leftBumper().negate());
     }
 
     public Trigger bothBumpers() {
-        return xbox.rightBumper().and(xbox.leftBumper());
+        return rightBumper().and(leftBumper());
     }
 
     public Trigger noTriggers() {
-        return xbox.leftTrigger(0).negate().and(xbox.rightTrigger(0).negate());
+        return leftTrigger(0).negate().and(rightTrigger(0).negate());
     }
 
     public Trigger leftTriggerOnly() {
-        return xbox.leftTrigger(0).and(xbox.rightTrigger(0).negate());
+        return leftTrigger(0).and(rightTrigger(0).negate());
     }
 
     public Trigger rightTriggerOnly() {
-        return xbox.rightTrigger(0).and(xbox.leftTrigger(0).negate());
+        return rightTrigger(0).and(leftTrigger(0).negate());
     }
 
     public Trigger bothTriggers() {
-        return xbox.leftTrigger(0).and(xbox.rightTrigger(0));
+        return leftTrigger(0).and(rightTrigger(0));
     }
 
     public Trigger leftYTrigger(ThresholdType t, double threshold) {
-        return axisTrigger(t, threshold, () -> xbox.getLeftY());
+        return axisTrigger(t, threshold, () -> getLeftY());
     }
 
     public Trigger leftXTrigger(ThresholdType t, double threshold) {
-        return axisTrigger(t, threshold, () -> xbox.getLeftX());
+        return axisTrigger(t, threshold, () -> getLeftX());
     }
 
     public Trigger rightYTrigger(ThresholdType t, double threshold) {
-        return axisTrigger(t, threshold, () -> xbox.getRightY());
+        return axisTrigger(t, threshold, () -> getRightY());
     }
 
     public Trigger rightXTrigger(ThresholdType t, double threshold) {
-        return axisTrigger(t, threshold, () -> xbox.getRightX());
+        return axisTrigger(t, threshold, () -> getRightX());
     }
 
-    public Trigger rightStick() {
+    public Trigger rightStick(double threshold) {
         return new Trigger(
                 () -> {
-                    return Math.abs(xbox.getRightX()) >= 0.1 || Math.abs(xbox.getRightY()) >= 0.1;
+                    return Math.abs(getRightX()) >= threshold || Math.abs(getRightY()) >= threshold;
                 });
     }
 
-    public Trigger leftStick() {
+    public Trigger leftStick(double threshold) {
         return new Trigger(
                 () -> {
-                    return Math.abs(xbox.getLeftX()) >= 0.1 || Math.abs(xbox.getLeftY()) >= 0.1;
+                    return Math.abs(getLeftX()) >= threshold || Math.abs(getLeftY()) >= threshold;
                 });
     }
 
@@ -328,7 +393,7 @@ public abstract class Gamepad extends SubsystemBase {
     }
 
     private void rumble(double leftIntensity, double rightIntensity) {
-        xbox.rumbleController(leftIntensity, rightIntensity);
+        rumbleController(leftIntensity, rightIntensity);
     }
 
     /** Command that can be used to rumble the pilot controller */
