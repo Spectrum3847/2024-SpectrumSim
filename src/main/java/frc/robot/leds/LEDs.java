@@ -58,7 +58,7 @@ public class LEDs extends SpectrumLEDs {
             }
         }
     }
-    
+
     // Many of these were borrowed from 6328-2023 code
     public void solid(Section section, Color color, int priority) {
         if (getUpdate()) {
@@ -222,8 +222,6 @@ public class LEDs extends SpectrumLEDs {
             }
         }
     }
-
-
 
     public void bounce(
             Section section,

@@ -2,9 +2,10 @@ package frc.spectrumLib.leds;
 
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.util.Color;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 
-public class SpectrumLEDs extends SubsystemBase {
+public class SpectrumLEDs implements Subsystem {
     protected int priority = 0;
     // LED IO
     private AddressableLED leds;
@@ -22,6 +23,7 @@ public class SpectrumLEDs extends SubsystemBase {
         buffer = new SpectrumLEDBuffer(length);
         leds.setData(buffer.getLEDBuffer());
         leds.start();
+        CommandScheduler.getInstance().registerSubsystem(this);
     }
 
     /**
@@ -43,11 +45,6 @@ public class SpectrumLEDs extends SubsystemBase {
 
         if (counter % 5 == 0) {
             time = counter * 0.02;
-            // update = true;
-        } else if ((counter - 1) % 5 == 0) {
-            // leds.setData(buffer.getLEDBuffer());
-        } else {
-            // update = false;
         }
         counter++;
         if (counter > 500) {

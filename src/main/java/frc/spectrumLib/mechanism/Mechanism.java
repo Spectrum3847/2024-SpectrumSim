@@ -288,7 +288,9 @@ public abstract class Mechanism implements Subsystem, NTSendable {
     public void setMMPosition(DoubleSupplier position, int slot) {
         if (isAttached()) {
             MotionMagicVoltage mm =
-                    config.mmPositionVoltageSlot.withSlot(slot).withPosition(position.getAsDouble());
+                    config.mmPositionVoltageSlot
+                            .withSlot(slot)
+                            .withPosition(position.getAsDouble());
             motor.setControl(mm);
         }
     }

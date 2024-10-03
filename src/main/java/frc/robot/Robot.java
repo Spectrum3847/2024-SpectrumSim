@@ -87,7 +87,7 @@ public class Robot extends TimedRobot {
             launcher = new Launcher(config.launcher);
             pilot = new Pilot(config.pilot);
             leds = new LEDs(config.leds);
-            visionSystem = new VisionSystem(() -> swerve.getRobotPose());
+            visionSystem = new VisionSystem(swerve::getRobotPose);
 
             /** Intialize Telemetry */
             telemetry = new RobotTelemetry();
