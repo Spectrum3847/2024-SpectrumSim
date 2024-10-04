@@ -16,7 +16,6 @@ public class LinearSim {
     private final MechanismRoot2d staticRoot;
     private final MechanismRoot2d root;
     private final MechanismLigament2d m_elevatorMech2d;
-    private final MechanismLigament2d m_staticMech2d;
     LinearConfig config;
     private TalonFXSimState linearMotorSim;
 
@@ -37,14 +36,13 @@ public class LinearSim {
                         0);
 
         staticRoot = mech.getRoot("1StaticRoot", config.initialX, config.initialY);
-        m_staticMech2d =
-                staticRoot.append(
-                        new MechanismLigament2d(
-                                "1Static",
-                                config.staticLength,
-                                config.angle,
-                                config.lineWidth,
-                                new Color8Bit(Color.kOrange)));
+        staticRoot.append(
+                new MechanismLigament2d(
+                        "1Static",
+                        config.staticLength,
+                        config.angle,
+                        config.lineWidth,
+                        new Color8Bit(Color.kOrange)));
 
         root = mech.getRoot("Elevator Root", config.initialX, config.initialY);
         m_elevatorMech2d =

@@ -79,6 +79,7 @@ public class Swerve extends SwerveDrivetrain implements Subsystem, NTSendable {
         return getState().Pose;
     }
 
+    // Keep the robot on the field during simulation
     private void seedCheckedPose(Pose2d pose) {
 
         double halfRobot = config.robotLength / 2;
