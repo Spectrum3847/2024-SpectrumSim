@@ -32,7 +32,7 @@ public class LEDsConfig {
         HALF_HIGH,
         QUARTER_LOW,
         QUARTER_HIGH;
-
+        
         public int start() {
             switch (this) {
                 case FULL:

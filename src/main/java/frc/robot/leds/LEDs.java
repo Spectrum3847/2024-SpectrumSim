@@ -5,36 +5,75 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.util.Color;
 import frc.robot.RobotTelemetry;
 import frc.robot.leds.LEDsConfig.Section;
-import frc.spectrumLib.leds.SpectrumLEDs;
+//import frc.spectrumLib.leds.SpectrumLEDs;
 import java.util.List;
+import edu.wpi.first.wpilibj.AddressableLED;
+import edu.wpi.first.wpilibj.AddressableLEDBuffer;
+import edu.wpi.first.wpilibj.util.Color;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
 
 // This file is too long we should probably move some of it to the SpectrumLib
-public class LEDs extends SpectrumLEDs {
-    public LEDsConfig config;
+public class LEDs extends SubsystemBase {
+    public AddressableLED config;
+    private AddressableLEDBuffer buffer;
+    byte[] priorityBuffer;
+    
 
     public static long countdownStartTimeMS = System.currentTimeMillis();
     public static double strobeCounter = 0;
     public static boolean coastModeLED = false;
     public static boolean launchReadyLED = false;
-
+    private boolean update = true;
+    private LEDsConfig ledconfig;
+    private int counter = 0;
+    private double time = 0;
+    private int length = 0;
+    
     public LEDs(LEDsConfig config) {
-        super(config.port, LEDsConfig.length * 2);
-        this.config = config;
+        this.config = new AddressableLED(config.port);
+        //this.config = config;
 
         RobotTelemetry.print("LEDs Subsystem Initialized: ");
+    }
+
+    public void periodic() {
+        // Have our LEDs calculate only every other cycle
+        config.setData(buffer);
+        
+
+        if (counter % 5 == 0) {
+            time = counter * 0.02;
+            // update = true;
+        } else if ((counter - 1) % 5 == 0) {
+            // leds.setData(buffer.getLEDBuffer());
+        } else {
+            // update = false;
+        }
+        counter++;
+        if (counter > 500) {
+            counter = 0;
+        }
+    }
+
+    public void resetPriority() {
+        for (int i = 0; i < priorityBuffer.length; i++) {
+            priorityBuffer[i] = 0;
+            buffer.setRGB(i, 0, 0, 0);
+        }
     }
 
     // LED Patterns
 
     public void defaultPattern() {
         final int defaultPriority = 0;
-        if (getUpdate()) {
+        if (update) {
             // DS check takes priority
             if (!DriverStation.isDSAttached()) {
                 strobe(Section.FULL, Color.kOrangeRed, 1, defaultPriority);
             } else if (DriverStation.isDisabled()) {
                 // solid(Section.FULL, Color.kWhite, defaultPriority);
-                ombre(Section.FULL, config.SPECTRUM_COLOR, Color.kWhite, defaultPriority);
+                ombre(Section.FULL, ledconfig.SPECTRUM_COLOR, Color.kWhite, defaultPriority);
             } else if (DriverStation.isAutonomousEnabled()) {
                 solid(Section.FULL, Color.kBlack, defaultPriority);
             } else if (DriverStation.isTestEnabled()) {
@@ -59,12 +98,13 @@ public class LEDs extends SpectrumLEDs {
         }
     }
 
-    // Many of these were borrowed from 6328-2023 code
+    // Many of these were borrowed from 6328-2023 code 
     public void solid(Section section, Color color, int priority) {
-        if (getUpdate()) {
+        if (update) {
             if (color != null) {
                 for (int i = section.start(); i < section.end(); i++) {
-                    setLED(i, color, priority);
+                    buffer.setLED(i, color);
+                    priorityBuffer[i] = (byte) priority;
                 }
             }
         }
@@ -72,11 +112,12 @@ public class LEDs extends SpectrumLEDs {
 
     /** @param endLeds how many leds on each side of the ends of strip should be lit */
     public void limitedSolid(int endLeds, Color color, int priority) {
-        if (getUpdate()) {
+        if (update) {
             if (color != null) {
                 for (int i = Section.FULL.start(); i < Section.FULL.end(); i++) {
                     if (i <= endLeds || i >= Section.FULL.end() - endLeds) {
-                        setLED(i, color, priority);
+                        buffer.setLED(i, color);
+                        priorityBuffer[i] = (byte) priority;
                     }
                 }
             }
@@ -90,11 +131,12 @@ public class LEDs extends SpectrumLEDs {
      * @param color The color to set the LEDs to
      */
     public void solid(double percent, Color color, int priority) {
-        if (getUpdate()) {
+        if (update) {
             for (int i = 0;
                     i < MathUtil.clamp(LEDsConfig.length * percent, 0, LEDsConfig.length);
                     i++) {
-                setLED(i, color, priority);
+                    buffer.setLED(i, color);
+                    priorityBuffer[i] = (byte) priority;
             }
         }
     }
@@ -107,15 +149,15 @@ public class LEDs extends SpectrumLEDs {
      * @param duration The duration of the strobe
      */
     public void strobe(Section section, Color color, double duration, int priority) {
-        if (getUpdate()) {
-            boolean on = ((getLEDTime() % duration) / duration) > 0.5;
+        if (update) {
+            boolean on = ((time % duration) / duration) > 0.5;
             solid(section, on ? color : Color.kBlack, priority);
         }
     }
 
     /** @param frequency in robot cycles */
     public void customStrobe(Section section, Color color, double frequency, int priority) {
-        if (getUpdate()) {
+        if (update) {
             boolean on = false;
             strobeCounter++;
             if (strobeCounter >= frequency * 2) {
@@ -130,21 +172,21 @@ public class LEDs extends SpectrumLEDs {
 
     /** @param endLeds how many leds on each side of the ends of strip should be lit */
     public void limitedStrobe(int endLeds, Color color, double duration, int priority) {
-        if (getUpdate()) {
-            boolean on = ((getLEDTime() % duration) / duration) > 0.5;
+        if (update) {
+            boolean on = ((time % duration) / duration) > 0.5;
             limitedSolid(endLeds, on ? color : Color.kBlack, priority);
         }
     }
 
     public void breath(Section section, Color c1, Color c2, double duration, int priority) {
-        breath(section, c1, c2, duration, getLEDTime(), priority);
+        breath(section, c1, c2, duration, time, priority);
     }
 
     public void breath(
             Section section, Color c1, Color c2, double duration, double timestamp, int priority) {
-        if (getUpdate()) {
+        if (update) {
             double x =
-                    ((timestamp % config.breathDuration) / config.breathDuration) * 2.0 * Math.PI;
+                    ((timestamp % ledconfig.breathDuration) / ledconfig.breathDuration) * 2.0 * Math.PI;
             double ratio = (Math.sin(x) + 1.0) / 2.0;
             double red = (c1.red * (1 - ratio)) + (c2.red * ratio);
             double green = (c1.green * (1 - ratio)) + (c2.green * ratio);
@@ -161,13 +203,14 @@ public class LEDs extends SpectrumLEDs {
      * @param duration The duration of the rainbow
      */
     public void rainbow(Section section, double cycleLength, double duration, int priority) {
-        if (getUpdate()) {
-            double x = (1 - ((getLEDTime() / duration) % 1.0)) * 180.0;
+        if (update) {
+            double x = (1 - ((time / duration) % 1.0)) * 180.0;
             double xDiffPerLed = 180.0 / cycleLength;
             for (int i = section.start(); i < section.end(); i++) {
                 x += xDiffPerLed;
                 x %= 180.0;
-                setHSV(i, (int) x, 255, 255, priority);
+                buffer.setHSV(i, (int) x, 255, 255);
+                priorityBuffer[i] = (byte) priority;
             }
         }
     }
@@ -188,15 +231,15 @@ public class LEDs extends SpectrumLEDs {
             double cycleLength,
             double duration,
             int priority) {
-        if (getUpdate()) {
-            double x = (1 - ((getLEDTime() % duration) / duration)) * 2.0 * Math.PI;
+        if (update) {
+            double x = (1 - ((time % duration) / duration)) * 2.0 * Math.PI;
             double xDiffPerLed = (2.0 * Math.PI) / cycleLength;
             for (int i = section.start(); i < section.end(); i++) {
                 x += xDiffPerLed;
 
-                double ratio = (Math.pow(Math.sin(x), config.waveExponent) + 1.0) / 2.0;
+                double ratio = (Math.pow(Math.sin(x), ledconfig.waveExponent) + 1.0) / 2.0;
                 if (Double.isNaN(ratio)) {
-                    ratio = (-Math.pow(Math.sin(x + Math.PI), config.waveExponent) + 1.0) / 2.0;
+                    ratio = (-Math.pow(Math.sin(x + Math.PI), ledconfig.waveExponent) + 1.0) / 2.0;
                 }
                 if (Double.isNaN(ratio)) {
                     ratio = 0.5;
@@ -204,21 +247,23 @@ public class LEDs extends SpectrumLEDs {
                 double red = (c1.red * (1 - ratio)) + (c2.red * ratio);
                 double green = (c1.green * (1 - ratio)) + (c2.green * ratio);
                 double blue = (c1.blue * (1 - ratio)) + (c2.blue * ratio);
-                setLED(i, new Color(red, green, blue), priority);
+                buffer.setLED(i, new Color(red, green, blue));
+                priorityBuffer[i] = (byte) priority;
             }
         }
     }
 
     public void stripes(
             Section section, List<Color> colors, int length, double duration, int priority) {
-        if (getUpdate()) {
-            int offset = (int) (getLEDTime() % duration / duration * length * colors.size());
+        if (update) {
+            int offset = (int) (time % duration / duration * length * colors.size());
             for (int i = section.start(); i < section.end(); i++) {
                 int colorIndex =
                         (int) (Math.floor((double) (i - offset) / length) + colors.size())
                                 % colors.size();
                 colorIndex = colors.size() - 1 - colorIndex;
-                setLED(i, colors.get(colorIndex), priority);
+                buffer.setLED(i, colors.get(colorIndex));
+                priorityBuffer[i] = (byte) priority;
             }
         }
     }
@@ -231,7 +276,7 @@ public class LEDs extends SpectrumLEDs {
             Color fillColor,
             double speed,
             int priority) {
-        if (getUpdate()) {
+        if (update) {
             long currentTime = System.currentTimeMillis();
             double cycleTime = 1000 / speed; // Convert speed to milliseconds for the entire cycle
             double phase = (currentTime % cycleTime) / cycleTime; // Phase of the cycle from 0 to 1
@@ -245,20 +290,24 @@ public class LEDs extends SpectrumLEDs {
             // Set LEDs based on the current position and direction
             for (int i = section.start(); i < section.end(); i++) {
                 if (i == ledPosition) {
-                    setLED(i, primaryColor, priority); // Main LED
+                    buffer.setLED(i, primaryColor);
+                    priorityBuffer[i] = (byte) priority; // Main LED
                 } else if (i == ledPosition - 1 || i == ledPosition + 1) {
-                    setLED(i, secondaryColor, priority); // Immediate neighbors
+                    buffer.setLED(i, secondaryColor); // Immediate neighbors
+                    priorityBuffer[i] = (byte) priority;
                 } else if (i == ledPosition - 2 || i == ledPosition + 2) {
-                    setLED(i, tertiaryColor, priority); // Next neighbors
+                    buffer.setLED(i, tertiaryColor); // Next neighbors
+                    priorityBuffer[i] = (byte) priority;
                 } else {
-                    setLED(i, fillColor, priority); // Turn off other LEDs
+                    buffer.setLED(i, fillColor); // Turn off other LEDs
+                    priorityBuffer[i] = (byte) priority;
                 }
             }
         }
     }
 
     public void staticGradient(Section section, Color startColor, Color endColor, int priority) {
-        if (getUpdate()) {
+        if (update) {
             int totalLEDs = section.end() - section.start();
             for (int i = section.start(); i < section.end(); i++) {
                 double ratio = (double) (i - section.start()) / totalLEDs;
@@ -272,13 +321,14 @@ public class LEDs extends SpectrumLEDs {
                 Color currentColor = new Color(red, green, blue);
 
                 // Set the color of the current LED
-                setLED(i, currentColor, priority);
+                buffer.setLED(i, currentColor);
+                priorityBuffer[i] = (byte) priority;
             }
         }
     }
 
     public void ombre(Section section, Color startColor, Color endColor, int priority) {
-        if (getUpdate()) {
+        if (update) {
             long currentTime = System.currentTimeMillis();
             // The speed factor here determines how quickly the ombre moves along the strip
             double phaseShift =
@@ -304,7 +354,8 @@ public class LEDs extends SpectrumLEDs {
                 Color currentColor = new Color(red, green, blue);
 
                 // Set the color of the current LED
-                setLED(i, currentColor, priority);
+                buffer.setLED(i, currentColor);
+                priorityBuffer[i] = (byte) priority;
             }
         }
     }
@@ -317,7 +368,7 @@ public class LEDs extends SpectrumLEDs {
      * @param priority The priority of this LED pattern.
      */
     public void countdown(double durationInSeconds, int priority) {
-        if (getUpdate()) {
+        if (update) {
             long currentTimeMillis = System.currentTimeMillis();
             // Assuming the start time is stored somewhere, calculate elapsed time
             double elapsedTimeInSeconds = (currentTimeMillis - countdownStartTimeMS) / 1000.0;
@@ -338,24 +389,27 @@ public class LEDs extends SpectrumLEDs {
             for (int i = LEDsConfig.length - 1; i >= 0; i--) {
                 if (LEDsConfig.length - i <= ledsToTurnOff) {
                     // Turn off the LEDs progressively
-                    setLED(i, Color.kBlack, priority);
+                    buffer.setLED(i, Color.kBlack);
+                    priorityBuffer[i] = (byte) priority;
                 } else {
                     // Set the remaining LEDs to the countdown color
-                    setLED(i, countdownColor, priority);
+                    buffer.setLED(i, countdownColor);
+                    priorityBuffer[i] = (byte) priority;
                 }
             }
 
             // If the countdown is complete, ensure all LEDs are turned off
             if (progress >= 1.0) {
                 for (int i = 0; i < LEDsConfig.length; i++) {
-                    setLED(i, Color.kBlack, priority);
+                    buffer.setLED(i, Color.kBlack);
+                    priorityBuffer[i] = (byte) priority;
                 }
             }
         }
     }
 
     public void chase(int priority) {
-        if (getUpdate()) {
+        if (update) {
             long currentTimeMillis = System.currentTimeMillis();
             // Define the duration of each color phase (red/blue) in milliseconds
             double phaseDuration = 150; // Adjust for faster or slower transitions
@@ -378,7 +432,8 @@ public class LEDs extends SpectrumLEDs {
 
             // Set the color of the entire strip based on the current phase
             for (int i = 0; i < LEDsConfig.length; i++) {
-                setLED(i, chaseColor, priority);
+                buffer.setLED(i, chaseColor);
+                priorityBuffer[i] = (byte) priority;
             }
 
             // To add a moving effect
@@ -396,10 +451,11 @@ public class LEDs extends SpectrumLEDs {
                                     : LEDsConfig.length
                                             - 1
                                             - index; // Reverse direction for blue phase
-                    setLED(
+                    buffer.setLED(
                             index,
-                            chaseColor,
-                            priority + 1); // Slightly higher priority to override the static color
+                            chaseColor
+                            ); // Slightly higher priority to override the static color
+                            priorityBuffer[i] = (byte) (priority + 1);
                 }
             }
         }

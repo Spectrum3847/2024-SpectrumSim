@@ -7,6 +7,10 @@ import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Robot;
 import frc.robot.leds.LEDsConfig.Section;
+import edu.wpi.first.wpilibj.AddressableLED;
+import edu.wpi.first.wpilibj.AddressableLEDBuffer;
+import edu.wpi.first.wpilibj.util.Color;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 // This file is too long we should probably move some of it to the SpectrumLib
 public class LEDsCommands {
@@ -166,7 +170,7 @@ public class LEDsCommands {
         return runLEDPattern(() -> leds.customStrobe(section, color, frequency, priority))
                 .withName("Leds.customStrobe");
     }
-
+;
     /* Breath */
 
     @SuppressWarnings("unused")

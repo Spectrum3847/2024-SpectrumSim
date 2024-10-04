@@ -20,6 +20,8 @@ import frc.robot.swerve.Swerve;
 import frc.robot.swerve.SwerveCommands;
 import frc.robot.vision.VisionSystem;
 import frc.spectrumLib.util.CrashTracker;
+import edu.wpi.first.wpilibj.AddressableLED;
+
 
 public class Robot extends TimedRobot {
     public static RobotConfig robotConfig;
