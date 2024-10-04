@@ -12,6 +12,7 @@ import frc.robot.intake.Intake;
 import frc.robot.intake.IntakeCommands;
 import frc.robot.launcher.Launcher;
 import frc.robot.launcher.LauncherCommands;
+import frc.robot.pivot.Pivot;
 import frc.robot.leds.LEDs;
 import frc.robot.leds.LEDsCommands;
 import frc.robot.pilot.Pilot;
@@ -34,6 +35,7 @@ public class Robot extends TimedRobot {
     public static Elevator elevator;
     public static Intake intake;
     public static Launcher launcher;
+    public static Pivot pivot;
     public static LEDs leds;
     public static Pilot pilot;
     public static VisionSystem visionSystem;
