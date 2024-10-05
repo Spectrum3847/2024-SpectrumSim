@@ -9,16 +9,14 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 //import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.networktables.NTSendableBuilder;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
-import frc.robot.Robot;
 import frc.robot.RobotConfig;
+import frc.robot.RobotSim;
 import frc.robot.RobotTelemetry;
 import frc.spectrumLib.mechanism.Mechanism;
 import frc.spectrumLib.mechanism.TalonFXFactory;
 //import frc.spectrumLib.swerve.config.SwerveConfig;
-import java.util.function.DoubleSupplier;
 import lombok.*;
 
 public class Pivot extends Mechanism {
@@ -145,11 +143,39 @@ public class Pivot extends Mechanism {
     @Override
     public void initSendable(NTSendableBuilder builder) {
         if (isAttached()) {
-            builder.addDoubleProperty("Percent", null, null);
+            builder.addDoubleProperty("Position", this::getMotorPosition, null);
         }
     }
 
     // Removed tree map getters
+
+    public void increaseOffset() {
+        increaseOffset(1);
+    }
+
+    public void decreaseOffset() {
+        decreaseOffset(1);
+    }
+
+    public void increaseOffset(double amount) {
+        config.OFFSET += amount;
+        RobotTelemetry.print("Pivot offset increased to: " + config.OFFSET);
+    }
+
+    public void decreaseOffset(double amount) {
+        config.OFFSET -= amount;
+        RobotTelemetry.print("Pivot offset decreased to: " + config.OFFSET);
+    }
+
+    public void resetOffset() {
+        config.OFFSET = config.STARTING_OFFSET;
+        RobotTelemetry.print("Pivot offset reset to: " + config.OFFSET);
+    }
+
+    public void switchFeedSpot() {
+        config.shortFeed = !config.shortFeed;
+        RobotTelemetry.print("Feed spot switched to " + ((config.shortFeed) ? " short" : " long"));
+    }
 
     // --------------------------------------------------------------------------------
     // Custom Commands
@@ -158,7 +184,7 @@ public class Pivot extends Mechanism {
     public Command zeroPivotRoutine() {
         return new FunctionalCommand(
                         () -> toggleReverseSoftLimit(false), // init
-                        () -> setPercentOutput(() -> config.zeroSpeed), // execute
+                        () -> setPercentOutput(config::getZeroSpeed), // execute
                         (b) -> {
                             m_CANcoder.setPosition(0);
                             toggleReverseSoftLimit(true); // end
