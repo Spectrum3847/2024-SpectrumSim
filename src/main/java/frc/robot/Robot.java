@@ -13,6 +13,7 @@ import frc.robot.intake.IntakeCommands;
 import frc.robot.launcher.Launcher;
 import frc.robot.launcher.LauncherCommands;
 import frc.robot.pivot.Pivot;
+import frc.robot.pivot.PivotCommands;
 import frc.robot.leds.LEDs;
 import frc.robot.leds.LEDsCommands;
 import frc.robot.pilot.Pilot;
@@ -87,6 +88,8 @@ public class Robot extends TimedRobot {
             elevator = new Elevator(config.elevator);
             Timer.delay(canInitDelay);
             launcher = new Launcher(config.launcher);
+            pivot = new Pivot(config.pivot);
+            Timer.delay(canInitDelay);
             pilot = new Pilot(config.pilot);
             leds = new LEDs(config.leds);
             visionSystem = new VisionSystem(swerve::getRobotPose);

@@ -7,7 +7,7 @@ import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
-import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
+//import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.networktables.NTSendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -24,48 +24,51 @@ import lombok.*;
 public class Pivot extends Mechanism {
 
     public static class PivotConfig extends Config {
-        /* Cancoder config */
-        private final int CANcoderID = 44;
-        private final double CANcoderGearRatio = 35.1;
-        private double CANcoderOffset = 0;
-
         /* Pivot constants in motor rotations */
-        @Getter public final double maxRotation = 0.96; // 0.967
-        @Getter public final double minRotation = 0;
+        @Getter private final double maxRotation = 0.96; // 0.967
+        @Getter private final double minRotation = 0;
 
         /* Pivot positions in percentage of max rotation || 0 is horizontal */
-        @Getter public final double score = 65;
-        @Getter public final double climbHome = 3;
-        @Getter public final double home = 1;
-        @Getter public final double subwoofer = 81;
-        @Getter public final double intoAmp = 78;
-        @Getter public final double podium = 53.5;
-        @Getter public final double fromAmp = 52;
-        @Getter public final double ampWing = 41;
-        @Getter public final double intake = 50;
-        @Getter public final double manualFeed = 70;
-            
-        // Need to add auto launching positions when auton is added
+        @Getter private final double score = 65;
+        @Getter private final double climbHome = 3;
+        @Getter private final double home = 1;
+        @Getter private final double subwoofer = 81;
+        @Getter private final double intoAmp = 78;
+        @Getter private final double podium = 53.5;
+        @Getter private final double fromAmp = 52;
+        @Getter private final double ampWing = 41;
+        @Getter private final double intake = 50;
+        @Getter private final double manualFeed = 70;
 
+        /* Pivot config settings */
+        @Getter private final double zeroSpeed = -0.1;
         /**
         * Percentage of pivot rotation added/removed from vision launching pivot angles (percentage
         * of the CHANGE in angle you set to, not +- the angle you set to) (the actual offset to
         * angles gets bigger as you get farther away)
         */
+        @Getter private final double STARTING_OFFSET = 3;
+        @Getter private double OFFSET = STARTING_OFFSET; // do not change this line
+        @Getter private boolean shortFeed = false;
+        @Getter private final double currentLimit = 30;
+        @Getter private final double torqueCurrentLimit = 100;
+        @Getter private final double threshold = 40;
+        @Getter private final double velocityKp = 186; // 200 w/ 0.013 good
+        @Getter private final double velocityKv = 0.018;
+        @Getter private final double velocityKs = 0;
 
-        public final double STARTING_OFFSET = 3;
-
-        public double OFFSET = STARTING_OFFSET; // do not change this line
-
-        public boolean shortFeed = false;
-
-        /* Pivot config values */
-        public double currentLimit = 30;
-        public double torqueCurrentLimit = 100;
-        public double threshold = 40;
-        public double velocityKp = 186; // 200 w/ 0.013 good
-        public double velocityKv = 0.018;
-        public double velocityKs = 0;
+        /* Cancoder config settings */
+        private final int CANcoderID = 44;
+        private final double CANcoderGearRatio = 35.1;
+        private double CANcoderOffset = 0;
+        private enum CANCoderFeedbackType {
+            RemoteCANcoder,
+            FusedCANcoder,
+            SyncCANcoder,
+        }
+        private CANCoderFeedbackType pivotFeedbackSource = CANCoderFeedbackType.FusedCANcoder;
+            
+        // Need to add auto launching positions when auton is added
 
         // Removed implementation of tree map
 
@@ -87,6 +90,25 @@ public class Pivot extends Mechanism {
         public void configCANcoderOffset(double CANcoderOffset) {
             this.CANcoderOffset = CANcoderOffset;
         }
+
+        public void modifyMotorConfig(PivotConfig config) {
+            config.getTalonConfig().Feedback.FeedbackRemoteSensorID = config.CANcoderID;
+            switch (config.pivotFeedbackSource) {
+                case RemoteCANcoder:
+                    config.getTalonConfig().Feedback.FeedbackSensorSource =
+                            FeedbackSensorSourceValue.RemoteCANcoder;
+                    break;
+                case FusedCANcoder:
+                    config.getTalonConfig().Feedback.FeedbackSensorSource =
+                            FeedbackSensorSourceValue.FusedCANcoder;
+                    break;
+                case SyncCANcoder:
+                    config.getTalonConfig().Feedback.FeedbackSensorSource =
+                            FeedbackSensorSourceValue.SyncCANcoder;
+                    break;
+            }
+            config.getTalonConfig().Feedback.RotorToSensorRatio = config.CANcoderGearRatio;
+        }
     }
 
     private PivotConfig config;
@@ -97,8 +119,8 @@ public class Pivot extends Mechanism {
         this.config = config; // unsure if we need this, may delete and test
 
         if (isAttached()) {
-            modifyMotorConfig(swerveConfig); // Modify configuration to use remote CANcoder fused
-            motor = TalonFXFactory.createConfigTalon(config.id, config.talonConfig);
+            config.modifyMotorConfig(config); // Modify configuration to use remote CANcoder fused
+            motor = TalonFXFactory.createConfigTalon(config.getId(), config.getTalonConfig());
             m_CANcoder = new CANcoder(config.CANcoderID, RobotConfig.CANIVORE);
             CANcoderConfiguration cancoderConfigs = new CANcoderConfiguration();
             cancoderConfigs.MagnetSensor.MagnetOffset = config.CANcoderOffset;
@@ -136,7 +158,7 @@ public class Pivot extends Mechanism {
     public Command zeroPivotRoutine() {
         return new FunctionalCommand(
                         () -> toggleReverseSoftLimit(false), // init
-                        () -> setPercentOutput(config.zeroSpeed), // execute
+                        () -> setPercentOutput(() -> config.zeroSpeed), // execute
                         (b) -> {
                             m_CANcoder.setPosition(0);
                             toggleReverseSoftLimit(true); // end
@@ -179,6 +201,16 @@ public class Pivot extends Mechanism {
             return getMotorPosition() > config.maxRotation;
         }
         return false;
+    }
+
+    public void checkMotorResponse(StatusCode response) {
+        if (!response.isOK()) {
+            System.out.println(
+                    "Pivot CANcoder ID "
+                            + config.CANcoderID
+                            + " failed config with error "
+                            + response.toString());
+        }
     }
 
     // --------------------------------------------------------------------------------
