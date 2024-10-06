@@ -1,4 +1,4 @@
-package frc.spectrumLib.mechanism;
+package frc.spectrumLib.talonFX;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
@@ -45,7 +45,7 @@ public class TalonFXFactory {
         String leaderCanBus = leaderTalonFX.getNetwork();
         int leaderId = leaderTalonFX.getDeviceID();
         if (!follower_id.getBus().equals(leaderCanBus)) {
-            throw new RuntimeException("Master and Slave Talons must be on the same CAN bus");
+            throw new RuntimeException("Leader and Follwer Talons must be on the same CAN bus");
         }
 
         TalonFXConfiguration followerConfig = getDefaultConfig();
