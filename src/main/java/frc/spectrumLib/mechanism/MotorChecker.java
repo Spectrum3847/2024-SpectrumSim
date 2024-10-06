@@ -1,10 +1,9 @@
-package frc.spectrumLib.talonFX;
+package frc.spectrumLib.mechanism;
 
-import com.ctre.phoenix6.StatusSignal;
+import com.ctre.phoenix6.controls.ControlRequest;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.ControlModeValue;
 import edu.wpi.first.wpilibj.Timer;
-import frc.spectrumLib.mechanism.Mechanism;
 import frc.spectrumLib.util.Conversions;
 import frc.spectrumLib.util.Util;
 import java.util.ArrayList;
@@ -21,33 +20,34 @@ public class MotorChecker {
 
         @Getter @Setter private double runTimeSec = 1.0;
         @Getter @Setter private double waitTimeSec = 2.0;
-        @Getter @Setter private double runOutputPercentage = 0.5;
+        @Getter @Setter private double runOutput = 0.5;
+        @Getter @Setter private double stopOutput = 0.0;
+
+        @Getter @Setter private ControlModeValue controlMode = ControlModeValue.VoltageOut;
     }
 
-    private static class ControlRequest {
-        public StatusSignal<ControlModeValue> mMode;
-        public double setValue;
+    private static class StoredControlRequest {
+        @Getter @Setter private ControlRequest storedSetValue;
     }
 
     protected TalonFX[] mMotorsToCheck;
 
-    protected ArrayList<ControlRequest> mControlRequests = new ArrayList<>();
+    protected ArrayList<StoredControlRequest> controlRequests = new ArrayList<>();
 
     protected void storeConfiguration() {
         // record previous configuration for all talons
         for (TalonFX talon : mMotorsToCheck) {
 
-            ControlRequest configuration = new ControlRequest();
-            configuration.mMode = talon.getControlMode();
+            StoredControlRequest configuration = new StoredControlRequest();
+            configuration.storedSetValue = talon.getAppliedControl();
 
-            mControlRequests.add(configuration);
+            controlRequests.add(configuration);
         }
     }
 
     protected void restoreConfiguration() {
         for (int i = 0; i < mMotorsToCheck.length; ++i) {
-            mMotorsToCheck[i].getAppliedControl();
-            mMotorsToCheck[i].set(mControlRequests.get(i).setValue);
+            mMotorsToCheck[i].setControl(controlRequests.get(i).getStoredSetValue());
         }
     }
 
@@ -92,7 +92,7 @@ public class MotorChecker {
         for (TalonFX motor : mMotorsToCheck) {
             System.out.println("Checking: " + motor.getDeviceID());
 
-            setMotorOutput(motor, checkerConfig.runOutputPercentage);
+            setMotorOutput(motor, checkerConfig.runOutput);
             Timer.delay(checkerConfig.runTimeSec);
 
             // poll the interesting information
