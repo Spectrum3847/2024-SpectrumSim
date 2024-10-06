@@ -23,6 +23,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Subsystem;
+import frc.spectrumLib.talonFX.MotorChecker.CheckerConfig;
+import frc.spectrumLib.talonFX.TalonFXFactory;
 import frc.spectrumLib.util.CanDeviceId;
 import frc.spectrumLib.util.Conversions;
 import java.util.function.DoubleSupplier;
@@ -35,7 +37,7 @@ import lombok.*;
  * https://pro.docs.ctr-electronics.com/en/latest/docs/migration/migration-guide/closed-loop-guide.html
  */
 public abstract class Mechanism implements Subsystem, NTSendable {
-    protected TalonFX motor;
+    @Getter protected TalonFX motor;
     public Config config;
 
     public Mechanism(Config config) {
@@ -343,7 +345,10 @@ public abstract class Mechanism implements Subsystem, NTSendable {
         @Getter @Setter private boolean attached = true;
         @Getter private CanDeviceId id;
         @Getter private TalonFXConfiguration talonConfig;
+        @Getter private int numMotors = 1;
         @Getter private double voltageCompSaturation = 12.0; // 12V by default
+
+        @Getter private CheckerConfig checkerConfig = new CheckerConfig();
 
         @Getter
         private MotionMagicVelocityTorqueCurrentFOC mmVelocityFOC =

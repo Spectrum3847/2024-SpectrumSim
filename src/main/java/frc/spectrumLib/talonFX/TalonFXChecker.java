@@ -1,12 +1,12 @@
-package com.team254.lib.drivers;
+package frc.spectrumLib.talonFX;
 
-import com.ctre.phoenix6.signals.ControlModeValue;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.team1678.frc2024.subsystems.Subsystem;
-
+import com.ctre.phoenix6.signals.ControlModeValue;
+import frc.spectrumLib.mechanism.Mechanism;
 import java.util.ArrayList;
 
+/** From 254 lib imported from 1678-2024 */
 public class TalonFXChecker extends MotorChecker<TalonFX> {
     private static class ControlRequest {
         public StatusSignal<ControlModeValue> mMode;
@@ -15,11 +15,12 @@ public class TalonFXChecker extends MotorChecker<TalonFX> {
 
     protected ArrayList<ControlRequest> mControlRequests = new ArrayList<>();
 
-    public static boolean checkMotors(Subsystem subsystem,
-                                      ArrayList<MotorConfig<TalonFX>> motorsToCheck,
-                                      CheckerConfig checkerConfig) {
+    public static boolean checkMotors(
+            Mechanism mechanism,
+            ArrayList<MotorConfig<TalonFX>> motorsToCheck,
+            CheckerConfig checkerConfig) {
         TalonFXChecker checker = new TalonFXChecker();
-        return checker.checkMotorsImpl(subsystem, motorsToCheck, checkerConfig);
+        return checker.checkMotorsImpl(mechanism, motorsToCheck, checkerConfig);
     }
 
     @Override
@@ -52,5 +53,4 @@ public class TalonFXChecker extends MotorChecker<TalonFX> {
     public double getMotorCurrent(TalonFX motor) {
         return motor.getStatorCurrent().getValue();
     }
-
 }

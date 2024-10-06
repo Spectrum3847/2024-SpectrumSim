@@ -1,24 +1,25 @@
-package com.team254.lib.drivers;
+package frc.spectrumLib.talonFX;
 
-import com.team1678.frc2024.subsystems.Subsystem;
-import com.team254.lib.util.Util;
 import edu.wpi.first.wpilibj.Timer;
-
+import frc.spectrumLib.mechanism.Mechanism;
+import frc.spectrumLib.util.Util;
 import java.util.ArrayList;
 import java.util.function.DoubleSupplier;
+import lombok.Setter;
 
+/** From 254 lib imported from 1678-2024 */
 public abstract class MotorChecker<T> {
     public static class CheckerConfig {
-        public double mCurrentFloor = 5;
-        public double mRPMFloor = 2000;
+        @Setter public double mCurrentFloor = 5;
+        @Setter public double mRPMFloor = 2000;
 
-        public double mCurrentEpsilon = 5.0;
-        public double mRPMEpsilon = 500;
-        public DoubleSupplier mRPMSupplier = null;
+        @Setter public double mCurrentEpsilon = 5.0;
+        @Setter public double mRPMEpsilon = 500;
+        @Setter public DoubleSupplier mRPMSupplier = null;
 
-        public double mRunTimeSec = 4.0;
-        public double mWaitTimeSec = 2.0;
-        public double mRunOutputPercentage = 0.5;
+        @Setter public double mRunTimeSec = 4.0;
+        @Setter public double mWaitTimeSec = 2.0;
+        @Setter public double mRunOutputPercentage = 0.5;
     }
 
     public static class MotorConfig<T> {
@@ -41,13 +42,15 @@ public abstract class MotorChecker<T> {
 
     protected abstract double getMotorCurrent(T motor);
 
-    protected boolean checkMotorsImpl(Subsystem subsystem,
-                                      ArrayList<MotorConfig<T>> motorsToCheck,
-                                      CheckerConfig checkerConfig) {
+    protected boolean checkMotorsImpl(Mechanism mechanism) {
         boolean failure = false;
         System.out.println("////////////////////////////////////////////////");
-        System.out.println("Checking subsystem " + subsystem.getClass()
-                + " for " + motorsToCheck.size() + " motors.");
+        System.out.println(
+                "Checking subsystem "
+                        + mechanism.getName()
+                        + " for "
+                        + mechanism.config.getNumMotors()
+                        + " motors.");
 
         ArrayList<Double> currents = new ArrayList<>();
         ArrayList<Double> rpms = new ArrayList<>();
@@ -82,14 +85,20 @@ public abstract class MotorChecker<T> {
 
             // perform checks
             if (current < checkerConfig.mCurrentFloor) {
-                System.out.println(config.mName + " has failed current floor check vs " +
-                        checkerConfig.mCurrentFloor + "!!");
+                System.out.println(
+                        config.mName
+                                + " has failed current floor check vs "
+                                + checkerConfig.mCurrentFloor
+                                + "!!");
                 failure = true;
             }
             if (checkerConfig.mRPMSupplier != null) {
                 if (rpm < checkerConfig.mRPMFloor) {
-                    System.out.println(config.mName + " has failed rpm floor check vs " +
-                            checkerConfig.mRPMFloor + "!!");
+                    System.out.println(
+                            config.mName
+                                    + " has failed rpm floor check vs "
+                                    + checkerConfig.mRPMFloor
+                                    + "!!");
                     failure = true;
                 }
             }
@@ -123,4 +132,3 @@ public abstract class MotorChecker<T> {
         return !failure;
     }
 }
-

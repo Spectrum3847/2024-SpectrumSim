@@ -1,4 +1,4 @@
-package frc.spectrumLib.mechanism;
+package frc.spectrumLib.talonFX;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
