@@ -8,8 +8,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.RobotConfig.DEFAULT;
 import frc.robot.elevator.Elevator;
-import frc.robot.intake.Intake;
-import frc.robot.intake.IntakeCommands;
 import frc.robot.launcher.Launcher;
 import frc.robot.launcher.LauncherCommands;
 import frc.robot.leds.LEDs;
@@ -32,7 +30,6 @@ public class Robot extends TimedRobot {
 
     public static Swerve swerve;
     public static Elevator elevator;
-    public static Intake intake;
     public static Launcher launcher;
     public static LEDs leds;
     public static Pilot pilot;
@@ -80,8 +77,6 @@ public class Robot extends TimedRobot {
             double canInitDelay = 0.1; // Delay between any mechanism with motor/can configs
             swerve = new Swerve(config.swerve);
             Timer.delay(canInitDelay);
-            intake = new Intake(); // new Intake(config.intakeAttached);
-            Timer.delay(canInitDelay);
             elevator = new Elevator(config.elevator);
             Timer.delay(canInitDelay);
             launcher = new Launcher(config.launcher);
@@ -97,7 +92,6 @@ public class Robot extends TimedRobot {
              * command these must be done after all the subsystems are intialized
              */
             SwerveCommands.setupDefaultCommand(robotConfig.getRobotType());
-            IntakeCommands.setupDefaultCommand();
             LauncherCommands.setupDefaultCommand();
             LEDsCommands.setupDefaultCommand();
             PilotCommands.setupDefaultCommand();

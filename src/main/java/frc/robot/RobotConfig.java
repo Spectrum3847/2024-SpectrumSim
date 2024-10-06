@@ -15,6 +15,29 @@ import frc.robot.swerve.SwerveConfig;
 
 public class RobotConfig {
 
+    public static class DEFAULT {
+        public SwerveConfig swerve;
+        public ElevatorConfig elevator;
+        public LauncherConfig launcher;
+        public LEDsConfig leds;
+        public PilotConfig pilot;
+
+        public DEFAULT() {
+            swerve = new SwerveConfig();
+            elevator = new ElevatorConfig();
+            launcher = new LauncherConfig();
+            leds = new LEDsConfig();
+            pilot = new PilotConfig();
+        }
+
+        public class Transforms {
+            public static Transform3d robotToCamera =
+                    new Transform3d(
+                            new Translation3d(0, 0, 0.5), // Centered on the robot, 0.5m up
+                            new Rotation3d(0, Math.toRadians(-15), 0)); // Pitched 15 deg up
+        }
+    }
+
     public static String rioSerial = "empty";
     public static final Double robotInitDelay = 2.0; // Seconds to wait before starting robot code
 
@@ -99,59 +122,5 @@ public class RobotConfig {
         PM,
         ULTRAVIOLET,
         SIM
-    }
-
-    public static class DEFAULT {
-        public SwerveConfig swerve;
-        public ElevatorConfig elevator;
-        public LauncherConfig launcher;
-        public LEDsConfig leds;
-        public PilotConfig pilot;
-
-        public DEFAULT() {
-            swerve = new SwerveConfig();
-            elevator = new ElevatorConfig();
-            launcher = new LauncherConfig();
-            leds = new LEDsConfig();
-            pilot = new PilotConfig();
-        }
-
-        // None of the below should exist in the final version of our code, should all be inside
-        // their mechanism classes as config classes
-        public static class Intake {
-            public class Arm {
-                public static int deviceID = 20;
-                public static double ratio = 50.0; // 50:1 reduction
-
-                // Hard-stop limits
-                // public static double minAngle = Math.toRadians(-60);
-                // public static double maxAngle = Math.toRadians(90);
-                public static double startingAngle = Math.toRadians(90);
-
-                // Setpoints
-                public static double stowAngle = Math.toRadians(80);
-                public static double deployAngle = Math.toRadians(0);
-
-                // For simulation
-                // public static double simMOI = 0.2; // kgMetersSquared
-                // public static double simCGLength = 0.3; // m
-            }
-
-            public class Roller {
-                public static int deviceID = 21;
-                // Spublic static double ratio = 5.0; // 5:1 reduction
-
-                // For simulation
-                // public static final double simMOI = 0.01; // kgMetersSquared
-                // public static final double angularVelocityScalar = 0.03;
-            }
-        }
-
-        public class Transforms {
-            public static Transform3d robotToCamera =
-                    new Transform3d(
-                            new Translation3d(0, 0, 0.5), // Centered on the robot, 0.5m up
-                            new Rotation3d(0, Math.toRadians(-15), 0)); // Pitched 15 deg up
-        }
     }
 }

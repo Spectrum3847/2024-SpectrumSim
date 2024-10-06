@@ -3,7 +3,6 @@ package frc.robot.pilot;
 import frc.robot.Robot;
 import frc.robot.RobotTelemetry;
 import frc.robot.elevator.ElevatorCommands;
-import frc.robot.intake.IntakeCommands;
 import frc.robot.launcher.LauncherCommands;
 import frc.spectrumLib.gamepads.Gamepad;
 import lombok.Getter;
@@ -43,8 +42,6 @@ public class Pilot extends Gamepad {
     /** Setup the Buttons for telop mode. */
     /*  A, B, X, Y, Left Bumper, Right Bumper = Buttons 1 to 6 in simualation */
     public void setupTeleopTriggers() {
-        a().whileTrue(IntakeCommands.intake());
-
         b().whileTrue(ElevatorCommands.fullExtend());
         x().whileTrue(ElevatorCommands.home());
         y().whileTrue(ElevatorCommands.runElevator(() -> getLeftY()));
