@@ -23,7 +23,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Subsystem;
-import frc.spectrumLib.talonFX.MotorChecker.CheckerConfig;
 import frc.spectrumLib.talonFX.TalonFXFactory;
 import frc.spectrumLib.util.CanDeviceId;
 import frc.spectrumLib.util.Conversions;
@@ -38,12 +37,22 @@ import lombok.*;
  */
 public abstract class Mechanism implements Subsystem, NTSendable {
     @Getter protected TalonFX motor;
+    @Getter protected TalonFX[] followerMotors;
     public Config config;
 
     public Mechanism(Config config) {
         this.config = config;
         if (isAttached()) {
             motor = TalonFXFactory.createConfigTalon(config.id, config.talonConfig);
+
+            followerMotors = new TalonFX[config.followerConfigs.length];
+            for (int i = 0; i < config.followerConfigs.length; i++) {
+                followerMotors[i] =
+                        TalonFXFactory.createPermanentFollowerTalon(
+                                config.followerConfigs[i].id,
+                                motor,
+                                config.followerConfigs[i].isInverted);
+            }
         }
         CommandScheduler.getInstance().registerSubsystem(this);
     }
@@ -340,6 +349,19 @@ public abstract class Mechanism implements Subsystem, NTSendable {
         }
     }
 
+    public static class followerConfig {
+        @Getter private String name;
+        @Getter private CanDeviceId id;
+        @Getter private boolean attached = true;
+        @Getter private boolean isInverted = false;
+
+        public followerConfig(String name, int id, String canbus, boolean isInverted) {
+            this.name = name;
+            this.id = new CanDeviceId(id, canbus);
+            this.isInverted = isInverted;
+        }
+    }
+
     public static class Config {
         @Getter private String name;
         @Getter @Setter private boolean attached = true;
@@ -348,7 +370,7 @@ public abstract class Mechanism implements Subsystem, NTSendable {
         @Getter private int numMotors = 1;
         @Getter private double voltageCompSaturation = 12.0; // 12V by default
 
-        @Getter private CheckerConfig checkerConfig = new CheckerConfig();
+        @Getter private followerConfig[] followerConfigs = new followerConfig[0];
 
         @Getter
         private MotionMagicVelocityTorqueCurrentFOC mmVelocityFOC =
@@ -393,6 +415,10 @@ public abstract class Mechanism implements Subsystem, NTSendable {
                 DriverStation.reportWarning(
                         "Could not apply config changes to " + name + "\'s motor ", false);
             }
+        }
+
+        public void setFollowerConfigs(followerConfig... followers) {
+            followerConfigs = followers;
         }
 
         public void configVoltageCompensation(double voltageCompSaturation) {
