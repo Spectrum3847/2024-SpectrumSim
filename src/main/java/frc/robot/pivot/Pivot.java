@@ -66,8 +66,6 @@ public class Pivot extends Mechanism {
             FusedCANcoder,
             SyncCANcoder,
         }
-
-        @Getter
         private CANCoderFeedbackType pivotFeedbackSource = CANCoderFeedbackType.FusedCANcoder;
 
         // Need to add auto launching positions when auton is added
@@ -75,10 +73,10 @@ public class Pivot extends Mechanism {
         // Removed implementation of tree map
 
         /* Sim properties */
-        @Getter private double pivotX = 0.5;
-        @Getter private double pivotY = 0.2;
-        @Getter private double ratio = 100;
-        @Getter private double length = 0.5;
+        @Getter private double pivotX = 0.5; // Placeholder value for now
+        @Getter private double pivotY = 0.2; // Placeholder value for now
+        @Getter private double ratio = 50; // Placeholder value for now
+        @Getter private double length = 0.5; // Placeholder value for now
 
         public PivotConfig() {
             super("Pivot", 41, RobotConfig.CANIVORE);
