@@ -104,6 +104,7 @@ public class Robot extends TimedRobot {
             SwerveCommands.setupDefaultCommand(robotConfig.getRobotType());
             IntakeCommands.setupDefaultCommand();
             LauncherCommands.setupDefaultCommand();
+            PivotCommands.setupDefaultCommand();
             LEDsCommands.setupDefaultCommand();
             PilotCommands.setupDefaultCommand();
 

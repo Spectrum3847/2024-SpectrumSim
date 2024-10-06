@@ -14,13 +14,14 @@ public class ULTRAVIOLET2024 extends DEFAULT {
          * <p>Target 0.05 < motor position (rotations) < 0.15 when all the way down to keep shots
          * consistent
          *
-         * <p>ex: absolute pos no offset = 0.87; pivotCANcoderOffset = -0.86; read motor position = 0.13
+         * <p>ex: absolute pos no offset = 0.87; pivotCANcoderOffset = -0.86; read motor position =
+         * 0.13
          */
         pivot.configCANcoderOffset(-0.77);
         // Attached Mechanisms
         elevator.setAttached(true);
         launcher.setAttached(true);
-        pivot.setAttached(false);
+        pivot.setAttached(true);
         pilot.setAttached(true);
     }
 }

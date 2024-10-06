@@ -33,11 +33,15 @@ public class ArmSim {
                         true, // Simulate gravity
                         config.startingAngle);
 
-        armPivot = RobotSim.leftView.getRoot("Intake Arm Pivot", config.pivotX, config.pivotY);
+        armPivot = RobotSim.leftView.getRoot(name + " Pivot", config.pivotX, config.pivotY);
         armMech2d =
                 armPivot.append(
                         new MechanismLigament2d(
-                                "Intake Arm", config.length, 0.0, 5.0, new Color8Bit(Color.kBlue)));
+                                name + " Arm",
+                                config.length,
+                                0.0,
+                                5.0,
+                                new Color8Bit(Color.kBlue)));
     }
 
     public void simulationPeriodic() {
