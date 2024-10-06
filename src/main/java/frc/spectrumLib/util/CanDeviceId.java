@@ -3,11 +3,11 @@ package frc.spectrumLib.util;
 // Based on 254-2023 Class
 // https://github.com/Team254/FRC-2023-Public/blob/main/src/main/java/com/team254/lib/drivers/CanDeviceId.java
 public class CanDeviceId {
-    private final int mDeviceNumber;
+    private final int deviceNumber;
     private final String mBus;
 
     public CanDeviceId(int deviceNumber, String bus) {
-        mDeviceNumber = deviceNumber;
+        this.deviceNumber = deviceNumber;
         mBus = bus;
     }
 
@@ -17,7 +17,7 @@ public class CanDeviceId {
     }
 
     public int getDeviceNumber() {
-        return mDeviceNumber;
+        return deviceNumber;
     }
 
     public String getBus() {
@@ -25,6 +25,6 @@ public class CanDeviceId {
     }
 
     public boolean equals(CanDeviceId other) {
-        return other.mDeviceNumber == mDeviceNumber && other.mBus == mBus;
+        return other.deviceNumber == deviceNumber && other.mBus == mBus;
     }
 }

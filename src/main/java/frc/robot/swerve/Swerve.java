@@ -34,8 +34,8 @@ import java.util.function.Supplier;
  */
 public class Swerve extends SwerveDrivetrain implements Subsystem, NTSendable {
     private SwerveConfig config;
-    private Notifier m_simNotifier = null;
-    private double m_lastSimTime;
+    private Notifier simNotifier = null;
+    private double lastSimTime;
     private RotationController rotationController;
 
     /* Keep track if we've ever applied the operator perspective before or not */
@@ -201,19 +201,19 @@ public class Swerve extends SwerveDrivetrain implements Subsystem, NTSendable {
     // Simulation
     // --------------------------------------------------------------------------------
     private void startSimThread() {
-        m_lastSimTime = Utils.getCurrentTimeSeconds();
+        lastSimTime = Utils.getCurrentTimeSeconds();
 
         /* Run simulation at a faster rate so PID gains behave more reasonably */
-        m_simNotifier =
+        simNotifier =
                 new Notifier(
                         () -> {
                             final double currentTime = Utils.getCurrentTimeSeconds();
-                            double deltaTime = currentTime - m_lastSimTime;
-                            m_lastSimTime = currentTime;
+                            double deltaTime = currentTime - lastSimTime;
+                            lastSimTime = currentTime;
 
                             /* use the measured time delta, get battery voltage from WPILib */
                             updateSimState(deltaTime, RobotController.getBatteryVoltage());
                         });
-        m_simNotifier.startPeriodic(config.kSimLoopPeriod);
+        simNotifier.startPeriodic(config.kSimLoopPeriod);
     }
 }

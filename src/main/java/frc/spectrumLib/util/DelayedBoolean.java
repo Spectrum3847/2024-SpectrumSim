@@ -7,8 +7,8 @@ import java.util.function.BooleanSupplier;
 /** An iterative boolean latch that delays the transition from false to true. */
 public class DelayedBoolean {
     private boolean mLastStatus;
-    private double mTransitionTimestamp;
-    private final double mDelay; // seconds
+    private double transitionTimestamp;
+    private final double delay; // seconds
 
     /**
      * Create a new DelayedBoolean with a custom delay in seconds.
@@ -16,9 +16,9 @@ public class DelayedBoolean {
      * @param delay seconds
      */
     public DelayedBoolean(double delay) {
-        mTransitionTimestamp = Timer.getFPGATimestamp();
+        transitionTimestamp = Timer.getFPGATimestamp();
         mLastStatus = false;
-        mDelay = delay;
+        this.delay = delay;
     }
 
     public boolean update(boolean status) {
@@ -26,11 +26,11 @@ public class DelayedBoolean {
         boolean result = false;
 
         if (status && !mLastStatus) {
-            mTransitionTimestamp = timestamp;
+            transitionTimestamp = timestamp;
         }
 
         // If we are still true and we have transitioned.
-        if (status && (timestamp - mTransitionTimestamp > mDelay)) {
+        if (status && (timestamp - transitionTimestamp > delay)) {
             result = true;
         }
 
