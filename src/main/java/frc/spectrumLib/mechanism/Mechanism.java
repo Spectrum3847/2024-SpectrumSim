@@ -51,7 +51,7 @@ public abstract class Mechanism implements Subsystem, NTSendable {
                         TalonFXFactory.createPermanentFollowerTalon(
                                 config.followerConfigs[i].id,
                                 motor,
-                                config.followerConfigs[i].isInverted);
+                                config.followerConfigs[i].opposeLeader);
             }
         }
         CommandScheduler.getInstance().registerSubsystem(this);
@@ -353,12 +353,12 @@ public abstract class Mechanism implements Subsystem, NTSendable {
         @Getter private String name;
         @Getter private CanDeviceId id;
         @Getter private boolean attached = true;
-        @Getter private boolean isInverted = false;
+        @Getter private boolean opposeLeader = false;
 
-        public followerConfig(String name, int id, String canbus, boolean isInverted) {
+        public followerConfig(String name, int id, String canbus, boolean opposeLeader) {
             this.name = name;
             this.id = new CanDeviceId(id, canbus);
-            this.isInverted = isInverted;
+            this.opposeLeader = opposeLeader;
         }
     }
 
