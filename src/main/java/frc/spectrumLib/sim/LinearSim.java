@@ -26,32 +26,32 @@ public class LinearSim {
 
         this.elevatorSim =
                 new ElevatorSim(
-                        DCMotor.getKrakenX60Foc(config.numMotors),
-                        config.kElevatorGearing,
-                        config.kCarriageMassKg,
-                        config.kElevatorDrumRadius,
-                        config.kMinElevatorHeight,
-                        config.kMaxElevatorHeight,
+                        DCMotor.getKrakenX60Foc(config.getNumMotors()),
+                        config.getElevatorGearing(),
+                        config.getCarriageMassKg(),
+                        config.getDrumRadius(),
+                        config.getMinHeight(),
+                        config.getMaxHeight(),
                         true,
                         0);
 
-        staticRoot = mech.getRoot("1StaticRoot", config.initialX, config.initialY);
+        staticRoot = mech.getRoot("1StaticRoot", config.getInitialX(), config.getInitialY());
         staticRoot.append(
                 new MechanismLigament2d(
                         "1Static",
-                        config.staticLength,
-                        config.angle,
-                        config.lineWidth,
+                        config.getStaticLength(),
+                        config.getAngle(),
+                        config.getLineWidth(),
                         new Color8Bit(Color.kOrange)));
 
-        root = mech.getRoot("Elevator Root", config.initialX, config.initialY);
+        root = mech.getRoot("Elevator Root", config.getInitialX(), config.getInitialY());
         m_elevatorMech2d =
                 root.append(
                         new MechanismLigament2d(
                                 "Elevator",
-                                config.movingLength,
-                                config.angle,
-                                config.lineWidth,
+                                config.getMovingLength(),
+                                config.getAngle(),
+                                config.getLineWidth(),
                                 new Color8Bit(Color.kBlack)));
     }
 
@@ -60,14 +60,13 @@ public class LinearSim {
     }
 
     private double getRotationPerSec() {
-        return (elevatorSim.getVelocityMetersPerSecond()
-                        / (2 * Math.PI * config.kElevatorDrumRadius))
-                * config.kElevatorGearing;
+        return (elevatorSim.getVelocityMetersPerSecond() / (2 * Math.PI * config.getDrumRadius()))
+                * config.getElevatorGearing();
     }
 
     private double getRotations() {
-        return (elevatorSim.getPositionMeters() / (2 * Math.PI * config.kElevatorDrumRadius))
-                * config.kElevatorGearing;
+        return (elevatorSim.getPositionMeters() / (2 * Math.PI * config.getDrumRadius()))
+                * config.getElevatorGearing();
     }
 
     public void simulationPeriodic() {
@@ -79,7 +78,8 @@ public class LinearSim {
 
         double displacement = elevatorSim.getPositionMeters();
         root.setPosition(
-                config.initialX + (displacement * Math.cos(Math.toRadians(config.angle))),
-                config.initialY + (displacement * Math.sin(Math.toRadians(config.angle))));
+                config.getInitialX() + (displacement * Math.cos(Math.toRadians(config.getAngle()))),
+                config.getInitialY()
+                        + (displacement * Math.sin(Math.toRadians(config.getAngle()))));
     }
 }

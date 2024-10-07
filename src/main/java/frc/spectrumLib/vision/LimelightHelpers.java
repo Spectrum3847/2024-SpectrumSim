@@ -467,7 +467,7 @@ public class LimelightHelpers {
     static boolean profileJSON = false;
 
     static final String sanitizeName(String name) {
-        if (name == "" || name == null) {
+        if (name == null || name.equals("")) {
             return "limelight";
         }
         return name;
@@ -1026,7 +1026,7 @@ public class LimelightHelpers {
         setLimelightNTDoubleArray(limelightName, "fiducial_offset_set", entries);
     }
 
-    public static void SetRobotOrientation(
+    public static void setRobotOrientation(
             String limelightName,
             double yaw,
             double yawRate,
@@ -1045,7 +1045,7 @@ public class LimelightHelpers {
         setLimelightNTDoubleArray(limelightName, "robot_orientation_set", entries);
     }
 
-    public static void SetFidcuial3DOffset(String limelightName, double x, double y, double z) {
+    public static void setFidcuial3DOffset(String limelightName, double x, double y, double z) {
 
         double[] entries = new double[3];
         entries[0] = x;
@@ -1054,7 +1054,7 @@ public class LimelightHelpers {
         setLimelightNTDoubleArray(limelightName, "fiducial_offset_set", entries);
     }
 
-    public static void SetFiducialIDFiltersOverride(String limelightName, int[] validIDs) {
+    public static void setFiducialIDFiltersOverride(String limelightName, int[] validIDs) {
         double[] validIDsDouble = new double[validIDs.length];
         for (int i = 0; i < validIDs.length; i++) {
             validIDsDouble[i] = validIDs[i];
@@ -1062,7 +1062,7 @@ public class LimelightHelpers {
         setLimelightNTDoubleArray(limelightName, "fiducial_id_filters_set", validIDsDouble);
     }
 
-    public static void SetFiducialDownscalingOverride(String limelightName, float downscale) {
+    public static void setFiducialDownscalingOverride(String limelightName, float downscale) {
         int d = 0; // pipeline
         if (downscale == 1.0) {
             d = 1;
@@ -1127,7 +1127,7 @@ public class LimelightHelpers {
         try {
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
-            if (snapshotName != null && snapshotName != "") {
+            if (snapshotName != null && !snapshotName.equals("")) {
                 connection.setRequestProperty("snapname", snapshotName);
             }
 
@@ -1164,7 +1164,7 @@ public class LimelightHelpers {
         double millis = (end - start) * .000001;
         results.latency_jsonParse = millis;
         if (profileJSON) {
-            System.out.printf("lljson: %.2f\r\n", millis);
+            System.out.printf("lljson: %.2f\r%n", millis);
         }
 
         return results;

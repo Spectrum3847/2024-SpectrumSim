@@ -1,8 +1,8 @@
 package frc.robot.configs;
 
-import frc.robot.RobotConfig.DEFAULT;
+import frc.robot.RobotConfig.ConfigHolder;
 
-public class ULTRAVIOLET2024 extends DEFAULT {
+public class ULTRAVIOLET2024 extends ConfigHolder {
 
     public ULTRAVIOLET2024() {
         super();

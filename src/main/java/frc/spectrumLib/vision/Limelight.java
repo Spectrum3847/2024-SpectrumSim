@@ -7,17 +7,18 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.spectrumLib.vision.LimelightHelpers.LimelightResults;
 import frc.spectrumLib.vision.LimelightHelpers.RawFiducial;
 import java.text.DecimalFormat;
+import lombok.Getter;
 
 public class Limelight {
 
     /* Limelight Configuration */
 
     /** Must match to the name given in LL dashboard */
-    public final String CAMERA_NAME;
+    @Getter private final String CAMERA_NAME;
 
-    public String logStatus = "";
-    public String tagStatus = "";
-    public boolean isIntegrating;
+    @Getter private String logStatus = "";
+    @Getter private String tagStatus = "";
+    @Getter private boolean isIntegrating;
     /** Physical Config */
     private PhysicalConfig physicalConfig;
 
@@ -210,11 +211,11 @@ public class Limelight {
 
     /** */
     public void setRobotOrientation(double degrees) {
-        LimelightHelpers.SetRobotOrientation(CAMERA_NAME, degrees, 0, 0, 0, 0, 0);
+        LimelightHelpers.setRobotOrientation(CAMERA_NAME, degrees, 0, 0, 0, 0, 0);
     }
 
     public void setRobotOrientation(double degrees, double angularRate) {
-        LimelightHelpers.SetRobotOrientation(CAMERA_NAME, degrees, angularRate, 0, 0, 0, 0);
+        LimelightHelpers.setRobotOrientation(CAMERA_NAME, degrees, angularRate, 0, 0, 0, 0);
     }
 
     /**
@@ -277,8 +278,8 @@ public class Limelight {
      * degrees)
      */
     public static class PhysicalConfig {
-        public double forward, right, up; // meters
-        public double roll, pitch, yaw; // degrees
+        @Getter private double forward, right, up; // meters
+        @Getter private double roll, pitch, yaw; // degrees
 
         /**
          * Specify the location of your Limelight relative to the center of your robot. (meters,

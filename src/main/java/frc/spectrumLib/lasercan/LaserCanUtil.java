@@ -28,7 +28,7 @@ public class LaserCanUtil {
             int h,
             LaserCan.TimingBudget timingBudget) {
         lasercan = new LaserCan(id);
-        if (shortRange = true) {
+        if (shortRange == true) {
             setShortRange();
         } else {
             setLongRange();

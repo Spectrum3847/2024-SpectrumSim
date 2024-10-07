@@ -1,10 +1,11 @@
 package frc.robot.leds;
 
 import edu.wpi.first.wpilibj.util.Color;
+import lombok.Getter;
 
 public class LEDsConfig {
     // Length has to be static to make the enums work, it would be nice if there was another way
-    public static int length = 29;
+    @Getter private static int length = 29;
 
     public final int port = 0;
     public final double strobeFastDuration = 0.1;

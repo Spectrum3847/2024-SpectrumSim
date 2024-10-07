@@ -24,20 +24,26 @@ public class ArmSim {
         this.armMotorSim = armMotorSim;
         armSim =
                 new SingleJointedArmSim(
-                        DCMotor.getKrakenX60Foc(config.numMotors),
-                        config.ratio,
-                        config.simMOI,
-                        config.simCGLength,
-                        config.minAngle,
-                        config.maxAngle,
+                        DCMotor.getKrakenX60Foc(config.getNumMotors()),
+                        config.getRatio(),
+                        config.getSimMOI(),
+                        config.getSimCGLength(),
+                        config.getMinAngle(),
+                        config.getMaxAngle(),
                         true, // Simulate gravity
-                        config.startingAngle);
+                        config.getStartingAngle());
 
-        armPivot = RobotSim.leftView.getRoot("Intake Arm Pivot", config.pivotX, config.pivotY);
+        armPivot =
+                RobotSim.leftView.getRoot(
+                        "Intake Arm Pivot", config.getPivotX(), config.getPivotY());
         armMech2d =
                 armPivot.append(
                         new MechanismLigament2d(
-                                "Intake Arm", config.length, 0.0, 5.0, new Color8Bit(Color.kBlue)));
+                                "Intake Arm",
+                                config.getLength(),
+                                0.0,
+                                5.0,
+                                new Color8Bit(Color.kBlue)));
     }
 
     public void simulationPeriodic() {
@@ -45,9 +51,12 @@ public class ArmSim {
         armSim.update(TimedRobot.kDefaultPeriod);
 
         armMotorSim.setRawRotorPosition(
-                (armSim.getAngleRads() - config.startingAngle) * config.ratio * 2.0 * Math.PI);
+                (armSim.getAngleRads() - config.getStartingAngle())
+                        * config.getRatio()
+                        * 2.0
+                        * Math.PI);
         armMotorSim.setRotorVelocity(
-                armSim.getVelocityRadPerSec() * config.ratio / (2.0 * Math.PI));
+                armSim.getVelocityRadPerSec() * config.getRatio() / (2.0 * Math.PI));
 
         // ------ Update viz based on sim
         armMech2d.setAngle(Math.toDegrees(armSim.getAngleRads()));
