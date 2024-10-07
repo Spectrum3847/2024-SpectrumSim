@@ -66,6 +66,7 @@ public class Pivot extends Mechanism {
             FusedCANcoder,
             SyncCANcoder,
         }
+
         private CANCoderFeedbackType pivotFeedbackSource = CANCoderFeedbackType.FusedCANcoder;
 
         // Need to add auto launching positions when auton is added
