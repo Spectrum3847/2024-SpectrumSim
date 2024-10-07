@@ -24,6 +24,6 @@ public class ULTRAVIOLET2024 extends DEFAULT {
          * <p>ex: absolute pos no offset = 0.87; pivotCANcoderOffset = -0.86; read motor position =
          * 0.13
          */
-        pivot.setCANcoderOffset(-0.77);
+        pivot.configCANcoderOffset(-0.77);
     }
 }
