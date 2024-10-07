@@ -22,43 +22,43 @@ public class PivotCommands {
     }
 
     public static Command home() {
-        return pivot.runPosition(config::getHome).withName("Pivot.home");
+        return pivot.moveToPoseRevolutions(config::getHome).withName("Pivot.home");
     }
 
     public static Command climbHome() {
-        return pivot.runPosition(config::getClimbHome).withName("Pivot.climbHome");
+        return pivot.moveToPoseRevolutions(config::getClimbHome).withName("Pivot.climbHome");
     }
 
     public static Command manualFeed() {
-        return pivot.runPosition(config::getManualFeed).withName("Pivot.manualFeed");
+        return pivot.moveToPoseRevolutions(config::getManualFeed).withName("Pivot.manualFeed");
     }
 
     /* Scoring positions */
 
     public static Command subwoofer() {
-        return pivot.runPosition(config::getSubwoofer).withName("Pivot.subwoofer");
+        return pivot.moveToPoseRevolutions(config::getSubwoofer).withName("Pivot.subwoofer");
     }
 
     public static Command podium() {
-        return pivot.runPosition(config::getPodium).withName("Pivot.podium");
+        return pivot.moveToPoseRevolutions(config::getPodium).withName("Pivot.podium");
     }
 
     public static Command ampWing() {
-        return pivot.runPosition(config::getAmpWing).withName("Pivot.ampWing");
+        return pivot.moveToPoseRevolutions(config::getAmpWing).withName("Pivot.ampWing");
     }
 
     public static Command fromAmp() {
-        return pivot.runPosition(config::getFromAmp).withName("Pivot.fromAmp");
+        return pivot.moveToPoseRevolutions(config::getFromAmp).withName("Pivot.fromAmp");
     }
 
     public static Command intoAmp() {
-        return pivot.runPosition(config::getIntoAmp).withName("Pivot.intoAmp");
+        return pivot.moveToPoseRevolutions(config::getIntoAmp).withName("Pivot.intoAmp");
     }
 
     // missing auton pivot commands, add when auton is added
 
     public static Command intake() {
-        return pivot.runPosition(config::getIntake).withName("Pivot.intake");
+        return pivot.moveToPoseRevolutions(config::getIntake).withName("Pivot.intake");
     }
 
     public static Command coastMode() {
@@ -102,7 +102,7 @@ public class PivotCommands {
 
     // Tune value command
     public static Command tunePivot() {
-        return pivot.runPosition(new TuneValue("Tune Pivot", 0).getSupplier())
+        return pivot.moveToPoseRevolutions(new TuneValue("Tune Pivot", 0).getSupplier())
                 .withName("Pivot.Tune");
     }
 }
