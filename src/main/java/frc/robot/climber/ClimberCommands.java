@@ -2,18 +2,22 @@ package frc.robot.climber;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Robot;
+import frc.robot.climber.Climber.ClimberConfig;
 
 public class ClimberCommands {
-    private static Climber climber = Robot.climber;
-    private static ClimberConfig config = Robot.climber.config;
-    
+    private static Climber climber = Robot.getClimber();
+    private static ClimberConfig config = Robot.config.climber;
+
     public static void setupDefaultCommand() {
-        climber.setDefaultCommand(
-                climber.holdPosition().ignoringDisable(true).withName("Climber.default"));
+        climber.setDefaultCommand(holdPosition().ignoringDisable(true).withName("Climber.default"));
     }
 
-    public static void fullExtend() {
-        climber.runPosition(config::getFullExtend).withName("Climber.fullExtend");
+    public static Command holdPosition() {
+        return climber.holdPosition().withName("Climber.holdPosition");
+    }
+
+    public static Command fullExtend() {
+        return climber.runPosition(config::getFullExtend).withName("Climber.fullExtend");
     }
 
     public static void home() {

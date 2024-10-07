@@ -6,6 +6,7 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
+import frc.robot.climber.Climber.ClimberConfig;
 import frc.robot.configs.ULTRAVIOLET2024;
 import frc.robot.elevator.Elevator.ElevatorConfig;
 import frc.robot.launcher.Launcher.LauncherConfig;
@@ -17,6 +18,7 @@ public class RobotConfig {
 
     public static class DEFAULT {
         public SwerveConfig swerve;
+        public ClimberConfig climber;
         public ElevatorConfig elevator;
         public LauncherConfig launcher;
         public LEDsConfig leds;
@@ -24,6 +26,7 @@ public class RobotConfig {
 
         public DEFAULT() {
             swerve = new SwerveConfig();
+            climber = new ClimberConfig();
             elevator = new ElevatorConfig();
             launcher = new LauncherConfig();
             leds = new LEDsConfig();

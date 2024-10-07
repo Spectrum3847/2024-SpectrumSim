@@ -7,6 +7,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.RobotConfig.DEFAULT;
+import frc.robot.climber.Climber;
+import frc.robot.climber.ClimberCommands;
 import frc.robot.elevator.Elevator;
 import frc.robot.launcher.Launcher;
 import frc.robot.launcher.LauncherCommands;
@@ -18,6 +20,7 @@ import frc.robot.swerve.Swerve;
 import frc.robot.swerve.SwerveCommands;
 import frc.robot.vision.VisionSystem;
 import frc.spectrumLib.util.CrashTracker;
+import lombok.*;
 
 public class Robot extends TimedRobot {
     public static RobotConfig robotConfig;
@@ -29,6 +32,7 @@ public class Robot extends TimedRobot {
     public static RobotSim robotSim;
 
     public static Swerve swerve;
+    @Getter private static Climber climber;
     public static Elevator elevator;
     public static Launcher launcher;
     public static LEDs leds;
@@ -77,6 +81,7 @@ public class Robot extends TimedRobot {
             double canInitDelay = 0.1; // Delay between any mechanism with motor/can configs
             swerve = new Swerve(config.swerve);
             Timer.delay(canInitDelay);
+            climber = new Climber(config.climber);
             elevator = new Elevator(config.elevator);
             Timer.delay(canInitDelay);
             launcher = new Launcher(config.launcher);
@@ -92,6 +97,7 @@ public class Robot extends TimedRobot {
              * command these must be done after all the subsystems are intialized
              */
             SwerveCommands.setupDefaultCommand(robotConfig.getRobotType());
+            ClimberCommands.setupDefaultCommand();
             LauncherCommands.setupDefaultCommand();
             LEDsCommands.setupDefaultCommand();
             PilotCommands.setupDefaultCommand();

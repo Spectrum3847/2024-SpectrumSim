@@ -9,7 +9,7 @@ import frc.spectrumLib.mechanism.Mechanism;
 import lombok.*;
 
 public class Climber extends Mechanism {
-    public class ClimberConfig extends Config {
+    public static class ClimberConfig extends Config {
         /* Climber constants in rotations */
         @Getter private final double maxRotation = 104;
         @Getter private final double minRotation = -1;
