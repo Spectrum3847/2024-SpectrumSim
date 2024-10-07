@@ -1,18 +1,20 @@
 package frc.spectrumLib.sim;
 
+import lombok.Getter;
+
 public class ArmConfig {
 
-    public int numMotors = 1;
-    public double pivotX = 0.7;
-    public double pivotY = 0.3;
-    public double ratio = 50;
-    public double length = 0.5;
-    public double simMOI = 0.2;
-    public double simCGLength = 0.3;
-    public double minAngle = Math.toRadians(-60);
-    public double maxAngle = Math.toRadians(90);
-    public double startingAngle = Math.toRadians(90);
-    public boolean simulateGravity = true;
+    @Getter private int numMotors = 1;
+    @Getter private double pivotX = 0.7;
+    @Getter private double pivotY = 0.3;
+    @Getter private double ratio = 50;
+    @Getter private double length = 0.5;
+    @Getter private double simMOI = 0.2;
+    @Getter private double simCGLength = 0.3;
+    @Getter private double minAngle = Math.toRadians(-60);
+    @Getter private double maxAngle = Math.toRadians(90);
+    @Getter private double startingAngle = Math.toRadians(90);
+    @Getter private boolean simulateGravity = true;
 
     public ArmConfig(
             double pivotX,
