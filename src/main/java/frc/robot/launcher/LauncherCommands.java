@@ -5,7 +5,7 @@ import frc.robot.Robot;
 import java.util.function.DoubleSupplier;
 
 public class LauncherCommands {
-    public static Launcher launcher = Robot.launcher;
+    private static Launcher launcher = Robot.getLauncher();
 
     public static void setupDefaultCommand() {
         launcher.setDefaultCommand(launcher.runStop());

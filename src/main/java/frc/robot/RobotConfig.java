@@ -1,8 +1,5 @@
 package frc.robot;
 
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
@@ -15,30 +12,23 @@ import frc.robot.swerve.SwerveConfig;
 
 public class RobotConfig {
 
-    public static class DEFAULT {
+    public static class ConfigHolder {
         public SwerveConfig swerve;
         public ElevatorConfig elevator;
         public LauncherConfig launcher;
         public LEDsConfig leds;
         public PilotConfig pilot;
 
-        public DEFAULT() {
+        public ConfigHolder() {
             swerve = new SwerveConfig();
             elevator = new ElevatorConfig();
             launcher = new LauncherConfig();
             leds = new LEDsConfig();
             pilot = new PilotConfig();
         }
-
-        public class Transforms {
-            public static Transform3d robotToCamera =
-                    new Transform3d(
-                            new Translation3d(0, 0, 0.5), // Centered on the robot, 0.5m up
-                            new Rotation3d(0, Math.toRadians(-15), 0)); // Pitched 15 deg up
-        }
     }
 
-    public static String rioSerial = "empty";
+    public String rioSerial = "empty";
     public static final Double robotInitDelay = 2.0; // Seconds to wait before starting robot code
 
     public final String ALPHA2024SERIAL = "032B1F69";
@@ -48,12 +38,11 @@ public class RobotConfig {
     public static final String CANIVORE = "*"; // CANbus name is 3847
     public static final String RIO_CANBUS = "rio";
 
-    public static final int ledPWMport = 0;
+    public final int ledPWMport = 0;
 
     private RobotType robotType = null;
-    public boolean intakeAttached = true;
 
-    public DEFAULT config;
+    public ConfigHolder config;
 
     public RobotConfig() {
 
@@ -71,10 +60,10 @@ public class RobotConfig {
         // Set Config based on which robot we are on
         switch (getRobotType()) {
             case ALPHA:
-                config = new DEFAULT();
+                config = new ConfigHolder();
                 break;
             case PM:
-                config = new DEFAULT();
+                config = new ConfigHolder();
                 break;
             case SIM:
             case ULTRAVIOLET:

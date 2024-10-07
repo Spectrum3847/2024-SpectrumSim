@@ -10,16 +10,16 @@ import frc.robot.leds.LEDsConfig.Section;
 
 // This file is too long we should probably move some of it to the SpectrumLib
 public class LEDsCommands {
-    private static LEDs leds = Robot.leds;
-    private static LEDsConfig config = Robot.config.leds;
+    private static LEDs leds = Robot.getLeds();
+    private static LEDsConfig config = Robot.getConfig().leds;
 
     public static void setupDefaultCommand() {
         leds.setDefaultCommand(defaultCommand());
     }
 
     public static void setupLEDTriggers() {
-        Trigger coastMode = new Trigger(() -> LEDs.coastModeLED);
-        Trigger launchReady = new Trigger(() -> LEDs.launchReadyLED);
+        Trigger coastMode = new Trigger(() -> leds.isCoastModeLED());
+        Trigger launchReady = new Trigger(() -> leds.isLaunchReadyLED());
         // Trigger visionValid = new Trigger(() -> Vision.isPresent);
         // visionValid.whileTrue(solidGreenLED());
         coastMode.whileTrue(coastLEDs());
@@ -183,7 +183,7 @@ public class LEDsCommands {
     /* Rainbow */
 
     public static Command rainbow(int priority) {
-        return rainbow(Section.FULL, LEDsConfig.length, 1, priority);
+        return rainbow(Section.FULL, LEDsConfig.getLength(), 1, priority);
     }
 
     private static Command rainbow(
@@ -196,7 +196,7 @@ public class LEDsCommands {
 
     @SuppressWarnings("unused")
     private static Command wave(Color c1, Color c2, int priority) {
-        return wave(Section.FULL, c1, c2, LEDsConfig.length, 1, priority);
+        return wave(Section.FULL, c1, c2, LEDsConfig.getLength(), 1, priority);
     }
 
     /* Ombre */
@@ -262,7 +262,7 @@ public class LEDsCommands {
                         () -> leds.countdown(countdownSeconds, priority),
                         (b) -> {},
                         () -> {
-                            return (System.currentTimeMillis() - LEDs.countdownStartTimeMS)
+                            return (System.currentTimeMillis() - leds.getCountdownStartTimeMS())
                                     > countdownSeconds * 1000;
                         })
                 .ignoringDisable(true) // Run while disabled

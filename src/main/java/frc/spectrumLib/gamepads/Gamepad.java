@@ -22,9 +22,9 @@ public abstract class Gamepad extends SpectrumController implements Subsystem {
     // it
     private boolean printed = false; // Used to only print Gamepad Not Deteceted once
 
-    @Getter protected ExpCurve LeftStickCurve;
-    @Getter protected ExpCurve RightStickCurve;
-    @Getter protected ExpCurve TriggersCurve;
+    @Getter protected final ExpCurve leftStickCurve;
+    @Getter protected final ExpCurve rightStickCurve;
+    @Getter protected final ExpCurve triggersCurve;
 
     public static class Config {
         @Getter private String name;
@@ -72,19 +72,19 @@ public abstract class Gamepad extends SpectrumController implements Subsystem {
         super(config.getPort(), config.isXbox(), config.getEmulatedPS5Port(), config.getAttached());
         this.config = config;
         // Curve objects that we use to configure the controller axis ojbects
-        LeftStickCurve =
+        leftStickCurve =
                 new ExpCurve(
                         config.getLeftStickExp(),
                         0,
                         config.getLeftStickScalor(),
                         config.getLeftStickDeadzone());
-        RightStickCurve =
+        rightStickCurve =
                 new ExpCurve(
                         config.getRightStickExp(),
                         0,
                         config.getRightStickScalor(),
                         config.getRightStickDeadzone());
-        TriggersCurve =
+        triggersCurve =
                 new ExpCurve(
                         config.getTriggersExp(),
                         0,

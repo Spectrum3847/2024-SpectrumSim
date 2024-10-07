@@ -349,13 +349,13 @@ public abstract class Mechanism implements Subsystem, NTSendable {
         }
     }
 
-    public static class followerConfig {
+    public static class FollowerConfig {
         @Getter private String name;
         @Getter private CanDeviceId id;
         @Getter private boolean attached = true;
         @Getter private boolean opposeLeader = false;
 
-        public followerConfig(String name, int id, String canbus, boolean opposeLeader) {
+        public FollowerConfig(String name, int id, String canbus, boolean opposeLeader) {
             this.name = name;
             this.id = new CanDeviceId(id, canbus);
             this.opposeLeader = opposeLeader;
@@ -370,7 +370,7 @@ public abstract class Mechanism implements Subsystem, NTSendable {
         @Getter private int numMotors = 1;
         @Getter private double voltageCompSaturation = 12.0; // 12V by default
 
-        @Getter private followerConfig[] followerConfigs = new followerConfig[0];
+        @Getter private FollowerConfig[] followerConfigs = new FollowerConfig[0];
 
         @Getter
         private MotionMagicVelocityTorqueCurrentFOC mmVelocityFOC =
@@ -417,7 +417,7 @@ public abstract class Mechanism implements Subsystem, NTSendable {
             }
         }
 
-        public void setFollowerConfigs(followerConfig... followers) {
+        public void setFollowerConfigs(FollowerConfig... followers) {
             followerConfigs = followers;
         }
 

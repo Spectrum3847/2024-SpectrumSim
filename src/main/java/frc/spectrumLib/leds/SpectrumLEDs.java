@@ -6,11 +6,9 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 
 public class SpectrumLEDs implements Subsystem {
-    protected int priority = 0;
     // LED IO
     private AddressableLED leds;
     private SpectrumLEDBuffer buffer;
-    protected Runnable defaultPattern = () -> {}; // Start with blank pattern
     private boolean update = true;
     private int counter = 0;
     private double time = 0;

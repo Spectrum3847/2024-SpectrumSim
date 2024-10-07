@@ -11,8 +11,9 @@ public class LinearConfig {
     @Getter private double carriageMassKg = 1;
     @Getter private double drumRadius = Units.inchesToMeters(0.955 / 2);
     @Getter private double minHeight = 0;
-    @Getter private double maxHeight =
-            10000; // Units.inchesToMeters(Robot.config.elevator.maxHeight);
+
+    @Getter
+    private double maxHeight = 10000; // Units.inchesToMeters(Robot.config.elevator.maxHeight);
 
     // Display Config
     @Getter private double angle = 90; // O is horizontal, 90 is vertical, CCW is positive

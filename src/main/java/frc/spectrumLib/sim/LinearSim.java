@@ -60,8 +60,7 @@ public class LinearSim {
     }
 
     private double getRotationPerSec() {
-        return (elevatorSim.getVelocityMetersPerSecond()
-                        / (2 * Math.PI * config.getDrumRadius()))
+        return (elevatorSim.getVelocityMetersPerSecond() / (2 * Math.PI * config.getDrumRadius()))
                 * config.getElevatorGearing();
     }
 
@@ -80,6 +79,7 @@ public class LinearSim {
         double displacement = elevatorSim.getPositionMeters();
         root.setPosition(
                 config.getInitialX() + (displacement * Math.cos(Math.toRadians(config.getAngle()))),
-                config.getInitialY() + (displacement * Math.sin(Math.toRadians(config.getAngle()))));
+                config.getInitialY()
+                        + (displacement * Math.sin(Math.toRadians(config.getAngle()))));
     }
 }

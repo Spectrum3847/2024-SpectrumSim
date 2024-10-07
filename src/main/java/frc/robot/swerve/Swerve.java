@@ -45,7 +45,7 @@ public class Swerve extends SwerveDrivetrain implements Subsystem, NTSendable {
             new SwerveRequest.ApplyChassisSpeeds();
 
     public Swerve(SwerveConfig config) {
-        super(config.DrivetrainConstants, config.getModules());
+        super(config.getDrivetrainConstants(), config.getModules());
         this.config = config;
         configurePathPlanner();
 
@@ -82,8 +82,8 @@ public class Swerve extends SwerveDrivetrain implements Subsystem, NTSendable {
     // Keep the robot on the field during simulation
     private void seedCheckedPose(Pose2d pose) {
 
-        double halfRobot = config.robotLength / 2;
-        double maxX = Field.fieldLength - halfRobot;
+        double halfRobot = config.getRobotLength() / 2;
+        double maxX = Field.getFieldLength() - halfRobot;
         double x = pose.getX();
         boolean update = false;
         if (x < halfRobot) {
@@ -94,7 +94,7 @@ public class Swerve extends SwerveDrivetrain implements Subsystem, NTSendable {
             update = true;
         }
 
-        double maxY = Field.fieldWidth - halfRobot;
+        double maxY = Field.getFieldWidth() - halfRobot;
         double y = pose.getY();
         if (y < halfRobot) {
             y = halfRobot;
@@ -130,8 +130,8 @@ public class Swerve extends SwerveDrivetrain implements Subsystem, NTSendable {
                             (allianceColor) -> {
                                 this.setOperatorPerspectiveForward(
                                         allianceColor == Alliance.Red
-                                                ? config.RedAlliancePerspectiveRotation
-                                                : config.BlueAlliancePerspectiveRotation);
+                                                ? config.getRedAlliancePerspectiveRotation()
+                                                : config.getBlueAlliancePerspectiveRotation());
                                 hasAppliedPilotPerspective = true;
                             });
         }
@@ -165,7 +165,7 @@ public class Swerve extends SwerveDrivetrain implements Subsystem, NTSendable {
                 new Pose2d(
                         Units.feetToMeters(27),
                         Units.feetToMeters(27 / 2),
-                        config.BlueAlliancePerspectiveRotation));
+                        config.getBlueAlliancePerspectiveRotation()));
         double driveBaseRadius = 0;
         for (var moduleLocation : m_moduleLocations) {
             driveBaseRadius = Math.max(driveBaseRadius, moduleLocation.getNorm());
@@ -182,7 +182,7 @@ public class Swerve extends SwerveDrivetrain implements Subsystem, NTSendable {
                 new HolonomicPathFollowerConfig(
                         new PIDConstants(10, 0, 0),
                         new PIDConstants(10, 0, 0),
-                        config.kSpeedAt12VoltsMps,
+                        config.getSpeedAt12VoltsMps(),
                         driveBaseRadius,
                         new ReplanningConfig()),
                 () ->
@@ -214,6 +214,6 @@ public class Swerve extends SwerveDrivetrain implements Subsystem, NTSendable {
                             /* use the measured time delta, get battery voltage from WPILib */
                             updateSimState(deltaTime, RobotController.getBatteryVoltage());
                         });
-        m_simNotifier.startPeriodic(config.kSimLoopPeriod);
+        m_simNotifier.startPeriodic(config.getSimLoopPeriod());
     }
 }

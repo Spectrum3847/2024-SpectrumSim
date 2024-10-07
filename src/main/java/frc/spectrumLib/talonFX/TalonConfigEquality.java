@@ -164,19 +164,19 @@ public class TalonConfigEquality {
         if (ENABLE_LOGGING_INEQ && !val) {
             System.out.println("FeedbackConfigs not equal");
             System.out.printf(
-                    "A-FeedbackRotorOffset: %f, B-FeedbackRotorOffset: %f\n",
+                    "A-FeedbackRotorOffset: %f, B-FeedbackRotorOffset: %f%n",
                     a.FeedbackRotorOffset, b.FeedbackRotorOffset);
             System.out.printf(
-                    "A-SensorToMechanismRatio: %f, B-SensorToMechanismRatio: %f\n",
+                    "A-SensorToMechanismRatio: %f, B-SensorToMechanismRatio: %f%n",
                     a.SensorToMechanismRatio, b.SensorToMechanismRatio);
             System.out.printf(
-                    "A-RotorToSensorRatio: %f, B-RotorToSensorRatio: %f\n",
+                    "A-RotorToSensorRatio: %f, B-RotorToSensorRatio: %f%n",
                     a.RotorToSensorRatio, b.RotorToSensorRatio);
             System.out.printf(
-                    "A-FeedbackSensorSource: %d, B-FeedbackSensorSource: %d\n",
+                    "A-FeedbackSensorSource: %d, B-FeedbackSensorSource: %d%n",
                     a.FeedbackSensorSource.value, b.FeedbackSensorSource.value);
             System.out.printf(
-                    "A-FeedbackRemoteSensorID: %d, B-FeedbackRemoteSensorID: %d\n",
+                    "A-FeedbackRemoteSensorID: %d, B-FeedbackRemoteSensorID: %d%n",
                     a.FeedbackRemoteSensorID, b.FeedbackRemoteSensorID);
         }
         return val;
@@ -225,7 +225,7 @@ public class TalonConfigEquality {
     public static boolean isEqual(HardwareLimitSwitchConfigs a, HardwareLimitSwitchConfigs b) {
         boolean val =
                 a.ForwardLimitAutosetPositionEnable == b.ForwardLimitAutosetPositionEnable
-                        && b.ForwardLimitEnable == b.ForwardLimitEnable
+                        && a.ForwardLimitEnable == b.ForwardLimitEnable
                         && a.ReverseLimitAutosetPositionEnable
                                 == b.ReverseLimitAutosetPositionEnable
                         && a.ReverseLimitEnable == b.ReverseLimitEnable

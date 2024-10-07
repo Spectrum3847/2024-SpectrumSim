@@ -161,3 +161,22 @@ spotless {
         endWithNewline()
     }
 }
+
+spotbugs {
+    ignoreFailures = false
+    showStackTraces = true
+    showProgress = true
+    effort = com.github.spotbugs.snom.Effort.DEFAULT
+    reportLevel = com.github.spotbugs.snom.Confidence.valueOf("DEFAULT")
+    reportsDir = file("$buildDir/reports/spotbugs")
+    //includeFilter = file('spotbugs-include.xml')
+    excludeFilter = file('excludeFilter-spotbugs.xml')
+}
+
+tasks.spotbugsMain {
+    reports.create("html") {
+        required = true
+        outputLocation = file("$buildDir/reports/spotbugs.html")
+        setStylesheet("fancy-hist.xsl")
+    }
+}
