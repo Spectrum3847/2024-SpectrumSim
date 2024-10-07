@@ -139,7 +139,16 @@ public abstract class Mechanism implements Subsystem, NTSendable {
      * @param position position in revolutions
      */
     public Command moveToPoseRevolutions(DoubleSupplier position) {
-        return run(() -> setMMPosition(position)).withName(getName() + ".runPosition");
+        return run(() -> setMMPosition(position)).withName(getName() + ".runPoseRevolutions");
+    }
+
+    /**
+     * Move to the specified position.
+     * 
+     * @param position position in percentage of max revolutions
+     */
+    public Command moveToPosePercentage(DoubleSupplier position) {
+        return run(() -> setMMPosition(() -> config.maxRotation * (position.getAsDouble() / 100))).withName(getName() + ".runPosePercentage");
     }
 
     /**
@@ -344,6 +353,8 @@ public abstract class Mechanism implements Subsystem, NTSendable {
         @Getter private CanDeviceId id;
         @Getter private TalonFXConfiguration talonConfig;
         @Getter private double voltageCompSaturation = 12.0; // 12V by default
+        @Getter private double minRotation;
+        @Getter private double maxRotation;
 
         @Getter
         private MotionMagicVelocityTorqueCurrentFOC mmVelocityFOC =
@@ -580,6 +591,17 @@ public abstract class Mechanism implements Subsystem, NTSendable {
             } else {
                 DriverStation.reportWarning("MechConfig: Invalid Feedback slot", false);
             }
+        }
+
+        /**
+         * Sets the minimum and maximum motor rotations
+         * 
+         * @param minRotation
+         * @param maxRotation
+         */
+        protected void configMinMaxRotations(double minRotation, double maxRotation) {
+            this.minRotation = minRotation;
+            this.maxRotation = maxRotation;
         }
     }
 }

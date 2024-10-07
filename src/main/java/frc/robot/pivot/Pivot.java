@@ -22,10 +22,6 @@ import lombok.*;
 public class Pivot extends Mechanism {
 
     public static class PivotConfig extends Config {
-        /* Pivot constants in motor rotations */
-        @Getter private final double maxRotation = 0.96; // 0.967
-        @Getter private final double minRotation = 0;
-
         /* Pivot positions in percentage of max rotation || 0 is horizontal */
         @Getter private final double score = 65;
         @Getter private final double climbHome = 3;
@@ -89,8 +85,9 @@ public class Pivot extends Mechanism {
             configReverseTorqueCurrentLimit(torqueCurrentLimit);
             configNeutralBrakeMode(true);
             configClockwise_Positive();
-            configReverseSoftLimit(minRotation, true);
-            configForwardSoftLimit(maxRotation, true);
+            configMinMaxRotations(0, 0.96);
+            configReverseSoftLimit(getMinRotation(), true);
+            configForwardSoftLimit(getMaxRotation(), true);
             configMotionMagic(147000, 161000, 0);
         }
 
@@ -274,8 +271,8 @@ public class Pivot extends Mechanism {
                             config.pivotY,
                             config.ratio,
                             config.length,
-                            config.minRotation,
-                            config.maxRotation),
+                            config.getMinRotation(),
+                            config.getMaxRotation()),
                     mech,
                     pivotMotorSim,
                     config.getName());
