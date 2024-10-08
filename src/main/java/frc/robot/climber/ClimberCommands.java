@@ -9,7 +9,7 @@ import java.util.function.DoubleSupplier;
 
 public class ClimberCommands {
     private static Climber climber = Robot.getClimber();
-    private static ClimberConfig config = Robot.config.climber;
+    private static ClimberConfig config = Robot.getConfig().climber;
 
     public static void setupDefaultCommand() {
         climber.setDefaultCommand(holdPosition().ignoringDisable(true).withName("Climber.default"));
