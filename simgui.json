@@ -61,6 +61,11 @@
       "/SmartDashboard/Viz": "Mechanism2d"
     },
     "windows": {
+      "/SmartDashboard/LeftView": {
+        "window": {
+          "visible": true
+        }
+      },
       "/SmartDashboard/Scheduler": {
         "window": {
           "visible": true
