@@ -150,8 +150,18 @@ public abstract class Mechanism implements Subsystem, NTSendable {
      *
      * @param position position in revolutions
      */
-    public Command runPosition(DoubleSupplier position) {
-        return run(() -> setMMPosition(position)).withName(getName() + ".runPosition");
+    public Command moveToPoseRevolutions(DoubleSupplier position) {
+        return run(() -> setMMPosition(position)).withName(getName() + ".runPoseRevolutions");
+    }
+
+    /**
+     * Move to the specified position.
+     *
+     * @param position position in percentage of max revolutions
+     */
+    public Command moveToPosePercentage(DoubleSupplier position) {
+        return run(() -> setMMPosition(() -> config.maxRotation * (position.getAsDouble() / 100)))
+                .withName(getName() + ".runPosePercentage");
     }
 
     /**
@@ -193,7 +203,7 @@ public abstract class Mechanism implements Subsystem, NTSendable {
                 .withName(getName() + ".ensureBrakeMode");
     }
 
-    public void stop() {
+    protected void stop() {
         if (isAttached()) {
             motor.stopMotor();
         }
@@ -211,7 +221,7 @@ public abstract class Mechanism implements Subsystem, NTSendable {
      *
      * @param position rotations
      */
-    public void setMotorPosition(DoubleSupplier position) {
+    protected void setMotorPosition(DoubleSupplier position) {
         if (isAttached()) {
             motor.setPosition(position.getAsDouble());
         }
@@ -222,7 +232,7 @@ public abstract class Mechanism implements Subsystem, NTSendable {
      *
      * @param velocity rotations per second
      */
-    public void setMMVelocityFOC(DoubleSupplier velocity) {
+    protected void setMMVelocityFOC(DoubleSupplier velocity) {
         if (isAttached()) {
             MotionMagicVelocityTorqueCurrentFOC mm =
                     config.mmVelocityFOC.withVelocity(velocity.getAsDouble());
@@ -235,7 +245,7 @@ public abstract class Mechanism implements Subsystem, NTSendable {
      *
      * @param velocity rotations per second
      */
-    public void setVelocityTorqueCurrentFOC(DoubleSupplier velocity) {
+    protected void setVelocityTorqueCurrentFOC(DoubleSupplier velocity) {
         if (isAttached()) {
             VelocityTorqueCurrentFOC output =
                     config.velocityTorqueCurrentFOC.withVelocity(velocity.getAsDouble());
@@ -248,7 +258,7 @@ public abstract class Mechanism implements Subsystem, NTSendable {
      *
      * @param velocity rotations per second
      */
-    public void setVelocityTCFOCrpm(DoubleSupplier velocityRPM) {
+    protected void setVelocityTCFOCrpm(DoubleSupplier velocityRPM) {
         if (isAttached()) {
             VelocityTorqueCurrentFOC output =
                     config.velocityTorqueCurrentFOC.withVelocity(
@@ -262,7 +272,7 @@ public abstract class Mechanism implements Subsystem, NTSendable {
      *
      * @param velocity rotations per second
      */
-    public void setVelocity(DoubleSupplier velocity) {
+    protected void setVelocity(DoubleSupplier velocity) {
         if (isAttached()) {
             VelocityVoltage output = config.velocityControl.withVelocity(velocity.getAsDouble());
             motor.setControl(output);
@@ -274,7 +284,7 @@ public abstract class Mechanism implements Subsystem, NTSendable {
      *
      * @param position rotations
      */
-    public void setMMPositionFOC(DoubleSupplier position) {
+    protected void setMMPositionFOC(DoubleSupplier position) {
         if (isAttached()) {
             MotionMagicTorqueCurrentFOC mm =
                     config.mmPositionFOC.withPosition(position.getAsDouble());
@@ -287,7 +297,7 @@ public abstract class Mechanism implements Subsystem, NTSendable {
      *
      * @param position rotations
      */
-    public void setMMPosition(DoubleSupplier position) {
+    protected void setMMPosition(DoubleSupplier position) {
         setMMPosition(position, 0);
     }
 
@@ -370,6 +380,8 @@ public abstract class Mechanism implements Subsystem, NTSendable {
         @Getter private TalonFXConfiguration talonConfig;
         @Getter private int numMotors = 1;
         @Getter private double voltageCompSaturation = 12.0; // 12V by default
+        @Getter private double minRotation;
+        @Getter private double maxRotation;
 
         @Getter private FollowerConfig[] followerConfigs = new FollowerConfig[0];
 
@@ -612,6 +624,17 @@ public abstract class Mechanism implements Subsystem, NTSendable {
             } else {
                 DriverStation.reportWarning("MechConfig: Invalid Feedback slot", false);
             }
+        }
+
+        /**
+         * Sets the minimum and maximum motor rotations
+         *
+         * @param minRotation
+         * @param maxRotation
+         */
+        protected void configMinMaxRotations(double minRotation, double maxRotation) {
+            this.minRotation = minRotation;
+            this.maxRotation = maxRotation;
         }
     }
 }
