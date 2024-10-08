@@ -1,22 +1,21 @@
 package frc.spectrumLib.lasercan;
 
-import java.util.function.IntSupplier;
-
 import au.grapplerobotics.ConfigurationFailedException;
 import au.grapplerobotics.LaserCan;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import java.util.function.IntSupplier;
 import lombok.Getter;
 import lombok.Setter;
 
-public class LaserCanSubsystem implements Subsystem{
+public class LaserCanSubsystem implements Subsystem {
     private LaserCan lasercan;
     private LaserCanConfig config;
     private double cachedValue = -1000;
 
-    public static class LaserCanConfig{
+    public static class LaserCanConfig {
         @Getter @Setter private String name;;
         @Getter @Setter private int id;
         @Getter @Setter private boolean shortRange = true;
@@ -24,9 +23,11 @@ public class LaserCanSubsystem implements Subsystem{
         @Getter @Setter private int y = 8;
         @Getter @Setter private int w = 4;
         @Getter @Setter private int h = 4;
-        @Getter @Setter private LaserCan.TimingBudget timingBudget = LaserCan.TimingBudget.TIMING_BUDGET_100MS;
 
-        public LaserCanConfig(String name, int id){
+        @Getter @Setter
+        private LaserCan.TimingBudget timingBudget = LaserCan.TimingBudget.TIMING_BUDGET_100MS;
+
+        public LaserCanConfig(String name, int id) {
             this.name = name;
             this.id = id;
         }
@@ -41,7 +42,8 @@ public class LaserCanSubsystem implements Subsystem{
         } else {
             setLongRange();
         }
-        setRegionOfInterest(config.getX(), config.getY(), config.getW(), config.getH()); // max region
+        setRegionOfInterest(
+                config.getX(), config.getY(), config.getW(), config.getH()); // max region
         setTimingBudget(config.getTimingBudget()); // Can only set ms to 20, 33, 50, and 100
         CommandScheduler.getInstance().registerSubsystem(this);
     }
@@ -57,11 +59,15 @@ public class LaserCanSubsystem implements Subsystem{
     }
 
     public Trigger isGreaterThan(IntSupplier distance) {
-        return new Trigger(() -> getDistance() > distance.getAsInt()).and(validDistance()).debounce(0.25);
+        return new Trigger(() -> getDistance() > distance.getAsInt())
+                .and(validDistance())
+                .debounce(0.25);
     }
 
     public Trigger isLessThan(IntSupplier distance) {
-        return new Trigger(() -> getDistance() < distance.getAsInt()).and(validDistance()).debounce(0.25);
+        return new Trigger(() -> getDistance() < distance.getAsInt())
+                .and(validDistance())
+                .debounce(0.25);
     }
 
     public Trigger validDistance() {
@@ -126,7 +132,11 @@ public class LaserCanSubsystem implements Subsystem{
             } else {
                 if (measurement.status != 2) {
                     DriverStation.reportWarning(
-                            "LaserCan #" + config.getId() + " status went bad: " + measurement.status, false);
+                            "LaserCan #"
+                                    + config.getId()
+                                    + " status went bad: "
+                                    + measurement.status,
+                            false);
                 }
                 return measurement.distance_mm;
             }
@@ -134,4 +144,6 @@ public class LaserCanSubsystem implements Subsystem{
             return -1000;
         }
     }
+
+    // TODO: Add Simulation Code for LaserCANS
 }
