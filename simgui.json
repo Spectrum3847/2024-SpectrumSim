@@ -123,16 +123,13 @@
         "open": true
       },
       "SmartDashboard": {
-        "Elevator": {
+        "Elevator LaserCan": {
           "open": true
         },
         "Elevator:TEST": {
           "open": true
         },
         "ElevatorT": {
-          "open": true
-        },
-        "Launcher": {
           "open": true
         },
         "open": true,
