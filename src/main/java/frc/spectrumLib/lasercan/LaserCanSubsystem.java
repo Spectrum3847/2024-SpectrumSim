@@ -2,22 +2,28 @@ package frc.spectrumLib.lasercan;
 
 import au.grapplerobotics.ConfigurationFailedException;
 import au.grapplerobotics.LaserCan;
+import edu.wpi.first.networktables.NTSendable;
+import edu.wpi.first.networktables.NTSendableBuilder;
+import edu.wpi.first.util.sendable.SendableRegistry;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Robot;
 import java.util.function.IntSupplier;
 import lombok.Getter;
 import lombok.Setter;
 
-public class LaserCanSubsystem implements Subsystem {
+public class LaserCanSubsystem implements Subsystem, NTSendable {
     private LaserCan lasercan;
     private LaserCanConfig config;
-    private double cachedValue = -1000;
+    @Setter private double cachedValue = -1000; // -1000 is an error value or no data
 
     public static class LaserCanConfig {
         @Getter @Setter private String name;;
         @Getter @Setter private int id;
+        @Getter @Setter private boolean attached = true;
         @Getter @Setter private boolean shortRange = true;
         @Getter @Setter private int x = 8;
         @Getter @Setter private int y = 8;
@@ -36,7 +42,9 @@ public class LaserCanSubsystem implements Subsystem {
     // default constructor
     public LaserCanSubsystem(LaserCanConfig config) {
         this.config = config;
-        lasercan = new LaserCan(config.id);
+        if (config.isAttached()) {
+            lasercan = new LaserCan(config.id);
+        }
         if (config.isShortRange() == true) {
             setShortRange();
         } else {
@@ -45,17 +53,46 @@ public class LaserCanSubsystem implements Subsystem {
         setRegionOfInterest(
                 config.getX(), config.getY(), config.getW(), config.getH()); // max region
         setTimingBudget(config.getTimingBudget()); // Can only set ms to 20, 33, 50, and 100
+        telemetryInit();
         CommandScheduler.getInstance().registerSubsystem(this);
+    }
+
+    public LaserCanSubsystem(String name, int id, boolean attached) {
+        this(new LaserCanConfig(name, id).setAttached(attached));
+    }
+
+    public boolean isAttached() {
+        return config.isAttached();
     }
 
     @Override
     public void periodic() {
-        cachedValue = updateDistance();
+        if (isAttached() && Robot.isReal()) {
+            cachedValue = updateDistance();
+        }
     }
 
     @Override
     public String getName() {
         return config.getName();
+    }
+
+    @Override
+    public void initSendable(NTSendableBuilder builder) {
+        builder.setSmartDashboardType(getName());
+        builder.addBooleanProperty("Attached", this::isAttached, null);
+        if (Robot.isSimulation()) {
+            builder.addDoubleProperty("Distance", this::getDistance, this::setCachedValue);
+        } else {
+            builder.addDoubleProperty("Distance", this::getDistance, null);
+        }
+    }
+
+    // Setup the telemetry values, has to be called at the end of the implemetned mechanism
+    // constructor
+    public void telemetryInit() {
+        SendableRegistry.add(this, getName());
+        SmartDashboard.putData(this);
     }
 
     public Trigger isGreaterThan(IntSupplier distance) {
@@ -74,23 +111,30 @@ public class LaserCanSubsystem implements Subsystem {
         return new Trigger(() -> getDistance() >= 0);
     }
 
-    /* Helper methods for constructors */
+    public double getDistance() {
+        return cachedValue;
+    }
 
+    /* Helper methods for constructors */
     public void setShortRange() {
         config.setShortRange(true);
-        try {
-            lasercan.setRangingMode(LaserCan.RangingMode.SHORT);
-        } catch (ConfigurationFailedException e) {
-            logError();
+        if (isAttached() && Robot.isReal()) {
+            try {
+                lasercan.setRangingMode(LaserCan.RangingMode.SHORT);
+            } catch (ConfigurationFailedException e) {
+                logError();
+            }
         }
     }
 
     public void setLongRange() {
         config.setShortRange(false);
-        try {
-            lasercan.setRangingMode(LaserCan.RangingMode.LONG);
-        } catch (ConfigurationFailedException e) {
-            logError();
+        if (isAttached() && Robot.isReal()) {
+            try {
+                lasercan.setRangingMode(LaserCan.RangingMode.LONG);
+            } catch (ConfigurationFailedException e) {
+                logError();
+            }
         }
     }
 
@@ -99,19 +143,23 @@ public class LaserCanSubsystem implements Subsystem {
         config.setY(y);
         config.setW(w);
         config.setH(h);
-        try {
-            lasercan.setRegionOfInterest(new LaserCan.RegionOfInterest(x, y, w, h));
-        } catch (ConfigurationFailedException e) {
-            logError();
+        if (isAttached() && Robot.isReal()) {
+            try {
+                lasercan.setRegionOfInterest(new LaserCan.RegionOfInterest(x, y, w, h));
+            } catch (ConfigurationFailedException e) {
+                logError();
+            }
         }
     }
 
     public void setTimingBudget(LaserCan.TimingBudget timingBudget) {
         config.setTimingBudget(timingBudget);
-        try {
-            lasercan.setTimingBudget(timingBudget);
-        } catch (ConfigurationFailedException e) {
-            logError();
+        if (isAttached() && Robot.isReal()) {
+            try {
+                lasercan.setTimingBudget(timingBudget);
+            } catch (ConfigurationFailedException e) {
+                logError();
+            }
         }
     }
 
@@ -120,30 +168,25 @@ public class LaserCanSubsystem implements Subsystem {
         DriverStation.reportWarning("LaserCan: failed to complete operation", false);
     }
 
-    public double getDistance() {
-        return cachedValue;
-    }
-
     private int updateDistance() {
-        LaserCan.Measurement measurement = lasercan.getMeasurement();
-        if (measurement != null) {
-            if (measurement.status == 0) {
-                return measurement.distance_mm;
-            } else {
-                if (measurement.status != 2) {
-                    DriverStation.reportWarning(
-                            "LaserCan #"
-                                    + config.getId()
-                                    + " status went bad: "
-                                    + measurement.status,
-                            false);
+        if (isAttached() && Robot.isReal()) {
+            LaserCan.Measurement measurement = lasercan.getMeasurement();
+            if (measurement != null) {
+                if (measurement.status == 0) {
+                    return measurement.distance_mm;
+                } else {
+                    if (measurement.status != 2) {
+                        DriverStation.reportWarning(
+                                "LaserCan #"
+                                        + config.getId()
+                                        + " status went bad: "
+                                        + measurement.status,
+                                false);
+                    }
+                    return measurement.distance_mm;
                 }
-                return measurement.distance_mm;
             }
-        } else {
-            return -1000;
         }
+        return -1000;
     }
-
-    // TODO: Add Simulation Code for LaserCANS
 }
