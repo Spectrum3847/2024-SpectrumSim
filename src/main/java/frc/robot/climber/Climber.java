@@ -1,10 +1,19 @@
 package frc.robot.climber;
 
+import com.ctre.phoenix6.sim.TalonFXSimState;
 import edu.wpi.first.networktables.NTSendableBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import frc.robot.RobotConfig;
+import frc.robot.RobotSim;
+import frc.robot.RobotTelemetry;
+import frc.spectrumLib.mechanism.Mechanism;
+import frc.spectrumLib.sim.LinearConfig;
+import frc.spectrumLib.sim.LinearSim;
+import frc.robot.RobotSim;
+import frc.robot.RobotTelemetry;
 import frc.spectrumLib.mechanism.Mechanism;
 import lombok.*;
 
@@ -54,10 +63,16 @@ public class Climber extends Mechanism {
     }
 
     private ClimberConfig config;
+    //private ClimberSim sim;
 
     public Climber(ClimberConfig config) {
         super(config); // unsure if we need this, may delete and test
         this.config = config;
+
+        // simulationInit();
+        // simulationPeriodic();
+
+        RobotTelemetry.print(getName() + " Subsystem Initialized");
     }
 
     @Override
@@ -138,4 +153,18 @@ public class Climber extends Mechanism {
     // --------------------------------------------------------------------------------
     // Simulation
     // --------------------------------------------------------------------------------
+
+    // public void simulationInit() {
+    //     if (isAttached()) {
+    //         sim = new ClimberSim(motor.getSimState(), RobotSim.leftView);
+    //     }
+    // }
+
+    // @Override
+    // public void simulationPeriodic() {
+    //     if (isAttached()) {
+    //         sim.simulationPeriodic();
+    //     }
+
+    // }
 }

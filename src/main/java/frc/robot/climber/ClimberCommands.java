@@ -3,6 +3,9 @@ package frc.robot.climber;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Robot;
 import frc.robot.climber.Climber.ClimberConfig;
+import frc.spectrumLib.util.TuneValue;
+import java.util.function.DoubleSupplier;
+
 
 public class ClimberCommands {
     private static Climber climber = Robot.getClimber();
@@ -10,6 +13,10 @@ public class ClimberCommands {
 
     public static void setupDefaultCommand() {
         climber.setDefaultCommand(holdPosition().ignoringDisable(true).withName("Climber.default"));
+    }
+
+    public static Command runClimber(DoubleSupplier speed) {
+        return climber.runPercentage(speed).withName("Climber.runClimber");
     }
 
     public static Command holdPosition() {
@@ -46,5 +53,9 @@ public class ClimberCommands {
 
     public static void ensureBrakeMode() {
         climber.ensureBrakeMode().withName("Climber.BrakeMode");
+    }
+
+    public static Command tuneClimber() {
+        return climber.runPosition(new TuneValue("Tune Climber", 0).getSupplier()).withName("Climber.Tune");
     }
 }
