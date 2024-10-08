@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.RobotConfig.DEFAULT;
+import frc.robot.RobotConfig.ConfigHolder;
 import frc.robot.climber.Climber;
 import frc.robot.climber.ClimberCommands;
 import frc.robot.elevator.Elevator;
@@ -20,24 +20,24 @@ import frc.robot.swerve.Swerve;
 import frc.robot.swerve.SwerveCommands;
 import frc.robot.vision.VisionSystem;
 import frc.spectrumLib.util.CrashTracker;
-import lombok.*;
+import lombok.Getter;
 
 public class Robot extends TimedRobot {
-    public static RobotConfig robotConfig;
-    public static DEFAULT config;
+    @Getter private static RobotConfig robotConfig;
+    @Getter private static ConfigHolder config;
 
     /** Create a single static instance of all of your subsystems */
-    public static RobotTelemetry telemetry;
+    @Getter private static RobotTelemetry telemetry;
 
-    public static RobotSim robotSim;
+    @Getter private static RobotSim robotSim;
 
-    public static Swerve swerve;
+    @Getter private static Swerve swerve;
     @Getter private static Climber climber;
-    public static Elevator elevator;
-    public static Launcher launcher;
-    public static LEDs leds;
-    public static Pilot pilot;
-    public static VisionSystem visionSystem;
+    @Getter private static Elevator elevator;
+    @Getter private static Launcher launcher;
+    @Getter private static LEDs leds;
+    @Getter private static Pilot pilot;
+    @Getter private static VisionSystem visionSystem;
 
     @SuppressWarnings("unused")
     private Command m_autonomousCommand;
@@ -78,6 +78,7 @@ public class Robot extends TimedRobot {
              * code. Anything with an output that needs to be independently controlled is a
              * subsystem Something that don't have an output are alos subsystems.
              */
+            leds = new LEDs(config.leds);
             double canInitDelay = 0.1; // Delay between any mechanism with motor/can configs
             swerve = new Swerve(config.swerve);
             Timer.delay(canInitDelay);
@@ -86,7 +87,6 @@ public class Robot extends TimedRobot {
             Timer.delay(canInitDelay);
             launcher = new Launcher(config.launcher);
             pilot = new Pilot(config.pilot);
-            leds = new LEDs(config.leds);
             visionSystem = new VisionSystem(swerve::getRobotPose);
 
             /** Intialize Telemetry */

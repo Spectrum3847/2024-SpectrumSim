@@ -25,7 +25,9 @@ public class RollerSim {
             RollerConfig config, Mechanism2d mech, TalonFXSimState rollerMotorSim, String name) {
         this.config = config;
         this.rollerMotorSim = rollerMotorSim;
-        rollerSim = new FlywheelSim(DCMotor.getKrakenX60Foc(1), config.gearRatio, config.simMOI);
+        rollerSim =
+                new FlywheelSim(
+                        DCMotor.getKrakenX60Foc(1), config.getGearRatio(), config.getSimMOI());
 
         rollerAxle = mech.getRoot(name + " Axle", 0.0, 0.0);
 
@@ -33,20 +35,20 @@ public class RollerSim {
                 rollerAxle.append(
                         new MechanismLigament2d(
                                 name + " Roller",
-                                Units.inchesToMeters(config.rollerDiameterInches) / 2.0,
+                                Units.inchesToMeters(config.getRollerDiameterInches()) / 2.0,
                                 0.0,
                                 5.0,
                                 new Color8Bit(Color.kWhite)));
 
-        rollerBackground = new MechanismLigament2d[config.backgroundLines];
-        for (int i = 0; i < config.backgroundLines; i++) {
+        rollerBackground = new MechanismLigament2d[config.getBackgroundLines()];
+        for (int i = 0; i < config.getBackgroundLines(); i++) {
             rollerBackground[i] =
                     rollerAxle.append(
                             new MechanismLigament2d(
                                     name + " Background " + i,
-                                    Units.inchesToMeters(config.rollerDiameterInches) / 2.0,
-                                    (360 / config.backgroundLines) * i,
-                                    config.rollerDiameterInches,
+                                    Units.inchesToMeters(config.getRollerDiameterInches()) / 2.0,
+                                    (360 / config.getBackgroundLines()) * i,
+                                    config.getRollerDiameterInches(),
                                     new Color8Bit(Color.kBlack)));
         }
     }
@@ -74,26 +76,26 @@ public class RollerSim {
                 rollerViz.getAngle() + Math.toDegrees(rpm) * TimedRobot.kDefaultPeriod * 0.1);
 
         if (rollerSim.getAngularVelocityRadPerSec() < -1) {
-            setHalfBackground(config.revColor);
+            setHalfBackground(config.getRevColor());
         } else if (rollerSim.getAngularVelocityRadPerSec() > 1) {
-            setBackgroundColor(config.fwdColor);
+            setBackgroundColor(config.getFwdColor());
         } else {
-            setBackgroundColor(config.offColor);
+            setBackgroundColor(config.getOffColor());
         }
     }
 
     public void setBackgroundColor(Color8Bit color8Bit) {
-        for (int i = 0; i < config.backgroundLines; i++) {
+        for (int i = 0; i < config.getBackgroundLines(); i++) {
             rollerBackground[i].setColor(color8Bit);
         }
     }
 
     public void setHalfBackground(Color8Bit color8Bit) {
-        for (int i = 0; i < config.backgroundLines; i++) {
+        for (int i = 0; i < config.getBackgroundLines(); i++) {
             if (i % 2 == 0) {
                 rollerBackground[i].setColor(color8Bit);
             } else {
-                rollerBackground[i].setColor(config.offColor);
+                rollerBackground[i].setColor(config.getOffColor());
             }
         }
     }

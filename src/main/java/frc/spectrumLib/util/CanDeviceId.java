@@ -25,6 +25,28 @@ public class CanDeviceId {
     }
 
     public boolean equals(CanDeviceId other) {
-        return other.mDeviceNumber == mDeviceNumber && other.mBus == mBus;
+        return equals((Object) other);
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + mDeviceNumber;
+        result = prime * result + ((mBus == null) ? 0 : mBus.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null) return false;
+        if (getClass() != obj.getClass()) return false;
+        CanDeviceId other = (CanDeviceId) obj;
+        if (mDeviceNumber != other.mDeviceNumber) return false;
+        if (mBus == null) {
+            if (other.mBus != null) return false;
+        } else if (!mBus.equals(other.mBus)) return false;
+        return true;
     }
 }

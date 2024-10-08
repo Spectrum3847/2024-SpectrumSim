@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.RobotConfig;
 import frc.robot.RobotSim;
 import frc.robot.RobotTelemetry;
+import frc.spectrumLib.lasercan.LaserCanSubsystem;
 import frc.spectrumLib.mechanism.Mechanism;
 import frc.spectrumLib.sim.LinearConfig;
 import frc.spectrumLib.sim.LinearSim;
@@ -52,7 +53,7 @@ public class Elevator extends Mechanism {
 
         public ElevatorConfig() {
             super("Elevator", 52, RobotConfig.CANIVORE);
-            setFollowerConfigs(new followerConfig("left", 53, RobotConfig.CANIVORE, false));
+            setFollowerConfigs(new FollowerConfig("left", 53, RobotConfig.CANIVORE, false));
             configPIDGains(0, positionKp, 0, 0);
             configFeedForwardGains(0, positionKv, 0, 0);
             configMotionMagic(700, 900, 0); // 40, 120 FOC // 120, 195 Regular
@@ -75,10 +76,13 @@ public class Elevator extends Mechanism {
 
     private ElevatorConfig config;
     private ElevatorSim sim;
+    @Getter private LaserCanSubsystem laserCan;
 
     public Elevator(ElevatorConfig config) {
         super(config);
-        this.config = config; // unsure if we need this, may delete and test
+        this.config = config;
+        // just for lasercan testing, should be on intake/amptrap
+        laserCan = new LaserCanSubsystem("Elevator LaserCan", 1, true);
 
         simulationInit();
         telemetryInit();
@@ -110,6 +114,11 @@ public class Elevator extends Mechanism {
 
     public Trigger isUp() {
         return new Trigger(() -> (getMotorPosition() >= config.getElevatorUpHeight()));
+    }
+
+    public Trigger hasNote() {
+        // This should be a config value and use the getter to set it.
+        return getLaserCan().isGreaterThan(() -> 100);
     }
 
     // --------------------------------------------------------------------------------

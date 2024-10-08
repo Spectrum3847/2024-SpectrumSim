@@ -3,30 +3,32 @@ package frc.spectrumLib.sim;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
+import lombok.Getter;
 
 public class LinearConfig {
-    public int numMotors = 1;
-    public double kElevatorGearing = 5;
-    public double kCarriageMassKg = 1;
-    public double kElevatorDrumRadius = Units.inchesToMeters(0.955 / 2);
-    public double kMinElevatorHeight = 0;
-    public double kMaxElevatorHeight =
-            10000; // Units.inchesToMeters(Robot.config.elevator.maxHeight);
+    @Getter private int numMotors = 1;
+    @Getter private double elevatorGearing = 5;
+    @Getter private double carriageMassKg = 1;
+    @Getter private double drumRadius = Units.inchesToMeters(0.955 / 2);
+    @Getter private double minHeight = 0;
+
+    @Getter
+    private double maxHeight = 10000; // Units.inchesToMeters(Robot.config.elevator.maxHeight);
 
     // Display Config
-    public double angle = 90; // O is horizontal, 90 is vertical, CCW is positive
-    public Color8Bit color = new Color8Bit(Color.kPurple);
-    public double lineWidth = 10;
-    public double initialX = 0.5;
-    public double initialY = 0;
-    public double staticLength = 20;
-    public double movingLength = 20;
+    @Getter private double angle = 90; // O is horizontal, 90 is vertical, CCW is positive
+    @Getter private Color8Bit color = new Color8Bit(Color.kPurple);
+    @Getter private double lineWidth = 10;
+    @Getter private double initialX = 0.5;
+    @Getter private double initialY = 0;
+    @Getter private double staticLength = 20;
+    @Getter private double movingLength = 20;
 
     public LinearConfig(double x, double y, double gearing, double drumRadius) {
         this.initialX = x;
         this.initialY = y;
-        kElevatorGearing = gearing;
-        kElevatorDrumRadius = drumRadius;
+        elevatorGearing = gearing;
+        this.drumRadius = drumRadius;
     }
 
     public LinearConfig setNumMotors(int numMotors) {
@@ -35,7 +37,7 @@ public class LinearConfig {
     }
 
     public LinearConfig setCarriageMass(double carriageMassKg) {
-        this.kCarriageMassKg = carriageMassKg;
+        this.carriageMassKg = carriageMassKg;
         return this;
     }
 

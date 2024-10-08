@@ -22,9 +22,9 @@ public abstract class Gamepad extends SpectrumController implements Subsystem {
     // it
     private boolean printed = false; // Used to only print Gamepad Not Deteceted once
 
-    @Getter protected ExpCurve LeftStickCurve;
-    @Getter protected ExpCurve RightStickCurve;
-    @Getter protected ExpCurve TriggersCurve;
+    @Getter protected final ExpCurve leftStickCurve;
+    @Getter protected final ExpCurve rightStickCurve;
+    @Getter protected final ExpCurve triggersCurve;
 
     public static class Config {
         @Getter private String name;
@@ -41,15 +41,15 @@ public abstract class Gamepad extends SpectrumController implements Subsystem {
 
         @Getter @Setter int emulatedPS5Port;
 
-        @Getter @Setter double leftStickDeadzone = 0.0; // TODO: reivew
+        @Getter @Setter double leftStickDeadzone = 0.0;
         @Getter @Setter double leftStickExp = 1.0;
         @Getter @Setter double leftStickScalor = 1.0;
 
-        @Getter @Setter double rightStickDeadzone = 0.0; // TODO: reivew
+        @Getter @Setter double rightStickDeadzone = 0.0;
         @Getter @Setter double rightStickExp = 1.0;
         @Getter @Setter double rightStickScalor = 1.0;
 
-        @Getter @Setter double triggersDeadzone = 0.0; // TODO: review
+        @Getter @Setter double triggersDeadzone = 0.0;
         @Getter @Setter double triggersExp = 1.0;
         @Getter @Setter double triggersScalor = 1.0;
 
@@ -72,19 +72,19 @@ public abstract class Gamepad extends SpectrumController implements Subsystem {
         super(config.getPort(), config.isXbox(), config.getEmulatedPS5Port(), config.getAttached());
         this.config = config;
         // Curve objects that we use to configure the controller axis ojbects
-        LeftStickCurve =
+        leftStickCurve =
                 new ExpCurve(
                         config.getLeftStickExp(),
                         0,
                         config.getLeftStickScalor(),
                         config.getLeftStickDeadzone());
-        RightStickCurve =
+        rightStickCurve =
                 new ExpCurve(
                         config.getRightStickExp(),
                         0,
                         config.getRightStickScalor(),
                         config.getRightStickDeadzone());
-        TriggersCurve =
+        triggersCurve =
                 new ExpCurve(
                         config.getTriggersExp(),
                         0,

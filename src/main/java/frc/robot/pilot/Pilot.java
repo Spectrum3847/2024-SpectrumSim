@@ -46,10 +46,10 @@ public class Pilot extends Gamepad {
         x().whileTrue(ElevatorCommands.home());
         y().whileTrue(ElevatorCommands.runElevator(() -> getLeftY()));
 
-        b().whileTrue(LauncherCommands.runVelocity(Robot.config.launcher::getMaxVelocity));
+        b().whileTrue(LauncherCommands.runVelocity(Robot.getConfig().launcher::getMaxVelocity));
         x().whileTrue(
                         LauncherCommands.runVelocity(
-                                () -> -1 * Robot.config.launcher.getMaxVelocity()));
+                                () -> -1 * Robot.getConfig().launcher.getMaxVelocity()));
     };
 
     /** Setup the Buttons for Disabled mode. */
@@ -63,17 +63,17 @@ public class Pilot extends Gamepad {
     };
 
     public void setMaxVelocity(double maxVelocity) {
-        LeftStickCurve.setScalar(maxVelocity);
+        leftStickCurve.setScalar(maxVelocity);
     }
 
     public void setMaxRotationalVelocity(double maxRotationalVelocity) {
-        TriggersCurve.setScalar(maxRotationalVelocity);
+        triggersCurve.setScalar(maxRotationalVelocity);
     }
 
     // Positive is forward, up on the left stick is positive
     // Applies Expontial Curve, Deadzone, and Slow Mode toggle
     public double getDriveFwdPositive() {
-        double fwdPositive = LeftStickCurve.calculate(-1 * getLeftY());
+        double fwdPositive = leftStickCurve.calculate(-1 * getLeftY());
         if (isSlowMode) {
             fwdPositive *= Math.abs(config.getSlowModeScalor());
         }
@@ -83,7 +83,7 @@ public class Pilot extends Gamepad {
     // Positive is left, left on the left stick is positive
     // Applies Expontial Curve, Deadzone, and Slow Mode toggle
     public double getDriveLeftPositive() {
-        double leftPositive = -1 * LeftStickCurve.calculate(getLeftX());
+        double leftPositive = -1 * leftStickCurve.calculate(getLeftX());
         if (isSlowMode) {
             leftPositive *= Math.abs(config.getSlowModeScalor());
         }
@@ -93,7 +93,7 @@ public class Pilot extends Gamepad {
     // Positive is counter-clockwise, left Trigger is positive
     // Applies Expontial Curve, Deadzone, and Slow Mode toggle
     public double getDriveCCWPositive() {
-        double ccwPositive = TriggersCurve.calculate(getTwist());
+        double ccwPositive = triggersCurve.calculate(getTwist());
         if (isSlowMode) {
             ccwPositive *= Math.abs(config.getSlowModeScalor());
         } else if (isTurboMode) {
