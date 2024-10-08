@@ -9,6 +9,7 @@ import frc.robot.elevator.Elevator.ElevatorConfig;
 import frc.robot.launcher.Launcher.LauncherConfig;
 import frc.robot.leds.LEDsConfig;
 import frc.robot.pilot.Pilot.PilotConfig;
+import frc.robot.pivot.Pivot.PivotConfig;
 import frc.robot.swerve.SwerveConfig;
 
 public class RobotConfig {
@@ -20,6 +21,7 @@ public class RobotConfig {
         public LauncherConfig launcher;
         public LEDsConfig leds;
         public PilotConfig pilot;
+        public PivotConfig pivot;
 
         public ConfigHolder() {
             swerve = new SwerveConfig();
@@ -28,6 +30,7 @@ public class RobotConfig {
             launcher = new LauncherConfig();
             leds = new LEDsConfig();
             pilot = new PilotConfig();
+            pivot = new PivotConfig();
         }
     }
 

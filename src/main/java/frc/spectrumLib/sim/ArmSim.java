@@ -35,11 +35,11 @@ public class ArmSim {
 
         armPivot =
                 RobotSim.leftView.getRoot(
-                        "Intake Arm Pivot", config.getPivotX(), config.getPivotY());
+                        name + " Arm Pivot", config.getPivotX(), config.getPivotY());
         armMech2d =
                 armPivot.append(
                         new MechanismLigament2d(
-                                "Intake Arm",
+                                name + " Arm",
                                 config.getLength(),
                                 0.0,
                                 5.0,

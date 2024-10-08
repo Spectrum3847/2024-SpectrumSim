@@ -10,12 +10,15 @@ import frc.robot.RobotConfig.ConfigHolder;
 import frc.robot.climber.Climber;
 import frc.robot.climber.ClimberCommands;
 import frc.robot.elevator.Elevator;
+import frc.robot.elevator.ElevatorCommands;
 import frc.robot.launcher.Launcher;
 import frc.robot.launcher.LauncherCommands;
 import frc.robot.leds.LEDs;
 import frc.robot.leds.LEDsCommands;
 import frc.robot.pilot.Pilot;
 import frc.robot.pilot.PilotCommands;
+import frc.robot.pivot.Pivot;
+import frc.robot.pivot.PivotCommands;
 import frc.robot.swerve.Swerve;
 import frc.robot.swerve.SwerveCommands;
 import frc.robot.vision.VisionSystem;
@@ -37,6 +40,7 @@ public class Robot extends TimedRobot {
     @Getter private static Launcher launcher;
     @Getter private static LEDs leds;
     @Getter private static Pilot pilot;
+    @Getter private static Pivot pivot;
     @Getter private static VisionSystem visionSystem;
 
     @SuppressWarnings("unused")
@@ -87,6 +91,9 @@ public class Robot extends TimedRobot {
             Timer.delay(canInitDelay);
             launcher = new Launcher(config.launcher);
             pilot = new Pilot(config.pilot);
+            pivot = new Pivot(config.pivot);
+            Timer.delay(canInitDelay);
+            leds = new LEDs(config.leds);
             visionSystem = new VisionSystem(swerve::getRobotPose);
 
             /** Intialize Telemetry */
@@ -98,9 +105,11 @@ public class Robot extends TimedRobot {
              */
             SwerveCommands.setupDefaultCommand(robotConfig.getRobotType());
             ClimberCommands.setupDefaultCommand();
+            ElevatorCommands.setupDefaultCommand();
             LauncherCommands.setupDefaultCommand();
             LEDsCommands.setupDefaultCommand();
             PilotCommands.setupDefaultCommand();
+            PivotCommands.setupDefaultCommand();
 
             RobotTelemetry.print("--- Robot Init Complete ---");
 
