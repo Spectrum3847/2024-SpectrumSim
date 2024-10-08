@@ -45,6 +45,8 @@ public class LaserCanSubsystem implements Subsystem, NTSendable {
     // default constructor
     public LaserCanSubsystem(LaserCanConfig config) {
         this.config = config;
+        boolean i = false;
+        i = i;
         if (config.isAttached()) {
             lasercan = new LaserCan(config.id);
         }

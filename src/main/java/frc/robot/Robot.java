@@ -89,7 +89,6 @@ public class Robot extends TimedRobot {
             pilot = new Pilot(config.pilot);
             pivot = new Pivot(config.pivot);
             Timer.delay(canInitDelay);
-            leds = new LEDs(config.leds);
             visionSystem = new VisionSystem(swerve::getRobotPose);
 
             /** Intialize Telemetry */
