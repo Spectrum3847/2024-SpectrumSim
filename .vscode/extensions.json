@@ -1,0 +1,14 @@
+{
+    "recommendations": [
+        "usernamehw.errorlens",
+        "github.vscode-pull-request-github",
+        "github.copilot",
+        "eamodio.gitlens",
+        "visualstudioexptteam.vscodeintellicode",
+        "redhat.java",
+        "ms-vsliveshare.vsliveshare",
+        "techer.open-in-browser",
+        "ban.spellright",
+        "wpilibsuite.vscode-wpilib"
+    ]
+}

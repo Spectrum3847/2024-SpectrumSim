@@ -42,6 +42,7 @@ public abstract class Mechanism implements Subsystem, NTSendable {
 
     public Mechanism(Config config) {
         this.config = config;
+
         if (isAttached()) {
             motor = TalonFXFactory.createConfigTalon(config.id, config.talonConfig);
 

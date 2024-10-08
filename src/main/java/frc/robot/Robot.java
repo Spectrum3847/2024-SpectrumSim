@@ -79,6 +79,7 @@ public class Robot extends TimedRobot {
              * code. Anything with an output that needs to be independently controlled is a
              * subsystem Something that don't have an output are alos subsystems.
              */
+            leds = new LEDs(config.leds);
             double canInitDelay = 0.1; // Delay between any mechanism with motor/can configs
             swerve = new Swerve(config.swerve);
             Timer.delay(canInitDelay);

@@ -31,13 +31,13 @@ public class Launcher extends Mechanism {
             super("Launcher", 42, RobotConfig.CANIVORE);
             configPIDGains(0, velocityKp, 0.0, 0.0);
             configFeedForwardGains(velocityKs, velocityKv, 0, 0);
-            configGearRatio(1 / 2); // TODO: configure
+            configGearRatio(1 / 2);
             configSupplyCurrentLimit(currentLimit, threshold, true);
             configStatorCurrentLimit(torqueCurrentLimit, true);
             configForwardTorqueCurrentLimit(torqueCurrentLimit);
             configReverseTorqueCurrentLimit(torqueCurrentLimit);
             configNeutralBrakeMode(true);
-            configCounterClockwise_Positive(); // TODO: configure
+            configCounterClockwise_Positive();
             configMotionMagic(51, 205, 0);
         }
     }

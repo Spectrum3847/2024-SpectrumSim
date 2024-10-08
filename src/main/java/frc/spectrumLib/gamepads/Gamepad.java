@@ -41,15 +41,15 @@ public abstract class Gamepad extends SpectrumController implements Subsystem {
 
         @Getter @Setter int emulatedPS5Port;
 
-        @Getter @Setter double leftStickDeadzone = 0.0; // TODO: reivew
+        @Getter @Setter double leftStickDeadzone = 0.0;
         @Getter @Setter double leftStickExp = 1.0;
         @Getter @Setter double leftStickScalor = 1.0;
 
-        @Getter @Setter double rightStickDeadzone = 0.0; // TODO: reivew
+        @Getter @Setter double rightStickDeadzone = 0.0;
         @Getter @Setter double rightStickExp = 1.0;
         @Getter @Setter double rightStickScalor = 1.0;
 
-        @Getter @Setter double triggersDeadzone = 0.0; // TODO: review
+        @Getter @Setter double triggersDeadzone = 0.0;
         @Getter @Setter double triggersExp = 1.0;
         @Getter @Setter double triggersScalor = 1.0;
 
