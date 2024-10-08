@@ -80,7 +80,8 @@ public class Elevator extends Mechanism {
 
     public Elevator(ElevatorConfig config) {
         super(config);
-        this.config = config; // unsure if we need this, may delete and test
+        this.config = config;
+        // just for lasercan testing, should be on intake/amptrap
         laserCan = new LaserCanSubsystem("Elevator LaserCan", 1, true);
 
         simulationInit();
