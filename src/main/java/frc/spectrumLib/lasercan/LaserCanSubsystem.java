@@ -110,6 +110,10 @@ public class LaserCanSubsystem implements Subsystem, NTSendable {
                 .debounce(0.25);
     }
 
+    public Trigger isBetween(IntSupplier min, IntSupplier max) {
+        return isGreaterThan(min).and(isLessThan(max));
+    }
+
     public Trigger validDistance() {
         return new Trigger(() -> getDistance() >= 0);
     }
