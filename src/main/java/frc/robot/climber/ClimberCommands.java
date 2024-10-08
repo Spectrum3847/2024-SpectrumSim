@@ -24,27 +24,27 @@ public class ClimberCommands {
     }
 
     public static Command fullExtend() {
-        return climber.runPosition(config::getFullExtend).withName("Climber.fullExtend");
+        return climber.moveToPosePercentage(config::getFullExtend).withName("Climber.fullExtend");
     }
 
     public static void home() {
-        climber.runPosition(config::getHome).withName("Climber.home");
+        climber.moveToPosePercentage(config::getHome).withName("Climber.home");
     }
 
     public static void topClimb() {
-        climber.runPosition(config::getTopClimb).withName("Climber.topClimb");
+        climber.moveToPosePercentage(config::getTopClimb).withName("Climber.topClimb");
     }
 
     public static void midClimb() {
-        climber.runPosition(config::getMidClimb).withName("Climber.midClimb");
+        climber.moveToPosePercentage(config::getMidClimb).withName("Climber.midClimb");
     }
 
     public static void botClimb() {
-        climber.runPosition(config::getBotClimb).withName("Climber.botClimb");
+        climber.moveToPosePercentage(config::getBotClimb).withName("Climber.botClimb");
     }
 
     public static void safeClimb() {
-        climber.runPosition(config::getSafeClimb).withName("Climber.safeClimb");
+        climber.moveToPosePercentage(config::getSafeClimb).withName("Climber.safeClimb");
     }
 
     public static void coastMode() {
@@ -56,6 +56,6 @@ public class ClimberCommands {
     }
 
     public static Command tuneClimber() {
-        return climber.runPosition(new TuneValue("Tune Climber", 0).getSupplier()).withName("Climber.Tune");
+        return climber.moveToPosePercentage(new TuneValue("Tune Climber", 0).getSupplier()).withName("Climber.Tune");
     }
 }

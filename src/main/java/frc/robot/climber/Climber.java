@@ -19,10 +19,6 @@ import lombok.*;
 
 public class Climber extends Mechanism {
     public static class ClimberConfig extends Config {
-        /* Climber constants in rotations */
-        @Getter private final double maxRotation = 104;
-        @Getter private final double minRotation = -1;
-
         /* Climber positions in percent (0 - 100) of full rotation */
         @Getter private double fullExtend = 100;
         @Getter private double home = 0;
@@ -54,8 +50,9 @@ public class Climber extends Mechanism {
             configStatorCurrentLimit(statorCurrentLimit, true);
             configForwardTorqueCurrentLimit(torqueCurrentLimit);
             configReverseTorqueCurrentLimit(torqueCurrentLimit);
-            configForwardSoftLimit(maxRotation, true);
-            configReverseSoftLimit(minRotation, true);
+            configMinMaxRotations(-1, 104);
+            configForwardSoftLimit(getMaxRotation(), true);
+            configReverseSoftLimit(getMinRotation(), true);
             configNeutralBrakeMode(true);
             // configMotionMagicPosition(0.12);
             configClockwise_Positive();
@@ -88,7 +85,7 @@ public class Climber extends Mechanism {
         if (isAttached()) {
             builder.addDoubleProperty("Position", this::getMotorPosition, null);
             builder.addDoubleProperty(
-                    "Percent Angle", () -> getMotorPosition() / config.maxRotation * 100, null);
+                    "Percent Angle", () -> getMotorPosition() / config.getMaxRotation() * 100, null);
         }
     }
 
