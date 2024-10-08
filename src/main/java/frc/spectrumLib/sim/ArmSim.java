@@ -40,13 +40,9 @@ public class ArmSim {
                 armPivot.append(
                         new MechanismLigament2d(
                                 name + " Arm",
-                               
                                 config.getLength(),
-                               
                                 0.0,
-                               
                                 5.0,
-                               
                                 new Color8Bit(Color.kBlue)));
     }
 

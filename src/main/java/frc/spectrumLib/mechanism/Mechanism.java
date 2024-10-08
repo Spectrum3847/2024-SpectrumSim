@@ -155,11 +155,12 @@ public abstract class Mechanism implements Subsystem, NTSendable {
 
     /**
      * Move to the specified position.
-     * 
+     *
      * @param position position in percentage of max revolutions
      */
     public Command moveToPosePercentage(DoubleSupplier position) {
-        return run(() -> setMMPosition(() -> config.maxRotation * (position.getAsDouble() / 100))).withName(getName() + ".runPosePercentage");
+        return run(() -> setMMPosition(() -> config.maxRotation * (position.getAsDouble() / 100)))
+                .withName(getName() + ".runPosePercentage");
     }
 
     /**
@@ -626,7 +627,7 @@ public abstract class Mechanism implements Subsystem, NTSendable {
 
         /**
          * Sets the minimum and maximum motor rotations
-         * 
+         *
          * @param minRotation
          * @param maxRotation
          */
