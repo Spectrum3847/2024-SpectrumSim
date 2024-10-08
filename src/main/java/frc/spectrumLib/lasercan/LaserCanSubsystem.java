@@ -17,9 +17,9 @@ public class LaserCanSubsystem implements Subsystem{
     private double cachedValue = -1000;
 
     public static class LaserCanConfig{
-        @Getter @Setter private String name = "LaserCan";
+        @Getter @Setter private String name;;
         @Getter @Setter private int id;
-        @Getter @Setter private boolean shortRange;
+        @Getter @Setter private boolean shortRange = true;
         @Getter @Setter private int x = 8;
         @Getter @Setter private int y = 8;
         @Getter @Setter private int w = 4;
@@ -57,11 +57,11 @@ public class LaserCanSubsystem implements Subsystem{
     }
 
     public Trigger isGreaterThan(IntSupplier distance) {
-        return new Trigger(() -> getDistance() > distance.getAsInt()).debounce(0.25);
+        return new Trigger(() -> getDistance() > distance.getAsInt()).and(validDistance().debounce(0.25));
     }
 
     public Trigger isLessThan(IntSupplier distance) {
-        return new Trigger(() -> getDistance() < distance.getAsInt()).debounce(0.25).and(validDistance());
+        return new Trigger(() -> getDistance() < distance.getAsInt()).and(validDistance().debounce(0.25));
     }
 
     public Trigger validDistance() {
