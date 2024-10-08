@@ -57,11 +57,11 @@ public class LaserCanSubsystem implements Subsystem{
     }
 
     public Trigger isGreaterThan(IntSupplier distance) {
-        return new Trigger(() -> getDistance() > distance.getAsInt()).and(validDistance().debounce(0.25));
+        return new Trigger(() -> getDistance() > distance.getAsInt()).and(validDistance()).debounce(0.25);
     }
 
     public Trigger isLessThan(IntSupplier distance) {
-        return new Trigger(() -> getDistance() < distance.getAsInt()).and(validDistance().debounce(0.25));
+        return new Trigger(() -> getDistance() < distance.getAsInt()).and(validDistance()).debounce(0.25);
     }
 
     public Trigger validDistance() {
