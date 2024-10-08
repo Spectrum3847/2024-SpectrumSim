@@ -42,6 +42,7 @@ public abstract class Mechanism implements Subsystem, NTSendable {
 
     public Mechanism(Config config) {
         this.config = config;
+
         if (isAttached()) {
             motor = TalonFXFactory.createConfigTalon(config.id, config.talonConfig);
 
@@ -199,7 +200,7 @@ public abstract class Mechanism implements Subsystem, NTSendable {
     }
 
     /** Sets the mechanism position of the motor to 0 */
-    public void tareMotor() {
+    protected void tareMotor() {
         if (isAttached()) {
             setMotorPosition(() -> 0);
         }
