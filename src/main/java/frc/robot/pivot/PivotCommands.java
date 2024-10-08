@@ -7,8 +7,8 @@ import frc.spectrumLib.util.TuneValue;
 import java.util.function.DoubleSupplier;
 
 public class PivotCommands {
-    private static Pivot pivot = Robot.pivot;
-    private static PivotConfig config = Robot.config.pivot;
+    private static Pivot pivot = Robot.getPivot();
+    private static PivotConfig config = Robot.getConfig().pivot;
 
     public static void setupDefaultCommand() {
         pivot.setDefaultCommand(

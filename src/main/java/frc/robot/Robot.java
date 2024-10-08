@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.RobotConfig.ConfigHolder;
 import frc.robot.elevator.Elevator;
+import frc.robot.elevator.ElevatorCommands;
 import frc.robot.launcher.Launcher;
 import frc.robot.launcher.LauncherCommands;
 import frc.robot.leds.LEDs;
@@ -84,9 +85,9 @@ public class Robot extends TimedRobot {
             elevator = new Elevator(config.elevator);
             Timer.delay(canInitDelay);
             launcher = new Launcher(config.launcher);
-            Timer.delay(canInitDelay);
             pilot = new Pilot(config.pilot);
             pivot = new Pivot(config.pivot);
+            Timer.delay(canInitDelay);
             leds = new LEDs(config.leds);
             visionSystem = new VisionSystem(swerve::getRobotPose);
 
@@ -98,6 +99,7 @@ public class Robot extends TimedRobot {
              * command these must be done after all the subsystems are intialized
              */
             SwerveCommands.setupDefaultCommand(robotConfig.getRobotType());
+            ElevatorCommands.setupDefaultCommand();
             LauncherCommands.setupDefaultCommand();
             LEDsCommands.setupDefaultCommand();
             PilotCommands.setupDefaultCommand();

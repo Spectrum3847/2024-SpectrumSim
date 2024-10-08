@@ -19,6 +19,7 @@ public class RobotConfig {
         public LauncherConfig launcher;
         public LEDsConfig leds;
         public PilotConfig pilot;
+        public PivotConfig pivot;
 
         public ConfigHolder() {
             swerve = new SwerveConfig();
@@ -26,6 +27,7 @@ public class RobotConfig {
             launcher = new LauncherConfig();
             leds = new LEDsConfig();
             pilot = new PilotConfig();
+            pivot = new PivotConfig();
         }
     }
 
