@@ -20,25 +20,28 @@ public class RotationController {
 
     public RotationController(SwerveConfig config) {
         this.config = config;
-        constraints = new Constraints(config.maxAngularVelocity, config.maxAngularAcceleration);
+        constraints =
+                new Constraints(config.getMaxAngularVelocity(), config.getMaxAngularAcceleration());
         controller =
                 new ProfiledPIDController(
-                        config.kPRotationController,
-                        config.kIRotationController,
-                        config.kDRotationController,
+                        config.getKPRotationController(),
+                        config.getKIRotationController(),
+                        config.getKDRotationController(),
                         constraints);
 
         controller.enableContinuousInput(-Math.PI, Math.PI);
-        controller.setTolerance(config.rotationTolerance);
+        controller.setTolerance(config.getRotationTolerance());
 
         // Hold controller is standard PID
         holdController =
                 new PIDController(
-                        config.kPHoldController, config.kIHoldController, config.kDHoldController);
+                        config.getKPHoldController(),
+                        config.getKIHoldController(),
+                        config.getKDHoldController());
 
         holdController.enableContinuousInput(-Math.PI, Math.PI);
         holdController.setTolerance(
-                config.rotationTolerance / 2); // Half the tolerance of turn controller
+                config.getRotationTolerance() / 2); // Half the tolerance of turn controller
     }
 
     public double calculate(double goalRadians, double currentRadians, boolean isHoldController) {

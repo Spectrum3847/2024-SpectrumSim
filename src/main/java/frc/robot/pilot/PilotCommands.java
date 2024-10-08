@@ -7,12 +7,11 @@ import frc.robot.swerve.SwerveCommands;
 
 /** This class should have any command calls that directly call the Pilot */
 public class PilotCommands {
-    private static Pilot pilot = Robot.pilot;
+    private static Pilot pilot = Robot.getPilot();
 
     /** Set default command to turn off the rumble */
     public static void setupDefaultCommand() {
-        Robot.pilot.setDefaultCommand(
-                rumble(0, 1)); // launchReadyRumble().withName("Pilot.default"));
+        pilot.setDefaultCommand(rumble(0, 1)); // launchReadyRumble().withName("Pilot.default"));
     }
 
     public static Command pilotDrive() {
@@ -25,7 +24,7 @@ public class PilotCommands {
 
     /** Command that can be used to rumble the pilot controller */
     public static Command rumble(double intensity, double durationSeconds) {
-        return Robot.pilot.rumbleCommand(intensity, durationSeconds);
+        return pilot.rumbleCommand(intensity, durationSeconds);
     }
 
     /**

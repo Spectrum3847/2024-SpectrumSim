@@ -10,6 +10,6 @@ import frc.robot.leds.LEDsCommands;
 public class RobotCommands {
     public static void setupRobotTriggers() {
         // Example trigger, sets the LEDs to orange when the elevator is up
-        Robot.elevator.isUp().whileTrue(LEDsCommands.solidOrangeLED());
+        Robot.getElevator().isUp().whileTrue(LEDsCommands.solidOrangeLED());
     }
 }

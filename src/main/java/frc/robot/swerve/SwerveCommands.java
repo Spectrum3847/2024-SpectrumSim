@@ -10,8 +10,8 @@ import frc.robot.pilot.PilotCommands;
 import java.util.function.DoubleSupplier;
 
 public class SwerveCommands {
-    static Swerve swerve = Robot.swerve;
-    static SwerveConfig config = Robot.config.swerve;
+    static Swerve swerve = Robot.getSwerve();
+    static SwerveConfig config = Robot.getConfig().swerve;
 
     public static void setupDefaultCommand(RobotType robotType) {
         if (robotType == RobotType.PM) {
@@ -19,19 +19,19 @@ public class SwerveCommands {
             // Robot.swerve.setDefaultCommand(PhotonPilotCommands.pilotDrive());
             // return;
         }
-        Robot.swerve.setDefaultCommand(PilotCommands.pilotDrive());
+        swerve.setDefaultCommand(PilotCommands.pilotDrive());
     }
 
     private static SwerveRequest.FieldCentric fieldCentricDrive =
             new SwerveRequest.FieldCentric()
-                    .withDeadband(config.kSpeedAt12VoltsMps * config.kDeadband)
-                    .withRotationalDeadband(config.kMaxAngularRate * config.kDeadband)
+                    .withDeadband(config.getSpeedAt12VoltsMps() * config.getDeadband())
+                    .withRotationalDeadband(config.getMaxAngularRate() * config.getDeadband())
                     .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
 
     // Uses m/s and rad/s
     public static Command drive(
             DoubleSupplier fwdPositive, DoubleSupplier leftPositive, DoubleSupplier ccwPositive) {
-        return Robot.swerve.applyRequest(
+        return swerve.applyRequest(
                 () ->
                         fieldCentricDrive
                                 .withVelocityX(fwdPositive.getAsDouble())

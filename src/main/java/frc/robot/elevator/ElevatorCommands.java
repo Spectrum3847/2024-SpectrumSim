@@ -7,8 +7,8 @@ import frc.spectrumLib.util.TuneValue;
 import java.util.function.DoubleSupplier;
 
 public class ElevatorCommands {
-    private static Elevator elevator = Robot.elevator;
-    private static ElevatorConfig config = Robot.config.elevator;
+    private static Elevator elevator = Robot.getElevator();
+    private static ElevatorConfig config = Robot.getConfig().elevator;
 
     public static void setupDefaultCommand() {
         elevator.setDefaultCommand(

@@ -7,18 +7,19 @@ import frc.robot.RobotTelemetry;
 import frc.robot.leds.LEDsConfig.Section;
 import frc.spectrumLib.leds.SpectrumLEDs;
 import java.util.List;
+import lombok.Getter;
 
 // This file is too long we should probably move some of it to the SpectrumLib
 public class LEDs extends SpectrumLEDs {
-    public LEDsConfig config;
+    @Getter private LEDsConfig config;
 
-    public static long countdownStartTimeMS = System.currentTimeMillis();
-    public static double strobeCounter = 0;
-    public static boolean coastModeLED = false;
-    public static boolean launchReadyLED = false;
+    @Getter private long countdownStartTimeMS = System.currentTimeMillis();
+    @Getter private double strobeCounter = 0;
+    @Getter private boolean coastModeLED = false;
+    @Getter private boolean launchReadyLED = false;
 
     public LEDs(LEDsConfig config) {
-        super(config.port, LEDsConfig.length * 2);
+        super(config.port, LEDsConfig.getLength() * 2);
         this.config = config;
 
         RobotTelemetry.print("LEDs Subsystem Initialized: ");
@@ -92,7 +93,7 @@ public class LEDs extends SpectrumLEDs {
     public void solid(double percent, Color color, int priority) {
         if (getUpdate()) {
             for (int i = 0;
-                    i < MathUtil.clamp(LEDsConfig.length * percent, 0, LEDsConfig.length);
+                    i < MathUtil.clamp(LEDsConfig.getLength() * percent, 0, LEDsConfig.getLength());
                     i++) {
                 setLED(i, color, priority);
             }
@@ -326,7 +327,7 @@ public class LEDs extends SpectrumLEDs {
             double progress = elapsedTimeInSeconds / durationInSeconds;
 
             // Calculate the number of LEDs to turn off based on the progress
-            int ledsToTurnOff = (int) (LEDsConfig.length * progress);
+            int ledsToTurnOff = (int) (LEDsConfig.getLength() * progress);
 
             // Calculate the color transition from yellow to red based on the progress
             // Yellow (255, 255, 0) to Red (255, 0, 0)
@@ -335,8 +336,8 @@ public class LEDs extends SpectrumLEDs {
             Color countdownColor = new Color(red, green, 0);
 
             // Update the LEDs from the end of the strip towards the beginning
-            for (int i = LEDsConfig.length - 1; i >= 0; i--) {
-                if (LEDsConfig.length - i <= ledsToTurnOff) {
+            for (int i = LEDsConfig.getLength() - 1; i >= 0; i--) {
+                if (LEDsConfig.getLength() - i <= ledsToTurnOff) {
                     // Turn off the LEDs progressively
                     setLED(i, Color.kBlack, priority);
                 } else {
@@ -347,7 +348,7 @@ public class LEDs extends SpectrumLEDs {
 
             // If the countdown is complete, ensure all LEDs are turned off
             if (progress >= 1.0) {
-                for (int i = 0; i < LEDsConfig.length; i++) {
+                for (int i = 0; i < LEDsConfig.getLength(); i++) {
                     setLED(i, Color.kBlack, priority);
                 }
             }
@@ -377,23 +378,23 @@ public class LEDs extends SpectrumLEDs {
             }
 
             // Set the color of the entire strip based on the current phase
-            for (int i = 0; i < LEDsConfig.length; i++) {
+            for (int i = 0; i < LEDsConfig.getLength(); i++) {
                 setLED(i, chaseColor, priority);
             }
 
             // To add a moving effect
             if (phase == 0 || phase == 2) {
                 int moveDuration =
-                        LEDsConfig.length / 4; // Number of LEDs to cover for the moving effect
+                        LEDsConfig.getLength() / 4; // Number of LEDs to cover for the moving effect
                 for (int i = 0; i < moveDuration; i++) {
                     int index =
                             (int)
                                     ((currentTimeMillis / 100)
-                                            % LEDsConfig.length); // Moving index based on time
+                                            % LEDsConfig.getLength()); // Moving index based on time
                     index =
                             (phase == 0)
                                     ? index
-                                    : LEDsConfig.length
+                                    : LEDsConfig.getLength()
                                             - 1
                                             - index; // Reverse direction for blue phase
                     setLED(
@@ -412,21 +413,5 @@ public class LEDs extends SpectrumLEDs {
 
     public void restartStrobeCounter() {
         strobeCounter = 0;
-    }
-
-    public static void turnOnCoastLEDs() {
-        coastModeLED = true;
-    }
-
-    public static void turnOffCoastLEDs() {
-        coastModeLED = false;
-    }
-
-    public static void turnOnLaunchLEDs() {
-        launchReadyLED = true;
-    }
-
-    public static void turnOffLaunchLEDs() {
-        launchReadyLED = false;
     }
 }

@@ -12,6 +12,7 @@ import java.util.UUID;
 public class CrashTracker {
 
     private static final UUID RUN_INSTANCE_UUID = UUID.randomUUID();
+    private static String filePath = "/home/lvuser/crash_tracking.txt";
 
     /**
      * Logs details of a Throwable exception to a designated file. This method captures the unique
@@ -36,8 +37,7 @@ public class CrashTracker {
     }
 
     private static void logMarker(String mark, Throwable nullableException) {
-        try (PrintWriter writer =
-                new PrintWriter(new FileWriter("/home/lvuser/crash_tracking.txt", true))) {
+        try (PrintWriter writer = new PrintWriter(new FileWriter(filePath, true))) {
             writer.print(RUN_INSTANCE_UUID.toString());
             writer.print(", ");
             writer.print(mark);

@@ -3,7 +3,6 @@ package frc.robot.pilot;
 import frc.robot.Robot;
 import frc.robot.RobotTelemetry;
 import frc.robot.elevator.ElevatorCommands;
-import frc.robot.intake.IntakeCommands;
 import frc.robot.launcher.LauncherCommands;
 import frc.robot.pivot.PivotCommands;
 import frc.spectrumLib.gamepads.Gamepad;
@@ -44,16 +43,14 @@ public class Pilot extends Gamepad {
     /** Setup the Buttons for telop mode. */
     /*  A, B, X, Y, Left Bumper, Right Bumper = Buttons 1 to 6 in simualation */
     public void setupTeleopTriggers() {
-        a().whileTrue(IntakeCommands.intake());
-
         b().whileTrue(ElevatorCommands.fullExtend());
         x().whileTrue(ElevatorCommands.home());
         y().whileTrue(ElevatorCommands.runElevator(() -> getLeftY()));
 
-        b().whileTrue(LauncherCommands.runVelocity(Robot.config.launcher::getMaxVelocity));
+        b().whileTrue(LauncherCommands.runVelocity(Robot.getConfig().launcher::getMaxVelocity));
         x().whileTrue(
                         LauncherCommands.runVelocity(
-                                () -> -1 * Robot.config.launcher.getMaxVelocity()));
+                                () -> -1 * Robot.getConfig().launcher.getMaxVelocity()));
         b().whileTrue(PivotCommands.subwoofer());
         x().whileTrue(PivotCommands.home());
     };
@@ -69,17 +66,17 @@ public class Pilot extends Gamepad {
     };
 
     public void setMaxVelocity(double maxVelocity) {
-        LeftStickCurve.setScalar(maxVelocity);
+        leftStickCurve.setScalar(maxVelocity);
     }
 
     public void setMaxRotationalVelocity(double maxRotationalVelocity) {
-        TriggersCurve.setScalar(maxRotationalVelocity);
+        triggersCurve.setScalar(maxRotationalVelocity);
     }
 
     // Positive is forward, up on the left stick is positive
     // Applies Expontial Curve, Deadzone, and Slow Mode toggle
     public double getDriveFwdPositive() {
-        double fwdPositive = LeftStickCurve.calculate(-1 * getLeftY());
+        double fwdPositive = leftStickCurve.calculate(-1 * getLeftY());
         if (isSlowMode) {
             fwdPositive *= Math.abs(config.getSlowModeScalor());
         }
@@ -89,7 +86,7 @@ public class Pilot extends Gamepad {
     // Positive is left, left on the left stick is positive
     // Applies Expontial Curve, Deadzone, and Slow Mode toggle
     public double getDriveLeftPositive() {
-        double leftPositive = -1 * LeftStickCurve.calculate(getLeftX());
+        double leftPositive = -1 * leftStickCurve.calculate(getLeftX());
         if (isSlowMode) {
             leftPositive *= Math.abs(config.getSlowModeScalor());
         }
@@ -99,7 +96,7 @@ public class Pilot extends Gamepad {
     // Positive is counter-clockwise, left Trigger is positive
     // Applies Expontial Curve, Deadzone, and Slow Mode toggle
     public double getDriveCCWPositive() {
-        double ccwPositive = TriggersCurve.calculate(getTwist());
+        double ccwPositive = triggersCurve.calculate(getTwist());
         if (isSlowMode) {
             ccwPositive *= Math.abs(config.getSlowModeScalor());
         } else if (isTurboMode) {

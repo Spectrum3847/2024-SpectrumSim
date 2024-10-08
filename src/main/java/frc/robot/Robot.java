@@ -6,10 +6,8 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.RobotConfig.DEFAULT;
+import frc.robot.RobotConfig.ConfigHolder;
 import frc.robot.elevator.Elevator;
-import frc.robot.intake.Intake;
-import frc.robot.intake.IntakeCommands;
 import frc.robot.launcher.Launcher;
 import frc.robot.launcher.LauncherCommands;
 import frc.robot.leds.LEDs;
@@ -22,24 +20,24 @@ import frc.robot.swerve.Swerve;
 import frc.robot.swerve.SwerveCommands;
 import frc.robot.vision.VisionSystem;
 import frc.spectrumLib.util.CrashTracker;
+import lombok.Getter;
 
 public class Robot extends TimedRobot {
-    public static RobotConfig robotConfig;
-    public static DEFAULT config;
+    @Getter private static RobotConfig robotConfig;
+    @Getter private static ConfigHolder config;
 
     /** Create a single static instance of all of your subsystems */
-    public static RobotTelemetry telemetry;
+    @Getter private static RobotTelemetry telemetry;
 
-    public static RobotSim robotSim;
+    @Getter private static RobotSim robotSim;
 
-    public static Swerve swerve;
-    public static Elevator elevator;
-    public static Intake intake;
-    public static Launcher launcher;
-    public static Pivot pivot;
-    public static LEDs leds;
-    public static Pilot pilot;
-    public static VisionSystem visionSystem;
+    @Getter private static Swerve swerve;
+    @Getter private static Elevator elevator;
+    @Getter private static Launcher launcher;
+    @Getter private static LEDs leds;
+    @Getter private static Pilot pilot;
+    @Getter private static Pivot pivot;
+    @Getter private static VisionSystem visionSystem;
 
     @SuppressWarnings("unused")
     private Command m_autonomousCommand;
@@ -83,14 +81,12 @@ public class Robot extends TimedRobot {
             double canInitDelay = 0.1; // Delay between any mechanism with motor/can configs
             swerve = new Swerve(config.swerve);
             Timer.delay(canInitDelay);
-            intake = new Intake(); // new Intake(config.intakeAttached);
-            Timer.delay(canInitDelay);
             elevator = new Elevator(config.elevator);
             Timer.delay(canInitDelay);
             launcher = new Launcher(config.launcher);
-            pivot = new Pivot(config.pivot);
             Timer.delay(canInitDelay);
             pilot = new Pilot(config.pilot);
+            pivot = new Pivot(config.pivot);
             leds = new LEDs(config.leds);
             visionSystem = new VisionSystem(swerve::getRobotPose);
 
@@ -102,11 +98,10 @@ public class Robot extends TimedRobot {
              * command these must be done after all the subsystems are intialized
              */
             SwerveCommands.setupDefaultCommand(robotConfig.getRobotType());
-            IntakeCommands.setupDefaultCommand();
             LauncherCommands.setupDefaultCommand();
-            PivotCommands.setupDefaultCommand();
             LEDsCommands.setupDefaultCommand();
             PilotCommands.setupDefaultCommand();
+            PivotCommands.setupDefaultCommand();
 
             RobotTelemetry.print("--- Robot Init Complete ---");
 

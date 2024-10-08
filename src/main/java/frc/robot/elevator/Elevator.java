@@ -52,6 +52,7 @@ public class Elevator extends Mechanism {
 
         public ElevatorConfig() {
             super("Elevator", 52, RobotConfig.CANIVORE);
+            setFollowerConfigs(new FollowerConfig("left", 53, RobotConfig.CANIVORE, false));
             configPIDGains(0, positionKp, 0, 0);
             configFeedForwardGains(0, positionKv, 0, 0);
             configMotionMagic(700, 900, 0); // 40, 120 FOC // 120, 195 Regular
