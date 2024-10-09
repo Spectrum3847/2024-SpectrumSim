@@ -50,7 +50,7 @@ public class Climber extends Mechanism {
         @Getter private double movingLength = 1;
 
         public ClimberConfig() {
-            super("Climber", 54, RobotConfig.CANIVORE);
+            super("Climber", 54, RobotConfig.CANIVORE); // motor id was originally 53
             configPIDGains(0, positionKp, 0, 0);
             configFeedForwardGains(0, positionKv, 0, 0);
             configMotionMagic(14700, 16100, 0); // 40, 120 FOC // 120, 195 Regular
