@@ -35,20 +35,21 @@ public class LinearSim {
                         true,
                         0);
 
-        staticRoot = mech.getRoot("1StaticRoot", config.getInitialX(), config.getInitialY());
+        staticRoot =
+                mech.getRoot(name + " 1StaticRoot", config.getInitialX(), config.getInitialY());
         staticRoot.append(
                 new MechanismLigament2d(
-                        "1Static",
+                        name + " 1Static",
                         config.getStaticLength(),
                         config.getAngle(),
                         config.getLineWidth(),
                         new Color8Bit(Color.kOrange)));
 
-        root = mech.getRoot("Elevator Root", config.getInitialX(), config.getInitialY());
+        root = mech.getRoot(name + " Root", config.getInitialX(), config.getInitialY());
         m_elevatorMech2d =
                 root.append(
                         new MechanismLigament2d(
-                                "Elevator",
+                                name,
                                 config.getMovingLength(),
                                 config.getAngle(),
                                 config.getLineWidth(),

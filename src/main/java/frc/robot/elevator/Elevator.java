@@ -49,7 +49,7 @@ public class Elevator extends Mechanism {
         @Getter private double initialY = 0.0;
         @Getter private double angle = 180 - 72;
         @Getter private double staticLength = 20;
-        @Getter private double movingLength = 1;
+        @Getter private double movingLength = 20;
 
         public ElevatorConfig() {
             super("Elevator", 52, RobotConfig.CANIVORE);

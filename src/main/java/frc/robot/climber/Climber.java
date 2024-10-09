@@ -1,6 +1,7 @@
 package frc.robot.climber;
 
 import com.ctre.phoenix6.sim.TalonFXSimState;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NTSendableBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
@@ -12,9 +13,6 @@ import frc.robot.RobotTelemetry;
 import frc.spectrumLib.mechanism.Mechanism;
 import frc.spectrumLib.sim.LinearConfig;
 import frc.spectrumLib.sim.LinearSim;
-import frc.robot.RobotSim;
-import frc.robot.RobotTelemetry;
-import frc.spectrumLib.mechanism.Mechanism;
 import lombok.*;
 
 public class Climber extends Mechanism {
@@ -41,8 +39,18 @@ public class Climber extends Mechanism {
         @Getter private final double torqueCurrentLimit = 100;
         @Getter private final double threshold = 80;
 
+        /* Climber sim properties */
+        @Getter private double kClimberGearing = 12; // 5
+        @Getter private double kCarriageMass = 1;
+        @Getter private double kClimberDrumRadiusMeters = Units.inchesToMeters(0.955 / 2);
+        @Getter private double initalX = 0.95;
+        @Getter private double initalY = 0;
+        @Getter private double angle = 180 - 38;
+        @Getter private double staticLength = 30;
+        @Getter private double movingLength = 1;
+
         public ClimberConfig() {
-            super("Climber", 53, RobotConfig.CANIVORE);
+            super("Climber", 54, RobotConfig.CANIVORE);
             configPIDGains(0, positionKp, 0, 0);
             configFeedForwardGains(0, positionKv, 0, 0);
             configMotionMagic(14700, 16100, 0); // 40, 120 FOC // 120, 195 Regular
@@ -55,20 +63,19 @@ public class Climber extends Mechanism {
             configReverseSoftLimit(getMinRotation(), true);
             configNeutralBrakeMode(true);
             // configMotionMagicPosition(0.12);
-            configClockwise_Positive();
+            configCounterClockwise_Positive();
         }
     }
 
     private ClimberConfig config;
-    //private ClimberSim sim;
+    private ClimberSim sim;
 
     public Climber(ClimberConfig config) {
         super(config); // unsure if we need this, may delete and test
         this.config = config;
 
-        // simulationInit();
-        // simulationPeriodic();
-
+        simulationInit();
+        telemetryInit();
         RobotTelemetry.print(getName() + " Subsystem Initialized");
     }
 
@@ -84,8 +91,11 @@ public class Climber extends Mechanism {
     public void initSendable(NTSendableBuilder builder) {
         if (isAttached()) {
             builder.addDoubleProperty("Position", this::getMotorPosition, null);
+            builder.addDoubleProperty("Velocity", this::getMotorVelocityRPM, null);
             builder.addDoubleProperty(
-                    "Percent Angle", () -> getMotorPosition() / config.getMaxRotation() * 100, null);
+                    "Position Percentage",
+                    () -> getMotorPosition() / config.getMaxRotation() * 100,
+                    null);
         }
     }
 
@@ -151,17 +161,33 @@ public class Climber extends Mechanism {
     // Simulation
     // --------------------------------------------------------------------------------
 
-    // public void simulationInit() {
-    //     if (isAttached()) {
-    //         sim = new ClimberSim(motor.getSimState(), RobotSim.leftView);
-    //     }
-    // }
+    private void simulationInit() {
+        if (isAttached()) {
+            sim = new ClimberSim(motor.getSimState(), RobotSim.leftView);
+        }
+    }
 
-    // @Override
-    // public void simulationPeriodic() {
-    //     if (isAttached()) {
-    //         sim.simulationPeriodic();
-    //     }
+    @Override
+    public void simulationPeriodic() {
+        if (isAttached()) {
+            sim.simulationPeriodic();
+        }
+    }
 
-    // }
+    class ClimberSim extends LinearSim {
+        public ClimberSim(TalonFXSimState climberMotorSim, Mechanism2d mech) {
+            super(
+                    new LinearConfig(
+                                    config.getInitalX(),
+                                    config.getInitalY(),
+                                    config.getKClimberGearing(),
+                                    config.getKClimberDrumRadiusMeters())
+                            .setAngle(config.getAngle())
+                            .setMovingLength(config.getMovingLength())
+                            .setStaticLength(config.getStaticLength()),
+                    mech,
+                    climberMotorSim,
+                    config.getName());
+        }
+    }
 }

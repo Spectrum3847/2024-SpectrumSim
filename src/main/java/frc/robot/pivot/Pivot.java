@@ -73,7 +73,7 @@ public class Pivot extends Mechanism {
         @Getter private double pivotX = 0.55;
         @Getter private double pivotY = 0.1;
         @Getter private double ratio = 50;
-        @Getter private double length = 0.35;
+        @Getter private double length = 0.4;
 
         public PivotConfig() {
             super("Pivot", 41, RobotConfig.CANIVORE);
