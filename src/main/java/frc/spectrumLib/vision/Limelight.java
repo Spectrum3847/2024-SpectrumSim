@@ -4,14 +4,13 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.spectrumLib.vision.LimelightHelpers.LimelightResults;
 import frc.spectrumLib.vision.LimelightHelpers.RawFiducial;
 import java.text.DecimalFormat;
 import lombok.Getter;
 import lombok.Setter;
 
-public class Limelight implements Subsystem {
+public class Limelight {
 
     /* Limelight Configuration */
 
@@ -81,13 +80,6 @@ public class Limelight implements Subsystem {
         setLimelightPipeline(pipeline);
     }
 
-    @Override
-    public void periodic() {}
-
-    @Override
-    public void simulationPeriodic() {}
-
-    @Override
     public String getName() {
         return config.getName();
     }
@@ -368,12 +360,5 @@ public class Limelight implements Subsystem {
                 df.format(Units.radiansToDegrees(botPose3d.getRotation().getY())));
         SmartDashboard.putString(
                 "LimelightYaw", df.format(Units.radiansToDegrees(botPose3d.getRotation().getZ())));
-    }
-
-    private void simulationInit() {
-        if (isAttached()) {
-            // Create a new RollerSim with the left view, the motor's sim state, and a 6 in diameter
-
-        }
     }
 }
