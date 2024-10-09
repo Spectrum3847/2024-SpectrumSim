@@ -31,7 +31,6 @@ public class Robot extends TimedRobot {
     @Getter private static RobotTelemetry telemetry;
 
     @Getter private static RobotSim robotSim;
-
     @Getter private static Swerve swerve;
     @Getter private static Elevator elevator;
     @Getter private static Launcher launcher;
@@ -87,8 +86,8 @@ public class Robot extends TimedRobot {
             Timer.delay(canInitDelay);
             launcher = new Launcher(config.launcher);
             pilot = new Pilot(config.pilot);
-            pivot = new Pivot(config.pivot);
             Timer.delay(canInitDelay);
+            pivot = new Pivot(config.pivot);
             visionSystem = new VisionSystem(swerve::getRobotPose);
 
             /** Intialize Telemetry */

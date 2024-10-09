@@ -4,33 +4,76 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.spectrumLib.vision.LimelightHelpers.LimelightResults;
 import frc.spectrumLib.vision.LimelightHelpers.RawFiducial;
 import java.text.DecimalFormat;
 import lombok.Getter;
+import lombok.Setter;
 
-public class Limelight {
+public class Limelight implements Subsystem {
 
     /* Limelight Configuration */
 
-    /** Must match to the name given in LL dashboard */
-    @Getter private final String CAMERA_NAME;
+    public static class LimelightConfig {
+        /** Must match to the name given in LL dashboard */
+        @Getter @Setter private String name;
 
-    @Getter private String logStatus = "";
-    @Getter private String tagStatus = "";
-    @Getter private boolean isIntegrating;
-    /** Physical Config */
-    private PhysicalConfig physicalConfig;
+        @Getter @Setter private boolean attached = true;
+
+        @Getter @Setter private boolean isIntegrating;
+        /** Physical Config */
+        @Getter private double forward, right, up; // meters
+
+        @Getter private double roll, pitch, yaw; // degrees
+
+        public LimelightConfig(String name) {
+            this.name = name;
+        }
+
+        /**
+         * @param forward (meters) forward from center of robot
+         * @param right (meters) right from center of robot
+         * @param up (meters) up from center of robot
+         * @return
+         */
+        public LimelightConfig withTranslation(double forward, double right, double up) {
+            this.forward = forward;
+            this.right = right;
+            this.up = up;
+            return this;
+        }
+
+        /**
+         * @param roll (degrees) roll of limelight || positive is rotated right
+         * @param pitch (degrees) pitch of limelight || positive is camera tilted up
+         * @param yaw (yaw) yaw of limelight || positive is rotated left
+         * @return
+         */
+        public LimelightConfig withRotation(double roll, double pitch, double yaw) {
+            this.roll = roll;
+            this.pitch = pitch;
+            this.yaw = yaw;
+            return this;
+        }
+    }
 
     /* Debug */
     private final DecimalFormat df = new DecimalFormat();
+    private LimelightConfig config;
+    @Getter @Setter private String logStatus = "";
+    @Getter @Setter private String tagStatus = "";
 
-    public Limelight(String cameraName) {
-        this.CAMERA_NAME = cameraName;
-        physicalConfig = new PhysicalConfig();
-        logStatus = "Not started";
-        tagStatus = "Not started";
-        isIntegrating = false;
+    public Limelight(LimelightConfig config) {
+        this.config = config;
+    }
+
+    public Limelight(String name) {
+        config = new LimelightConfig(name);
+    }
+
+    public Limelight(String name, boolean attached) {
+        config = new LimelightConfig(name).setAttached(attached);
     }
 
     public Limelight(String cameraName, int pipeline) {
@@ -38,34 +81,31 @@ public class Limelight {
         setLimelightPipeline(pipeline);
     }
 
-    public Limelight(String cameraName, int pipeline, PhysicalConfig physicalConfig) {
-        this(cameraName, pipeline);
-        this.physicalConfig = physicalConfig;
-        // LimelightHelpers.setCameraPose_RobotSpace(
-        //         this.CAMERA_NAME,
-        //         physicalConfig.forward,
-        //         physicalConfig.right,
-        //         physicalConfig.up,
-        //         physicalConfig.roll,
-        //         physicalConfig.pitch,
-        //         physicalConfig.yaw);
+    @Override
+    public void periodic() {}
+
+    @Override
+    public void simulationPeriodic() {}
+
+    @Override
+    public String getName() {
+        return config.getName();
     }
 
-    /*
-     *
-     * Frequently Used Methods
-     *
-     *
-     */
+    public boolean isAttached() {
+        return config.isAttached();
+    }
 
     /* ::: Basic Information Retrieval ::: */
-
     /**
      * @return Horizontal Offset From Crosshair To Target (LL1: -27 degrees to 27 degrees / LL2:
      *     -29.8 to 29.8 degrees)
      */
     public double getHorizontalOffset() {
-        return LimelightHelpers.getTX(CAMERA_NAME);
+        if (!isAttached()){
+            return 0;
+        }
+        return LimelightHelpers.getTX(config.getName());
     }
 
     /**
@@ -73,21 +113,33 @@ public class Limelight {
      *     degrees / LL2: -24.85 to 24.85 degrees)
      */
     public double getVerticalOffset() {
-        return LimelightHelpers.getTY(CAMERA_NAME);
+        if (!isAttached()){
+            return 0;
+        }
+        return LimelightHelpers.getTY(config.getName());
     }
 
     /** @return Whether the LL has any valid targets (apriltags or other vision targets) */
     public boolean targetInView() {
-        return LimelightHelpers.getTV(CAMERA_NAME);
+        if (!isAttached()){
+            return false;
+        }
+        return LimelightHelpers.getTV(config.getName());
     }
 
     /** @return whether the LL sees multiple tags or not */
     public boolean multipleTagsInView() {
+        if (!isAttached()){
+            return false;
+        }
         return getTagCountInView() > 1;
     }
 
     public double getTagCountInView() {
-        return LimelightHelpers.getBotPoseEstimate_wpiBlue(CAMERA_NAME).tagCount;
+        if (!isAttached()){
+            return 0;
+        }
+        return LimelightHelpers.getBotPoseEstimate_wpiBlue(config.getName()).tagCount;
 
         // if (retrieveJSON() == null) return 0;
 
@@ -99,40 +151,58 @@ public class Limelight {
      *     criteria set in LL dasbhoard)
      */
     public double getClosestTagID() {
-        return LimelightHelpers.getFiducialID(CAMERA_NAME);
+        if (!isAttached()){
+            return 0;
+        }
+        return LimelightHelpers.getFiducialID(config.getName());
     }
 
     public double getTargetSize() {
-        return LimelightHelpers.getTA(CAMERA_NAME);
+        if (!isAttached()){
+            return 0;
+        }
+        return LimelightHelpers.getTA(config.getName());
     }
 
     /* ::: Pose Retrieval ::: */
 
     /** @return the corresponding LL Pose3d (MEGATAG1) for the alliance in DriverStation.java */
     public Pose3d getRawPose3d() {
+        if (!isAttached()){
+            return new Pose3d();
+        }
         return LimelightHelpers.getBotPose3d_wpiBlue(
-                CAMERA_NAME); // 2024: all alliances use blue as 0,0
+                config.name); // 2024: all alliances use blue as 0,0
     }
 
     /** @return the corresponding LL Pose3d (MEGATAG2) for the alliance in DriverStation.java */
     public Pose2d getMegaPose2d() {
-        return LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(CAMERA_NAME)
+        if (!isAttached()){
+            return new Pose2d();
+        }
+        return LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(config.name)
                 .pose; // 2024: all alliances use blue as 0,0
     }
 
     public boolean hasAccuratePose() {
+        if (!isAttached()){
+            return false;
+        }
         return multipleTagsInView() && getTargetSize() > 0.1;
     }
 
     /** @return the distance of the 2d vector from the camera to closest apriltag */
-    public double getDistanceToTagFromCamera() {
-        double x = LimelightHelpers.getCameraPose3d_TargetSpace(CAMERA_NAME).getX();
-        double y = LimelightHelpers.getCameraPose3d_TargetSpace(CAMERA_NAME).getZ();
+    public double getDistanceToTagFromCamera() {  
+        if (!isAttached()){
+            return 0;
+        }
+        double x = LimelightHelpers.getCameraPose3d_TargetSpace(config.name).getX();
+        double y = LimelightHelpers.getCameraPose3d_TargetSpace(config.name).getZ();
         return Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
     }
 
     public RawFiducial[] getRawFiducial() {
-        return LimelightHelpers.getBotPoseEstimate_wpiBlue(CAMERA_NAME).rawFiducials;
+        return LimelightHelpers.getBotPoseEstimate_wpiBlue(config.name).rawFiducials;
     }
 
     /**
@@ -140,8 +210,11 @@ public class Limelight {
      *
      * @return The timestamp of the pose estimation in seconds.
      */
-    public double getRawPoseTimestamp() {
-        return LimelightHelpers.getBotPoseEstimate_wpiBlue(CAMERA_NAME).timestampSeconds;
+    public double getRawPoseTimestamp() {  
+        if (!isAttached()){
+            return 0;
+        }
+        return LimelightHelpers.getBotPoseEstimate_wpiBlue(config.getName()).timestampSeconds;
     }
 
     /**
@@ -150,7 +223,11 @@ public class Limelight {
      * @return The timestamp of the pose estimation in seconds.
      */
     public double getMegaPoseTimestamp() {
-        return LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(CAMERA_NAME).timestampSeconds;
+        if (!isAttached()){
+            return 0;
+        }
+        return LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(config.getName())
+                .timestampSeconds;
     }
 
     /**
@@ -160,14 +237,15 @@ public class Limelight {
      */
     @Deprecated(forRemoval = true)
     public double getPoseLatency() {
-        return Units.millisecondsToSeconds(LimelightHelpers.getBotPose_wpiBlue(CAMERA_NAME)[6]);
+        if (!isAttached()){
+            return 0;
+        }
+        return Units.millisecondsToSeconds(
+                LimelightHelpers.getBotPose_wpiBlue(config.getName())[6]);
     }
 
     /*
-     *
      * Custom Helpers
-     *
-     *
      */
 
     /**
@@ -177,45 +255,54 @@ public class Limelight {
      * @return
      */
     public double getDistanceToTarget(double targetHeight) {
-        return (targetHeight - physicalConfig.up)
-                / Math.tan(Units.degreesToRadians(physicalConfig.roll + getVerticalOffset()));
+        if (!isAttached()){
+            return 0;
+        }
+        return (targetHeight - config.up)
+                / Math.tan(Units.degreesToRadians(config.roll + getVerticalOffset()));
     }
 
     public void sendValidStatus(String message) {
-        isIntegrating = true;
+        config.isIntegrating = true;
         logStatus = message;
     }
 
     public void sendInvalidStatus(String message) {
-        isIntegrating = false;
+        config.isIntegrating = false;
         logStatus = message;
     }
 
     /*
-     *
      * Utility Wrappers
-     *
-     *
      */
 
     /** @return The latest LL results as a LimelightResults object. */
     @SuppressWarnings("unused")
     private LimelightResults retrieveJSON() {
-        return LimelightHelpers.getLatestResults(CAMERA_NAME);
+        return LimelightHelpers.getLatestResults(config.name);
     }
 
     /** @param pipelineIndex use pipeline indexes in {@link VisionConfig} //TODO: come back */
     public void setLimelightPipeline(int pipelineIndex) {
-        LimelightHelpers.setPipelineIndex(CAMERA_NAME, pipelineIndex);
+        if (!isAttached()){
+            return;
+        }
+        LimelightHelpers.setPipelineIndex(config.name, pipelineIndex);
     }
 
     /** */
     public void setRobotOrientation(double degrees) {
-        LimelightHelpers.setRobotOrientation(CAMERA_NAME, degrees, 0, 0, 0, 0, 0);
+        if (!isAttached()){
+            return;
+        }
+        LimelightHelpers.setRobotOrientation(config.name, degrees, 0, 0, 0, 0, 0);
     }
 
     public void setRobotOrientation(double degrees, double angularRate) {
-        LimelightHelpers.setRobotOrientation(CAMERA_NAME, degrees, angularRate, 0, 0, 0, 0);
+        if (!isAttached()){
+            return;
+        }
+        LimelightHelpers.setRobotOrientation(config.name, degrees, angularRate, 0, 0, 0, 0);
     }
 
     /**
@@ -224,10 +311,13 @@ public class Limelight {
      * @param enabled true to enable the LED mode, false to disable it
      */
     public void setLEDMode(boolean enabled) {
+        if (!isAttached()){
+            return;
+        }
         if (enabled) {
-            LimelightHelpers.setLEDMode_ForceOn(CAMERA_NAME);
+            LimelightHelpers.setLEDMode_ForceOn(config.getName());
         } else {
-            LimelightHelpers.setLEDMode_ForceOff(CAMERA_NAME);
+            LimelightHelpers.setLEDMode_ForceOff(config.getName());
         }
     }
 
@@ -237,14 +327,20 @@ public class Limelight {
      * @return
      */
     public void blinkLEDs() {
-        LimelightHelpers.setLEDMode_ForceBlink(CAMERA_NAME);
+        if (!isAttached()){
+            return;
+        }
+        LimelightHelpers.setLEDMode_ForceBlink(config.getName());
     }
 
     /** Checks if the camera is connected by looking for an empty botpose array from camera. */
     public boolean isCameraConnected() {
+        if (!isAttached()){
+            return false;
+        }
         try {
             var rawPoseArray =
-                    LimelightHelpers.getLimelightNTTableEntry(CAMERA_NAME, "botpose_wpiblue")
+                    LimelightHelpers.getLimelightNTTableEntry(config.getName(), "botpose_wpiblue")
                             .getDoubleArray(new double[0]);
             if (rawPoseArray.length < 6) {
                 return false;
@@ -258,6 +354,9 @@ public class Limelight {
 
     /** Prints the vision, estimated, and odometry pose to SmartDashboard */
     public void printDebug() {
+        if (!isAttached()){
+            return;
+        }
         Pose3d botPose3d = getRawPose3d();
         SmartDashboard.putString("LimelightX", df.format(botPose3d.getTranslation().getX()));
         SmartDashboard.putString("LimelightY", df.format(botPose3d.getTranslation().getY()));
@@ -271,46 +370,10 @@ public class Limelight {
                 "LimelightYaw", df.format(Units.radiansToDegrees(botPose3d.getRotation().getZ())));
     }
 
-    // TODO: isEstimateReady, toPose2d
+    private void simulationInit() {
+        if (isAttached()) {
+            // Create a new RollerSim with the left view, the motor's sim state, and a 6 in diameter
 
-    /**
-     * Specify the location of your Limelight relative to the center of your robot. (meters,
-     * degrees)
-     */
-    public static class PhysicalConfig {
-        @Getter private double forward, right, up; // meters
-        @Getter private double roll, pitch, yaw; // degrees
-
-        /**
-         * Specify the location of your Limelight relative to the center of your robot. (meters,
-         * degrees)
-         */
-        public PhysicalConfig() {}
-
-        /**
-         * @param forward (meters) forward from center of robot
-         * @param right (meters) right from center of robot
-         * @param up (meters) up from center of robot
-         * @return
-         */
-        public PhysicalConfig withTranslation(double forward, double right, double up) {
-            this.forward = forward;
-            this.right = right;
-            this.up = up;
-            return this;
-        }
-
-        /**
-         * @param roll (degrees) roll of limelight || positive is rotated right
-         * @param pitch (degrees) pitch of limelight || positive is camera tilted up
-         * @param yaw (yaw) yaw of limelight || positive is rotated left
-         * @return
-         */
-        public PhysicalConfig withRotation(double roll, double pitch, double yaw) {
-            this.roll = roll;
-            this.pitch = pitch;
-            this.yaw = yaw;
-            return this;
         }
     }
 }
