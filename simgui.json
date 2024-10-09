@@ -48,6 +48,16 @@
         "header": {
           "open": true
         }
+      },
+      "Talon FX (v6)[54]": {
+        "header": {
+          "open": true
+        }
+      },
+      "Talon FX (v6)[54]/Rotor Sensor": {
+        "header": {
+          "open": true
+        }
       }
     }
   },
@@ -99,9 +109,6 @@
     }
   },
   "NetworkTables": {
-    "Retained Values": {
-      "open": false
-    },
     "transitory": {
       "CameraPublisher": {
         "cameraName-processed": {
@@ -117,13 +124,20 @@
       "LiveWindow": {
         ".status": {
           "open": true
-        }
+        },
+        "open": true
+      },
+      "Pose": {
+        "open": true
       },
       "Shuffleboard": {
         "open": true
       },
       "SmartDashboard": {
-        "Elevator LaserCan": {
+        "Climber": {
+          "open": true
+        },
+        "Elevator": {
           "open": true
         },
         "Elevator:TEST": {
@@ -132,21 +146,44 @@
         "ElevatorT": {
           "open": true
         },
+        "LeftView": {
+          "Climber 1StaticRoot": {
+            "open": true
+          },
+          "Climber Root": {
+            "open": true
+          }
+        },
+        "VisionSystemSim-main": {
+          "Sim Field": {
+            "open": true
+          },
+          "open": true
+        },
         "open": true,
         "robot launcher": {
           "open": true
         }
+      },
+      "photonvision": {
+        "cameraName": {
+          "open": true
+        },
+        "open": true
       }
     }
   },
   "NetworkTables Info": {
-    "Clients": {
-      "open": true
-    },
     "Connections": {
       "open": true
     },
     "Server": {
+      "Publishers": {
+        "open": true
+      },
+      "Subscribers": {
+        "open": true
+      },
       "open": true
     },
     "visible": true
