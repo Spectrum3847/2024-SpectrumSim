@@ -55,6 +55,7 @@
     "types": {
       "/FMSInfo": "FMSInfo",
       "/SmartDashboard/Arm Viz": "Mechanism2d",
+      "/SmartDashboard/Auto Chooser": "String Chooser",
       "/SmartDashboard/LeftView": "Mechanism2d",
       "/SmartDashboard/Scheduler": "Scheduler",
       "/SmartDashboard/VisionSystemSim-main/Sim Field": "Field2d",

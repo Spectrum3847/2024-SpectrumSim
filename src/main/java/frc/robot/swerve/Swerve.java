@@ -166,7 +166,7 @@ public class Swerve extends SwerveDrivetrain implements Subsystem, NTSendable {
                         Units.feetToMeters(27),
                         Units.feetToMeters(27 / 2),
                         config.getBlueAlliancePerspectiveRotation()));
-        double driveBaseRadius = 0;
+        double driveBaseRadius = .4;
         for (var moduleLocation : m_moduleLocations) {
             driveBaseRadius = Math.max(driveBaseRadius, moduleLocation.getNorm());
         }
@@ -180,8 +180,8 @@ public class Swerve extends SwerveDrivetrain implements Subsystem, NTSendable {
                                 AutoRequest.withSpeeds(
                                         speeds)), // Consumer of ChassisSpeeds to drive the robot
                 new HolonomicPathFollowerConfig(
-                        new PIDConstants(10, 0, 0),
-                        new PIDConstants(10, 0, 0),
+                        new PIDConstants(5, 0, 0),
+                        new PIDConstants(5, 0, 0),
                         config.getSpeedAt12VoltsMps(),
                         driveBaseRadius,
                         new ReplanningConfig()),
