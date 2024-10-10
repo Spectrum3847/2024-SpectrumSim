@@ -12,7 +12,6 @@ import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Robot;
 import java.util.function.IntSupplier;
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -20,8 +19,7 @@ public class LaserCanSubsystem implements Subsystem, NTSendable {
     private LaserCan lasercan;
     private LaserCanConfig config;
 
-    @Setter(AccessLevel.PRIVATE)
-    private double cachedValue = -1000; // -1000 is an error value or no data
+    @Setter private double cachedValue = -1000; // -1000 is an error value or no data
 
     public static class LaserCanConfig {
         @Getter @Setter private String name;;

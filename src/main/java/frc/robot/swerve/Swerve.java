@@ -34,6 +34,7 @@ import java.util.function.Supplier;
  */
 public class Swerve extends SwerveDrivetrain implements Subsystem, NTSendable {
     private SwerveConfig config;
+    public static Swerve swerve;
     private Notifier m_simNotifier = null;
     private double m_lastSimTime;
     private RotationController rotationController;

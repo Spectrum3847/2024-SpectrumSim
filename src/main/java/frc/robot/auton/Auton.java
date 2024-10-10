@@ -26,6 +26,7 @@ public class Auton {
 
         autonChooser.addOption(
                 "Basic Front 4", new PathPlannerAuto("Basic Front 4")); // Runs full Auto
+        autonChooser.addOption("Madtown", new PathPlannerAuto("Madtown")); // Runs full Auto
         autonChooser.addOption(
                 "Do Nothing", Commands.print("Do Nothing Auto ran")); // Runs full Auto
 
@@ -39,8 +40,8 @@ public class Auton {
 
     public static Command getAutonomousCommand() {
         // return new CharacterizeLauncher(Robot.launcher);
-        Command auton =
-                new PathPlannerAuto("Basic Front 4"); // sees what auto is chosen on shuffleboard
+        Command auton = autonChooser.getSelected(); // sees what auto is chosen on shuffleboard
+        //Command auton = new PathPlannerAuto("Madtown");
         if (auton != null) {
             return auton; // checks to make sure there is an auto and if there is it runs an auto
         } else {

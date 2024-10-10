@@ -12,35 +12,10 @@ import com.ctre.phoenix6.mechanisms.swerve.SwerveModuleConstants.SteerFeedbackTy
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModuleConstantsFactory;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
-import frc.spectrumLib.swerve.config.DefaultConfig.SlotGains;
 import lombok.Getter;
 import lombok.Setter;
 
 public class SwerveConfig {
-
-    // Physical Config
-    private static final double frontWheelBaseInches = 11.875;
-    private static final double backWheelBaseInches = 8.375;
-    private static final double trueWheelBaseInches = frontWheelBaseInches + backWheelBaseInches;
-    private static final double trackWidthInches = 11.875;
-    private static final double kDriveGearRatio = 5.35714285714;
-    private static final double kSteerGearRatio = 21.4285714286;
-    
-    // Wheel Positions
-    private static final double kFrontLeftXPos = Units.inchesToMeters(frontWheelBaseInches);
-    private static final double kFrontLeftYPos = Units.inchesToMeters(trackWidthInches);
-    private static final double kFrontRightXPos = Units.inchesToMeters(frontWheelBaseInches);
-    private static final double kFrontRightYPos = Units.inchesToMeters(-trackWidthInches);
-    private static final double kBackLeftXPos = Units.inchesToMeters(-backWheelBaseInches);
-    private static final double kBackLeftYPos = Units.inchesToMeters(trackWidthInches);
-    private static final double kBackRightXPos = Units.inchesToMeters(-backWheelBaseInches);
-    private static final double kBackRightYPos = Units.inchesToMeters(-trackWidthInches);
-
-    // Angle Offsets: from cancoder Absolute Position No Offset, opposite sign
-    private static final double kFrontLeftCANcoderOffset = 0.045166; // 0.044922
-    private static final double kFrontRightCANncoderOffset = 0.224609; // 0.224365
-    private static final double kBackLeftCANcoderOffset = -0.305176; // -0.304199
-    private static final double kBackRightCANcoderOffset = -0.296875; // -0.296631
 
     @Getter private final double simLoopPeriod = 0.005; // 5 ms
     @Getter @Setter private double robotWidth = Units.inchesToMeters(29.5);
@@ -73,11 +48,14 @@ public class SwerveConfig {
     // The steer motor uses any SwerveModule.SteerRequestType control request with the
     // output type specified by SwerveModuleConstants.SteerMotorClosedLoopOutput
     @Getter
-    private Slot0Configs steerGains = new SlotGains(100, 0, 0, 0, 0);
+    private Slot0Configs steerGains =
+            new Slot0Configs().withKP(100).withKI(0).withKD(0.2).withKS(0).withKV(0).withKA(0);
     // When using closed-loop control, the drive motor uses the control
     // output type specified by SwerveModuleConstants.DriveMotorClosedLoopOutput
     @Getter
-    private Slot0Configs driveGains = new SlotGains(8, 0, 0.1, 0, 0.8);
+    private Slot0Configs driveGains =
+            new Slot0Configs().withKP(3).withKI(0).withKD(0).withKS(0).withKV(0).withKA(0);
+
     // The closed-loop output type to use for the steer motors;
     // This affects the PID/FF gains for the steer motors
     @Getter private ClosedLoopOutputType steerClosedLoopOutput = ClosedLoopOutputType.Voltage;
@@ -87,7 +65,7 @@ public class SwerveConfig {
 
     // The stator current at which the wheels start to slip;
     // This needs to be tuned to your individual robot
-    @Getter @Setter private double slipCurrentA = 80;
+    @Getter @Setter private double slipCurrentA = 150.0;
 
     // Initial configs for the drive and steer motors and the CANcoder; these cannot be null.
     // Some configs will be overwritten; check the `with*InitialConfigs()` API documentation.
@@ -112,14 +90,14 @@ public class SwerveConfig {
 
     // Theoretical free speed (m/s) at 12v applied output;
     // This needs to be tuned to your individual robot
-    @Getter @Setter private double speedAt12VoltsMps = 6;
+    @Getter @Setter private double speedAt12VoltsMps = 4.70;
 
     // Every 1 rotation of the azimuth results in kCoupleRatio drive motor turns;
     // This may need to be tuned to your individual robot
     @Getter private double coupleRatio = 3.5;
 
-    @Getter @Setter private double driveGearRatio = kDriveGearRatio;
-    @Getter @Setter private double steerGearRatio = kSteerGearRatio;
+    @Getter @Setter private double driveGearRatio = 7.363636364;
+    @Getter @Setter private double steerGearRatio = 15.42857143;
 
     @Getter @Setter
     private double wheelRadiusInches =
@@ -226,9 +204,9 @@ public class SwerveConfig {
                         frontLeftSteerMotorId,
                         frontLeftDriveMotorId,
                         frontLeftEncoderId,
-                        kFrontLeftCANcoderOffset,
-                        Units.inchesToMeters(kFrontLeftXPos),
-                        Units.inchesToMeters(kFrontLeftYPos),
+                        frontLeftEncoderOffset,
+                        Units.inchesToMeters(frontLeftXPosInches),
+                        Units.inchesToMeters(frontLeftYPosInches),
                         invertLeftSide);
 
         frontRight =
@@ -236,9 +214,9 @@ public class SwerveConfig {
                         frontRightSteerMotorId,
                         frontRightDriveMotorId,
                         frontRightEncoderId,
-                        kFrontRightCANncoderOffset,
-                        Units.inchesToMeters(kFrontRightXPos),
-                        Units.inchesToMeters(kFrontRightYPos),
+                        frontRightEncoderOffset,
+                        Units.inchesToMeters(frontRightXPosInches),
+                        Units.inchesToMeters(frontRightYPosInches),
                         invertRightSide);
 
         backLeft =
@@ -246,9 +224,9 @@ public class SwerveConfig {
                         backLeftSteerMotorId,
                         backLeftDriveMotorId,
                         backLeftEncoderId,
-                        kBackLeftCANcoderOffset,
-                        Units.inchesToMeters(kBackLeftXPos),
-                        Units.inchesToMeters(kBackLeftYPos),
+                        backLeftEncoderOffset,
+                        Units.inchesToMeters(backLeftXPosInches),
+                        Units.inchesToMeters(backLeftYPosInches),
                         invertLeftSide);
 
         backRight =
@@ -256,9 +234,9 @@ public class SwerveConfig {
                         backRightSteerMotorId,
                         backRightDriveMotorId,
                         backRightEncoderId,
-                        kBackRightCANcoderOffset,
-                        Units.inchesToMeters(kBackRightXPos),
-                        Units.inchesToMeters(kBackRightYPos),
+                        backRightEncoderOffset,
+                        Units.inchesToMeters(kBackRightXPosInches),
+                        Units.inchesToMeters(kBackRightYPosInches),
                         invertRightSide);
 
         return this;
