@@ -8,14 +8,16 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.RobotConfig.ConfigHolder;
-import frc.robot.auton.Auton;
 import frc.robot.elevator.Elevator;
+import frc.robot.elevator.ElevatorCommands;
 import frc.robot.launcher.Launcher;
 import frc.robot.launcher.LauncherCommands;
 import frc.robot.leds.LEDs;
 import frc.robot.leds.LEDsCommands;
 import frc.robot.pilot.Pilot;
 import frc.robot.pilot.PilotCommands;
+import frc.robot.pivot.Pivot;
+import frc.robot.pivot.PivotCommands;
 import frc.robot.swerve.Swerve;
 import frc.robot.swerve.SwerveCommands;
 import frc.robot.vision.VisionSystem;
@@ -32,10 +34,12 @@ public class Robot extends TimedRobot {
     @Getter private static RobotSim robotSim;
 
     @Getter private static Swerve swerve;
+    @Getter private static Climber climber;
     @Getter private static Elevator elevator;
     @Getter private static Launcher launcher;
     @Getter private static LEDs leds;
     @Getter private static Pilot pilot;
+    @Getter private static Pivot pivot;
     @Getter private static VisionSystem visionSystem;
     @Getter private static Auton auton;
 
@@ -78,14 +82,17 @@ public class Robot extends TimedRobot {
              * code. Anything with an output that needs to be independently controlled is a
              * subsystem Something that don't have an output are alos subsystems.
              */
+            leds = new LEDs(config.leds);
             double canInitDelay = 0.1; // Delay between any mechanism with motor/can configs
             swerve = new Swerve(config.swerve);
             Timer.delay(canInitDelay);
+            climber = new Climber(config.climber);
             elevator = new Elevator(config.elevator);
             Timer.delay(canInitDelay);
             launcher = new Launcher(config.launcher);
             pilot = new Pilot(config.pilot);
-            leds = new LEDs(config.leds);
+            pivot = new Pivot(config.pivot);
+            Timer.delay(canInitDelay);
             auton = new Auton();
             visionSystem = new VisionSystem(swerve::getRobotPose);
 
@@ -97,9 +104,12 @@ public class Robot extends TimedRobot {
              * command these must be done after all the subsystems are intialized
              */
             SwerveCommands.setupDefaultCommand(robotConfig.getRobotType());
+            ClimberCommands.setupDefaultCommand();
+            ElevatorCommands.setupDefaultCommand();
             LauncherCommands.setupDefaultCommand();
             LEDsCommands.setupDefaultCommand();
             PilotCommands.setupDefaultCommand();
+            PivotCommands.setupDefaultCommand();
 
             RobotTelemetry.print("--- Robot Init Complete ---");
 

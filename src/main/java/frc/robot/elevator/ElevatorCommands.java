@@ -24,19 +24,20 @@ public class ElevatorCommands {
     }
 
     public static Command fullExtend() {
-        return elevator.runPosition(config::getFullExtend).withName("Elevator.fullExtend");
+        return elevator.moveToPoseRevolutions(config::getFullExtend)
+                .withName("Elevator.fullExtend");
     }
 
     public static Command amp() {
-        return elevator.runPosition(config::getAmp).withName("Elevator.amp");
+        return elevator.moveToPoseRevolutions(config::getAmp).withName("Elevator.amp");
     }
 
     public static Command trap() {
-        return elevator.runPosition(config::getTrap).withName("Elevator.trap");
+        return elevator.moveToPoseRevolutions(config::getTrap).withName("Elevator.trap");
     }
 
     public static Command home() {
-        return elevator.runPosition(config::getHome).withName("Elevator.home");
+        return elevator.moveToPoseRevolutions(config::getHome).withName("Elevator.home");
     }
 
     public static Command zero() {
@@ -53,7 +54,7 @@ public class ElevatorCommands {
 
     // Example of a TuneValue that is used to tune a single value in the code
     public static Command tuneElevator() {
-        return elevator.runPosition(new TuneValue("Tune Elevator", 0).getSupplier())
+        return elevator.moveToPoseRevolutions(new TuneValue("Tune Elevator", 0).getSupplier())
                 .withName("Elevator.Tune");
     }
 }

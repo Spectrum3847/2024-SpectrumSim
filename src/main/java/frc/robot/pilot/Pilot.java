@@ -2,8 +2,10 @@ package frc.robot.pilot;
 
 import frc.robot.Robot;
 import frc.robot.RobotTelemetry;
+import frc.robot.climber.ClimberCommands;
 import frc.robot.elevator.ElevatorCommands;
 import frc.robot.launcher.LauncherCommands;
+import frc.robot.pivot.PivotCommands;
 import frc.spectrumLib.gamepads.Gamepad;
 import lombok.Getter;
 import lombok.Setter;
@@ -50,6 +52,10 @@ public class Pilot extends Gamepad {
         x().whileTrue(
                         LauncherCommands.runVelocity(
                                 () -> -1 * Robot.getConfig().launcher.getMaxVelocity()));
+        b().whileTrue(PivotCommands.subwoofer());
+        x().whileTrue(PivotCommands.home());
+        b().whileTrue(ClimberCommands.fullExtend());
+        x().whileTrue(ClimberCommands.home());
     };
 
     /** Setup the Buttons for Disabled mode. */
