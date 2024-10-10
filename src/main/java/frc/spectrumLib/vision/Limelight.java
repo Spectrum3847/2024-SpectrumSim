@@ -94,7 +94,7 @@ public class Limelight {
      *     -29.8 to 29.8 degrees)
      */
     public double getHorizontalOffset() {
-        if (!isAttached()){
+        if (!isAttached()) {
             return 0;
         }
         return LimelightHelpers.getTX(config.getName());
@@ -105,7 +105,7 @@ public class Limelight {
      *     degrees / LL2: -24.85 to 24.85 degrees)
      */
     public double getVerticalOffset() {
-        if (!isAttached()){
+        if (!isAttached()) {
             return 0;
         }
         return LimelightHelpers.getTY(config.getName());
@@ -113,7 +113,7 @@ public class Limelight {
 
     /** @return Whether the LL has any valid targets (apriltags or other vision targets) */
     public boolean targetInView() {
-        if (!isAttached()){
+        if (!isAttached()) {
             return false;
         }
         return LimelightHelpers.getTV(config.getName());
@@ -121,14 +121,14 @@ public class Limelight {
 
     /** @return whether the LL sees multiple tags or not */
     public boolean multipleTagsInView() {
-        if (!isAttached()){
+        if (!isAttached()) {
             return false;
         }
         return getTagCountInView() > 1;
     }
 
     public double getTagCountInView() {
-        if (!isAttached()){
+        if (!isAttached()) {
             return 0;
         }
         return LimelightHelpers.getBotPoseEstimate_wpiBlue(config.getName()).tagCount;
@@ -143,14 +143,14 @@ public class Limelight {
      *     criteria set in LL dasbhoard)
      */
     public double getClosestTagID() {
-        if (!isAttached()){
+        if (!isAttached()) {
             return 0;
         }
         return LimelightHelpers.getFiducialID(config.getName());
     }
 
     public double getTargetSize() {
-        if (!isAttached()){
+        if (!isAttached()) {
             return 0;
         }
         return LimelightHelpers.getTA(config.getName());
@@ -160,7 +160,7 @@ public class Limelight {
 
     /** @return the corresponding LL Pose3d (MEGATAG1) for the alliance in DriverStation.java */
     public Pose3d getRawPose3d() {
-        if (!isAttached()){
+        if (!isAttached()) {
             return new Pose3d();
         }
         return LimelightHelpers.getBotPose3d_wpiBlue(
@@ -169,7 +169,7 @@ public class Limelight {
 
     /** @return the corresponding LL Pose3d (MEGATAG2) for the alliance in DriverStation.java */
     public Pose2d getMegaPose2d() {
-        if (!isAttached()){
+        if (!isAttached()) {
             return new Pose2d();
         }
         return LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(config.name)
@@ -177,15 +177,15 @@ public class Limelight {
     }
 
     public boolean hasAccuratePose() {
-        if (!isAttached()){
+        if (!isAttached()) {
             return false;
         }
         return multipleTagsInView() && getTargetSize() > 0.1;
     }
 
     /** @return the distance of the 2d vector from the camera to closest apriltag */
-    public double getDistanceToTagFromCamera() {  
-        if (!isAttached()){
+    public double getDistanceToTagFromCamera() {
+        if (!isAttached()) {
             return 0;
         }
         double x = LimelightHelpers.getCameraPose3d_TargetSpace(config.name).getX();
@@ -202,8 +202,8 @@ public class Limelight {
      *
      * @return The timestamp of the pose estimation in seconds.
      */
-    public double getRawPoseTimestamp() {  
-        if (!isAttached()){
+    public double getRawPoseTimestamp() {
+        if (!isAttached()) {
             return 0;
         }
         return LimelightHelpers.getBotPoseEstimate_wpiBlue(config.getName()).timestampSeconds;
@@ -215,7 +215,7 @@ public class Limelight {
      * @return The timestamp of the pose estimation in seconds.
      */
     public double getMegaPoseTimestamp() {
-        if (!isAttached()){
+        if (!isAttached()) {
             return 0;
         }
         return LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(config.getName())
@@ -229,7 +229,7 @@ public class Limelight {
      */
     @Deprecated(forRemoval = true)
     public double getPoseLatency() {
-        if (!isAttached()){
+        if (!isAttached()) {
             return 0;
         }
         return Units.millisecondsToSeconds(
@@ -247,7 +247,7 @@ public class Limelight {
      * @return
      */
     public double getDistanceToTarget(double targetHeight) {
-        if (!isAttached()){
+        if (!isAttached()) {
             return 0;
         }
         return (targetHeight - config.up)
@@ -276,7 +276,7 @@ public class Limelight {
 
     /** @param pipelineIndex use pipeline indexes in {@link VisionConfig} //TODO: come back */
     public void setLimelightPipeline(int pipelineIndex) {
-        if (!isAttached()){
+        if (!isAttached()) {
             return;
         }
         LimelightHelpers.setPipelineIndex(config.name, pipelineIndex);
@@ -284,14 +284,14 @@ public class Limelight {
 
     /** */
     public void setRobotOrientation(double degrees) {
-        if (!isAttached()){
+        if (!isAttached()) {
             return;
         }
         LimelightHelpers.setRobotOrientation(config.name, degrees, 0, 0, 0, 0, 0);
     }
 
     public void setRobotOrientation(double degrees, double angularRate) {
-        if (!isAttached()){
+        if (!isAttached()) {
             return;
         }
         LimelightHelpers.setRobotOrientation(config.name, degrees, angularRate, 0, 0, 0, 0);
@@ -303,7 +303,7 @@ public class Limelight {
      * @param enabled true to enable the LED mode, false to disable it
      */
     public void setLEDMode(boolean enabled) {
-        if (!isAttached()){
+        if (!isAttached()) {
             return;
         }
         if (enabled) {
@@ -319,7 +319,7 @@ public class Limelight {
      * @return
      */
     public void blinkLEDs() {
-        if (!isAttached()){
+        if (!isAttached()) {
             return;
         }
         LimelightHelpers.setLEDMode_ForceBlink(config.getName());
@@ -327,7 +327,7 @@ public class Limelight {
 
     /** Checks if the camera is connected by looking for an empty botpose array from camera. */
     public boolean isCameraConnected() {
-        if (!isAttached()){
+        if (!isAttached()) {
             return false;
         }
         try {
@@ -346,7 +346,7 @@ public class Limelight {
 
     /** Prints the vision, estimated, and odometry pose to SmartDashboard */
     public void printDebug() {
-        if (!isAttached()){
+        if (!isAttached()) {
             return;
         }
         Pose3d botPose3d = getRawPose3d();
