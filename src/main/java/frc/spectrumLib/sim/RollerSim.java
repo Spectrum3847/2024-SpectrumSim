@@ -41,19 +41,17 @@ public class RollerSim {
                                 new Color8Bit(Color.kWhite)));
 
         rollerBackground = new MechanismLigament2d[config.getBackgroundLines()];
-        for (int i = 0; i < config.getBackgroundLines(); i++) {
-            rollerBackground[i] =
-                    rollerAxle.append(
-                            new MechanismLigament2d(
-                                    name + " Background " + i,
-                                    Units.inchesToMeters(config.getRollerDiameterInches()) / 2.0,
-                                    (360 / config.getBackgroundLines()) * i,
-                                    config.getRollerDiameterInches(),
-                                    new Color8Bit(Color.kBlack)));
-        }
+        Circle roller =
+                new Circle(
+                        mech,
+                        config.getBackgroundLines(),
+                        config.getRollerDiameterInches(),
+                        name,
+                        rollerAxle);
+        roller.drawCircle();
     }
 
-    public void simulationPeriodic(double x, double y) {
+    public void simulationPeriodic(double x, double y, Circle roller) {
         // ------ Update sim based on motor output
         rollerSim.setInput(rollerMotorSim.getMotorVoltage());
         rollerSim.update(TimedRobot.kDefaultPeriod);
@@ -76,27 +74,27 @@ public class RollerSim {
                 rollerViz.getAngle() + Math.toDegrees(rpm) * TimedRobot.kDefaultPeriod * 0.1);
 
         if (rollerSim.getAngularVelocityRadPerSec() < -1) {
-            setHalfBackground(config.getRevColor());
+            roller.setHalfBackground(config.getRevColor(), config.getOffColor());
         } else if (rollerSim.getAngularVelocityRadPerSec() > 1) {
-            setBackgroundColor(config.getFwdColor());
+            roller.setBackgroundColor(config.getFwdColor());
         } else {
-            setBackgroundColor(config.getOffColor());
+            roller.setBackgroundColor(config.getOffColor());
         }
     }
 
-    public void setBackgroundColor(Color8Bit color8Bit) {
-        for (int i = 0; i < config.getBackgroundLines(); i++) {
-            rollerBackground[i].setColor(color8Bit);
-        }
-    }
+    // public void setBackgroundColor(Color8Bit color8Bit) {
+    //     for (int i = 0; i < config.getBackgroundLines(); i++) {
+    //         rollerBackground[i].setColor(color8Bit);
+    //     }
+    // }
 
-    public void setHalfBackground(Color8Bit color8Bit) {
-        for (int i = 0; i < config.getBackgroundLines(); i++) {
-            if (i % 2 == 0) {
-                rollerBackground[i].setColor(color8Bit);
-            } else {
-                rollerBackground[i].setColor(config.getOffColor());
-            }
-        }
-    }
+    // public void setHalfBackground(Color8Bit color8Bit) {
+    //     for (int i = 0; i < config.getBackgroundLines(); i++) {
+    //         if (i % 2 == 0) {
+    //             rollerBackground[i].setColor(color8Bit);
+    //         } else {
+    //             rollerBackground[i].setColor(config.getOffColor());
+    //         }
+    //     }
+    // }
 }
