@@ -56,6 +56,7 @@ public class Pivot extends Mechanism {
         @Getter private final int CANcoderID = 44;
         @Getter private final double CANcoderGearRatio = 35.1;
         @Getter private double CANcoderOffset = 0;
+        @Getter private boolean isCANcoderAttached = true;
 
         private enum CANCoderFeedbackType {
             RemoteCANcoder,
@@ -72,23 +73,23 @@ public class Pivot extends Mechanism {
         /* Sim properties */
         @Getter private double pivotX = 0.55;
         @Getter private double pivotY = 0.1;
-        @Getter private double ratio = 50;
+        @Getter private double ratio = 14; // 15;
         @Getter private double length = 0.4;
 
         public PivotConfig() {
             super("Pivot", 41, RobotConfig.CANIVORE);
             configPIDGains(0, velocityKp, 0, 0);
             configFeedForwardGains(velocityKs, velocityKv, 0, 0);
+            configMotionMagic(147000, 161000, 0);
             configGearRatio(1);
             configSupplyCurrentLimit(currentLimit, threshold, true);
             configForwardTorqueCurrentLimit(torqueCurrentLimit);
             configReverseTorqueCurrentLimit(torqueCurrentLimit);
-            configNeutralBrakeMode(true);
-            configClockwise_Positive();
-            configMinMaxRotations(0, 0.96);
+            configMinMaxRotations(0, .96); // .96
             configReverseSoftLimit(getMinRotation(), true);
             configForwardSoftLimit(getMaxRotation(), true);
-            configMotionMagic(147000, 161000, 0);
+            configNeutralBrakeMode(true);
+            configCounterClockwise_Positive();
         }
 
         public void configCANcoderOffset(double CANcoderOffset) {
@@ -123,7 +124,7 @@ public class Pivot extends Mechanism {
         super(config);
         this.config = config; // unsure if we need this, may delete and test
 
-        if (isAttached()) {
+        if (config.isCANcoderAttached()) {
             config.modifyMotorConfig(config); // Modify configuration to use remote CANcoder fused
             m_CANcoder = new CANcoder(config.getCANcoderID(), RobotConfig.CANIVORE);
             CANcoderConfiguration cancoderConfigs = new CANcoderConfiguration();
@@ -151,6 +152,9 @@ public class Pivot extends Mechanism {
     public void initSendable(NTSendableBuilder builder) {
         if (isAttached()) {
             builder.addDoubleProperty("Position", this::getMotorPosition, null);
+            builder.addDoubleProperty("Velocity", this::getMotorVelocityRPM, null);
+            builder.addDoubleProperty(
+                    "Motor Voltage", this.motor.getSimState()::getMotorVoltage, null);
         }
     }
 
@@ -272,7 +276,8 @@ public class Pivot extends Mechanism {
                             config.ratio,
                             config.length,
                             config.getMinRotation(),
-                            config.getMaxRotation()),
+                            80, // config.getMaxRotation() * config.getRatio(),
+                            config.getMinRotation()),
                     mech,
                     pivotMotorSim,
                     config.getName());
