@@ -26,6 +26,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.crescendo.Field;
 import frc.robot.RobotTelemetry;
+import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
 /**
@@ -155,7 +156,7 @@ public class Swerve extends SwerveDrivetrain implements Subsystem, NTSendable {
 
     public void reorientForward() {
         double angleDegrees = 0;
-        if (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red) {
+        if (Field.isRed()) {
             angleDegrees = 180;
         }
         reorient(angleDegrees);
@@ -163,7 +164,7 @@ public class Swerve extends SwerveDrivetrain implements Subsystem, NTSendable {
 
     public void reorientLeft() {
         double angleDegrees = 90;
-        if (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red) {
+        if (Field.isRed()) {
             angleDegrees = 270;
         }
         reorient(angleDegrees);
@@ -171,7 +172,7 @@ public class Swerve extends SwerveDrivetrain implements Subsystem, NTSendable {
 
     public void reorientRight() {
         double angleDegrees = 270;
-        if (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red) {
+        if (Field.isRed()) {
             angleDegrees = 90;
         }
         reorient(angleDegrees);
@@ -179,7 +180,7 @@ public class Swerve extends SwerveDrivetrain implements Subsystem, NTSendable {
 
     public void reorientBack() {
         double angleDegrees = 180;
-        if (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red) {
+        if (Field.isRed()) {
             angleDegrees = 90;
         }
         reorient(angleDegrees);
@@ -220,6 +221,10 @@ public class Swerve extends SwerveDrivetrain implements Subsystem, NTSendable {
 
     double getRotationRadians() {
         return getRobotPose().getRotation().getRadians();
+    }
+
+    double calculateRotationController(DoubleSupplier targetRadians) {
+        return rotationController.calculate(targetRadians.getAsDouble(), getRotationRadians());
     }
 
     // --------------------------------------------------------------------------------

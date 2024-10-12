@@ -162,6 +162,9 @@ public class SwerveConfig {
     @Getter private SwerveModuleConstants backLeft;
     @Getter private SwerveModuleConstants backRight;
 
+    // Used in commands
+    @Getter @Setter private double targetHeading = 0;
+
     public SwerveModuleConstants[] getModules() {
         return new SwerveModuleConstants[] {frontLeft, frontRight, backLeft, backRight};
     }

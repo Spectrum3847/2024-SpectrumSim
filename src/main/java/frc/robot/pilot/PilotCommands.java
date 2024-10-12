@@ -22,6 +22,12 @@ public class PilotCommands {
                 .withName("PilotDrive");
     }
 
+    public static Command headingLockDrive() {
+        return SwerveCommands.headingLock(
+                        () -> pilot.getDriveFwdPositive(), () -> pilot.getDriveLeftPositive())
+                .withName("PilotHeadingLockDrive");
+    }
+
     /** Command that can be used to rumble the pilot controller */
     public static Command rumble(double intensity, double durationSeconds) {
         return pilot.rumbleCommand(intensity, durationSeconds);
