@@ -137,6 +137,72 @@ public class Swerve extends SwerveDrivetrain implements Subsystem, NTSendable {
         }
     }
 
+    public void reorient(double angleDegrees) {
+        try {
+            m_stateLock.writeLock().lock();
+
+            m_odometry.resetPosition(
+                    m_pigeon2.getRotation2d(),
+                    m_modulePositions,
+                    new Pose2d(
+                            getRobotPose().getX(),
+                            getRobotPose().getY(),
+                            Rotation2d.fromDegrees(angleDegrees)));
+        } finally {
+            m_stateLock.writeLock().unlock();
+        }
+    }
+
+    public void reorientForward() {
+        double angleDegrees = 0;
+        if (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red) {
+            angleDegrees = 180;
+        }
+        reorient(angleDegrees);
+    }
+
+    public void reorientLeft() {
+        double angleDegrees = 90;
+        if (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red) {
+            angleDegrees = 270;
+        }
+        reorient(angleDegrees);
+    }
+
+    public void reorientRight() {
+        double angleDegrees = 270;
+        if (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red) {
+            angleDegrees = 90;
+        }
+        reorient(angleDegrees);
+    }
+
+    public void reorientBack() {
+        double angleDegrees = 180;
+        if (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red) {
+            angleDegrees = 90;
+        }
+        reorient(angleDegrees);
+    }
+
+    public double getClosestCardinal() {
+        double heading = getRotation().getRadians();
+        if (heading > -Math.PI / 4 && heading <= Math.PI / 4) {
+            return 0;
+        } else if (heading > Math.PI / 4 && heading <= 3 * Math.PI / 4) {
+            return 90;
+        } else if (heading > 3 * Math.PI / 4 || heading <= -3 * Math.PI / 4) {
+            return 180;
+        } else {
+            return 270;
+        }
+    }
+
+    public void cardinalReorient() {
+        double angleDegrees = getClosestCardinal();
+        reorient(angleDegrees);
+    }
+
     // --------------------------------------------------------------------------------
     // Rotation Controller
     // --------------------------------------------------------------------------------

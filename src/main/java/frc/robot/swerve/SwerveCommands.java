@@ -3,6 +3,7 @@ package frc.robot.swerve;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Robot;
 import frc.robot.RobotConfig.RobotType;
@@ -42,5 +43,29 @@ public class SwerveCommands {
     public static Command test() {
         swerve.getRotation();
         return new WaitCommand(2);
+    }
+
+    public static Command reorient(double angleDegrees) {
+        return Commands.runOnce(() -> swerve.reorient(angleDegrees)).withName("Serve.reorient");
+    }
+
+    public static Command reorientForward() {
+        return swerve.runOnce(() -> swerve.reorientForward()).withName("Swerve.reorientForward");
+    }
+
+    public static Command reorientLeft() {
+        return swerve.runOnce(() -> swerve.reorientLeft()).withName("Swerve.reorientLeft");
+    }
+
+    public static Command reorientRight() {
+        return swerve.runOnce(() -> swerve.reorientRight()).withName("Swerve.reorientRight");
+    }
+
+    public static Command reorientBack() {
+        return swerve.runOnce(() -> swerve.reorientBack()).withName("Swerve.reorientBack");
+    }
+
+    public static Command cardinalReorient() {
+        return swerve.runOnce(() -> swerve.cardinalReorient()).withName("Swerve.cardinalReorient");
     }
 }
