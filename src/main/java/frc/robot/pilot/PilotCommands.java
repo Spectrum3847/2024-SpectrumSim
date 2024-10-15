@@ -16,16 +16,29 @@ public class PilotCommands {
 
     public static Command pilotDrive() {
         return SwerveCommands.drive(
-                        () -> pilot.getDriveFwdPositive(),
-                        () -> pilot.getDriveLeftPositive(),
-                        () -> pilot.getDriveCCWPositive())
+                        pilot::getDriveFwdPositive,
+                        pilot::getDriveLeftPositive,
+                        pilot::getDriveCCWPositive)
                 .withName("PilotDrive");
     }
 
     public static Command headingLockDrive() {
-        return SwerveCommands.headingLock(
-                        () -> pilot.getDriveFwdPositive(), () -> pilot.getDriveLeftPositive())
+        return SwerveCommands.headingLock(pilot::getDriveFwdPositive, pilot::getDriveLeftPositive)
                 .withName("PilotHeadingLockDrive");
+    }
+
+    /**
+     * Drive the robot using left stick and control orientation using the right stick Only Cardinal
+     * directions are allowed
+     *
+     * @return
+     */
+    public static Command stickSteerDrive() {
+        return SwerveCommands.drive(
+                        pilot::getDriveFwdPositive,
+                        pilot::getDriveLeftPositive,
+                        pilot::chooseCardinalDirections)
+                .withName("Swerve.PilotStickSteer");
     }
 
     /** Command that can be used to rumble the pilot controller */

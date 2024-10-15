@@ -51,6 +51,21 @@ public class SwerveCommands {
         return new WaitCommand(2);
     }
 
+    /**
+     * Reset the turn controller and then run the drive command with a angle supplier. This can be
+     * used for aiming at a goal or heading locking, etc
+     */
+    public static Command aimDrive(
+            DoubleSupplier velocityX, DoubleSupplier velocityY, DoubleSupplier targetRadians) {
+        return resetTurnController()
+                .andThen(
+                        drive(
+                                velocityX,
+                                velocityY,
+                                () -> swerve.calculateRotationController(targetRadians)))
+                .withName("Swerve.aimDrive");
+    }
+
     public static Command resetTurnController() {
         return swerve.runOnce(() -> swerve.resetRotationController())
                 .withName("ResetTurnController");
@@ -81,7 +96,9 @@ public class SwerveCommands {
                                         }
                                     } else {
                                         if (swerve.getRobotPose().getX()
-                                                >= Field.getFieldLength() / 2) {}
+                                                >= Field.getFieldLength() / 2) {
+                                            return 0;
+                                        }
                                     }
                                     if (velocityX.getAsDouble() == 0
                                             && velocityY.getAsDouble() == 0) {
@@ -90,7 +107,8 @@ public class SwerveCommands {
                                         return swerve.calculateRotationController(
                                                 () -> config.getTargetHeading());
                                     }
-                                })).withName("Swerve.HeadingLock");
+                                }))
+                .withName("Swerve.HeadingLock");
     }
 
     public static Command reorient(double angleDegrees) {

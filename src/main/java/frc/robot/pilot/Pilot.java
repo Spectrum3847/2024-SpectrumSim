@@ -58,8 +58,18 @@ public class Pilot extends Gamepad {
         b().whileTrue(ClimberCommands.fullExtend());
         x().whileTrue(ClimberCommands.home());
 
-        b().onTrue(SwerveCommands.reorientLeft());
-        x().onTrue(SwerveCommands.reorientRight());
+        /* Reorient commands */
+        upDpad().and(leftBumperOnly()).whileTrue(rumbleCommand(SwerveCommands.reorientForward()));
+        leftDpad().and(leftBumperOnly()).whileTrue(rumbleCommand(SwerveCommands.reorientLeft()));
+        downDpad().and(leftBumperOnly()).whileTrue(rumbleCommand(SwerveCommands.reorientBack()));
+        rightDpad().and(leftBumperOnly()).whileTrue(rumbleCommand(SwerveCommands.reorientRight()));
+
+        /* Use the right stick to set a cardinal direction to aim at */
+        (leftBumperOnly().negate())
+                .and(
+                        rightXTrigger(ThresholdType.ABS_GREATER_THAN, 0.5)
+                                .or(rightYTrigger(ThresholdType.ABS_GREATER_THAN, 0.5)))
+                .whileTrue(PilotCommands.stickSteerDrive());
     };
 
     /** Setup the Buttons for Disabled mode. */
