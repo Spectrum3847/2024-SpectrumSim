@@ -14,6 +14,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NTSendable;
 import edu.wpi.first.networktables.NTSendableBuilder;
@@ -38,6 +39,7 @@ public class Swerve extends SwerveDrivetrain implements Subsystem, NTSendable {
     private Notifier m_simNotifier = null;
     private double m_lastSimTime;
     private RotationController rotationController;
+    private SwerveModuleState[] Setpoints = new SwerveModuleState[] {};
 
     /* Keep track if we've ever applied the operator perspective before or not */
     private boolean hasAppliedPilotPerspective = false;
@@ -202,6 +204,21 @@ public class Swerve extends SwerveDrivetrain implements Subsystem, NTSendable {
     public void cardinalReorient() {
         double angleDegrees = getClosestCardinal();
         reorient(angleDegrees);
+    }
+
+    /**
+     * Applies the specified control request to this swerve drivetrain.
+     *
+     * @param request Request to apply
+     */
+    public void writeSetpoints(SwerveModuleState[] setpoints) {
+        try {
+            m_stateLock.writeLock().lock();
+
+            Setpoints = setpoints;
+        } finally {
+            m_stateLock.writeLock().unlock();
+        }
     }
 
     // --------------------------------------------------------------------------------

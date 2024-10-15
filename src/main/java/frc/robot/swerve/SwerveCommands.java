@@ -51,6 +51,11 @@ public class SwerveCommands {
         return new WaitCommand(2);
     }
 
+    /** Turn the swerve wheels to an X to prevent the robot from moving */
+    public static Command Xbrake() {
+        return Xbrake.run().withName("Swerve.Xbrake");
+    }
+
     /**
      * Reset the turn controller and then run the drive command with a angle supplier. This can be
      * used for aiming at a goal or heading locking, etc
