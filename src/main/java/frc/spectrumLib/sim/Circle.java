@@ -32,6 +32,7 @@ public class Circle {
         this.color = color;
         this.name = name;
         this.root = root;
+        circleBackground = new MechanismLigament2d[this.backgroundLines];
     }
 
     public Circle(
@@ -45,10 +46,10 @@ public class Circle {
         this.diameterInches = diameterInches;
         this.name = name;
         this.root = root;
+        this.circleBackground = new MechanismLigament2d[this.backgroundLines];
     }
 
     public void drawCircle() {
-        circleBackground = new MechanismLigament2d[this.backgroundLines];
         for (int i = 0; i < backgroundLines; i++) {
             circleBackground[i] =
                     root.append(
@@ -62,7 +63,7 @@ public class Circle {
     }
 
     public void setBackgroundColor(Color8Bit color) {
-        for (int i = 0; i < getBackgroundLines(); i++) {
+        for (int i = 0; i < backgroundLines; i++) {
             circleBackground[i].setColor(color);
         }
     }

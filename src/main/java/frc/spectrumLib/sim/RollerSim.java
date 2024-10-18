@@ -20,6 +20,7 @@ public class RollerSim {
     private FlywheelSim rollerSim;
     private TalonFXSimState rollerMotorSim;
     private RollerConfig config;
+    private Circle roller;
 
     public RollerSim(
             RollerConfig config, Mechanism2d mech, TalonFXSimState rollerMotorSim, String name) {
@@ -41,17 +42,17 @@ public class RollerSim {
                                 new Color8Bit(Color.kWhite)));
 
         rollerBackground = new MechanismLigament2d[config.getBackgroundLines()];
-        Circle roller =
+
+        roller =
                 new Circle(
                         mech,
                         config.getBackgroundLines(),
                         config.getRollerDiameterInches(),
                         name,
                         rollerAxle);
-        roller.drawCircle();
     }
 
-    public void simulationPeriodic(double x, double y, Circle roller) {
+    public void simulationPeriodic(double x, double y) {
         // ------ Update sim based on motor output
         rollerSim.setInput(rollerMotorSim.getMotorVoltage());
         rollerSim.update(TimedRobot.kDefaultPeriod);
