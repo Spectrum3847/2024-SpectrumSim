@@ -29,6 +29,7 @@ import frc.crescendo.Field;
 import frc.robot.RobotTelemetry;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
+import lombok.Getter;
 
 /**
  * Class that extends the Phoenix SwerveDrivetrain class and implements subsystem so it can be used
@@ -36,11 +37,13 @@ import java.util.function.Supplier;
  */
 public class Swerve extends SwerveDrivetrain implements Subsystem, NTSendable {
     private SwerveConfig config;
-    public static Swerve swerve;
     private Notifier m_simNotifier = null;
     private double m_lastSimTime;
     private RotationController rotationController;
-    private SwerveModuleState[] Setpoints = new SwerveModuleState[] {};
+
+    @Getter
+    protected SwerveModuleState[] setpoints =
+            new SwerveModuleState[] {}; // This currently doesn't do anything
 
     /* Keep track if we've ever applied the operator perspective before or not */
     private boolean hasAppliedPilotPerspective = false;
@@ -131,7 +134,7 @@ public class Swerve extends SwerveDrivetrain implements Subsystem, NTSendable {
         try {
             m_stateLock.writeLock().lock();
 
-            Setpoints = setpoints;
+            this.setpoints = setpoints;
         } finally {
             m_stateLock.writeLock().unlock();
         }

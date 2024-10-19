@@ -41,7 +41,7 @@ public class Auton {
     public static Command getAutonomousCommand() {
         // return new CharacterizeLauncher(Robot.launcher);
         Command auton = autonChooser.getSelected(); // sees what auto is chosen on shuffleboard
-        //Command auton = new PathPlannerAuto("Madtown");
+        // Command auton = new PathPlannerAuto("Madtown");
         if (auton != null) {
             return auton; // checks to make sure there is an auto and if there is it runs an auto
         } else {
