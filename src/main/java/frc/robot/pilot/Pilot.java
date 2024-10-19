@@ -6,6 +6,7 @@ import frc.robot.climber.ClimberCommands;
 import frc.robot.elevator.ElevatorCommands;
 import frc.robot.launcher.LauncherCommands;
 import frc.robot.pivot.PivotCommands;
+import frc.robot.swerve.SwerveCommands;
 import frc.spectrumLib.gamepads.Gamepad;
 import lombok.Getter;
 import lombok.Setter;
@@ -56,6 +57,19 @@ public class Pilot extends Gamepad {
         x().whileTrue(PivotCommands.home());
         b().whileTrue(ClimberCommands.fullExtend());
         x().whileTrue(ClimberCommands.home());
+
+        /* Reorient commands */
+        upDpad().and(leftBumperOnly()).whileTrue(rumbleCommand(SwerveCommands.reorientForward()));
+        leftDpad().and(leftBumperOnly()).whileTrue(rumbleCommand(SwerveCommands.reorientLeft()));
+        downDpad().and(leftBumperOnly()).whileTrue(rumbleCommand(SwerveCommands.reorientBack()));
+        rightDpad().and(leftBumperOnly()).whileTrue(rumbleCommand(SwerveCommands.reorientRight()));
+
+        /* Use the right stick to set a cardinal direction to aim at */
+        (leftBumperOnly().negate())
+                .and(
+                        rightXTrigger(ThresholdType.ABS_GREATER_THAN, 0.5)
+                                .or(rightYTrigger(ThresholdType.ABS_GREATER_THAN, 0.5)))
+                .whileTrue(PilotCommands.stickSteerDrive());
     };
 
     /** Setup the Buttons for Disabled mode. */
@@ -97,7 +111,7 @@ public class Pilot extends Gamepad {
     }
 
     // Positive is counter-clockwise, left Trigger is positive
-    // Applies Expontial Curve, Deadzone, and Slow Mode toggle
+    // Applies Exponential Curve, Deadzone, and Slow Mode toggle
     public double getDriveCCWPositive() {
         double ccwPositive = triggersCurve.calculate(getTwist());
         if (isSlowMode) {
