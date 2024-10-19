@@ -121,7 +121,6 @@ public class Swerve extends SwerveDrivetrain implements Subsystem, NTSendable {
         return m_kinematics.toChassisSpeeds(getState().ModuleStates);
     }
 
-    
     /**
      * Applies the specified control request to this swerve drivetrain.
      *

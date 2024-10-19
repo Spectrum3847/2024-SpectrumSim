@@ -133,6 +133,6 @@ public class SwerveCommands {
     }
 
     public static Command cardinalReorient() {
-        return swerve.runOnce(() -> swerve.cardinalReorient()).withName("Swerve.cardinalReorient");
+        return swerve.cardinalReorient().withName("Swerve.cardinalReorient");
     }
 }
