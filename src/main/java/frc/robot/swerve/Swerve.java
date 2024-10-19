@@ -14,6 +14,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NTSendable;
 import edu.wpi.first.networktables.NTSendableBuilder;
@@ -26,6 +27,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.crescendo.Field;
 import frc.robot.RobotTelemetry;
+import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
 /**
@@ -37,6 +39,7 @@ public class Swerve extends SwerveDrivetrain implements Subsystem, NTSendable {
     private Notifier m_simNotifier = null;
     private double m_lastSimTime;
     private RotationController rotationController;
+    private SwerveModuleState[] Setpoints = new SwerveModuleState[] {};
 
     /* Keep track if we've ever applied the operator perspective before or not */
     private boolean hasAppliedPilotPerspective = false;
@@ -118,6 +121,22 @@ public class Swerve extends SwerveDrivetrain implements Subsystem, NTSendable {
         return m_kinematics.toChassisSpeeds(getState().ModuleStates);
     }
 
+    
+    /**
+     * Applies the specified control request to this swerve drivetrain.
+     *
+     * @param request Request to apply
+     */
+    public void writeSetpoints(SwerveModuleState[] setpoints) {
+        try {
+            m_stateLock.writeLock().lock();
+
+            Setpoints = setpoints;
+        } finally {
+            m_stateLock.writeLock().unlock();
+        }
+    }
+
     private void setPilotPerspective() {
         /* Periodically try to apply the operator perspective */
         /* If we haven't applied the operator perspective before, then we should apply it regardless of DS state */
@@ -137,6 +156,56 @@ public class Swerve extends SwerveDrivetrain implements Subsystem, NTSendable {
         }
     }
 
+    protected void reorient(double angleDegrees) {
+        try {
+            m_stateLock.writeLock().lock();
+
+            m_odometry.resetPosition(
+                    m_pigeon2.getRotation2d(),
+                    m_modulePositions,
+                    new Pose2d(
+                            getRobotPose().getX(),
+                            getRobotPose().getY(),
+                            Rotation2d.fromDegrees(angleDegrees)));
+        } finally {
+            m_stateLock.writeLock().unlock();
+        }
+    }
+
+    protected Command reorientPilotAngle(double angleDegrees) {
+        return runOnce(
+                () -> {
+                    double output;
+                    if (Field.isRed()) {
+                        output = (angleDegrees + 180) % 360;
+                    } else {
+                        output = angleDegrees;
+                    }
+                    reorient(output);
+                });
+    }
+
+    protected double getClosestCardinal() {
+        double heading = getRotation().getRadians();
+        if (heading > -Math.PI / 4 && heading <= Math.PI / 4) {
+            return 0;
+        } else if (heading > Math.PI / 4 && heading <= 3 * Math.PI / 4) {
+            return 90;
+        } else if (heading > 3 * Math.PI / 4 || heading <= -3 * Math.PI / 4) {
+            return 180;
+        } else {
+            return 270;
+        }
+    }
+
+    protected Command cardinalReorient() {
+        return runOnce(
+                () -> {
+                    double angleDegrees = getClosestCardinal();
+                    reorient(angleDegrees);
+                });
+    }
+
     // --------------------------------------------------------------------------------
     // Rotation Controller
     // --------------------------------------------------------------------------------
@@ -154,6 +223,10 @@ public class Swerve extends SwerveDrivetrain implements Subsystem, NTSendable {
 
     double getRotationRadians() {
         return getRobotPose().getRotation().getRadians();
+    }
+
+    double calculateRotationController(DoubleSupplier targetRadians) {
+        return rotationController.calculate(targetRadians.getAsDouble(), getRotationRadians());
     }
 
     // --------------------------------------------------------------------------------
