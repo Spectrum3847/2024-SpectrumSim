@@ -9,6 +9,26 @@
       }
     },
     "Other Devices": {
+      "CANCoder (v6)[0]": {
+        "header": {
+          "open": true
+        }
+      },
+      "CANCoder (v6)[2]": {
+        "header": {
+          "open": true
+        }
+      },
+      "CANCoder (v6)[3]": {
+        "header": {
+          "open": true
+        }
+      },
+      "CANCoder (v6)[44]": {
+        "header": {
+          "open": true
+        }
+      },
       "Talon FX (v6)[20]": {
         "header": {
           "open": true
@@ -29,22 +49,27 @@
           "open": true
         }
       },
-      "Talon FX (v6)[42]": {
+      "Talon FX (v6)[40]": {
         "header": {
           "open": true
         }
       },
-      "Talon FX (v6)[42]/Rotor Sensor": {
+      "Talon FX (v6)[40]/Rotor Sensor": {
         "header": {
           "open": true
         }
       },
-      "Talon FX (v6)[52]": {
+      "Talon FX (v6)[41]": {
         "header": {
           "open": true
         }
       },
-      "Talon FX (v6)[52]/Rotor Sensor": {
+      "Talon FX (v6)[41]/Rotor Sensor": {
+        "header": {
+          "open": true
+        }
+      },
+      "Talon FX (v6)[54]": {
         "header": {
           "open": true
         }
@@ -55,6 +80,7 @@
     "types": {
       "/FMSInfo": "FMSInfo",
       "/SmartDashboard/Arm Viz": "Mechanism2d",
+      "/SmartDashboard/Auto Chooser": "String Chooser",
       "/SmartDashboard/LeftView": "Mechanism2d",
       "/SmartDashboard/Scheduler": "Scheduler",
       "/SmartDashboard/VisionSystemSim-main/Sim Field": "Field2d",
@@ -99,9 +125,6 @@
     }
   },
   "NetworkTables": {
-    "Retained Values": {
-      "open": false
-    },
     "transitory": {
       "CameraPublisher": {
         "cameraName-processed": {
@@ -117,36 +140,63 @@
       "LiveWindow": {
         ".status": {
           "open": true
-        }
+        },
+        "open": true
+      },
+      "Pose": {
+        "open": true
       },
       "Shuffleboard": {
         "open": true
       },
       "SmartDashboard": {
-        "Elevator LaserCan": {
-          "open": true
-        },
         "Elevator:TEST": {
           "open": true
         },
         "ElevatorT": {
           "open": true
         },
+        "LeftView": {
+          "Climber 1StaticRoot": {
+            "open": true
+          },
+          "Climber Root": {
+            "open": true
+          }
+        },
+        "Pivot": {
+          "open": true
+        },
+        "VisionSystemSim-main": {
+          "Sim Field": {
+            "open": true
+          },
+          "open": true
+        },
         "open": true,
         "robot launcher": {
           "open": true
         }
+      },
+      "photonvision": {
+        "cameraName": {
+          "open": true
+        },
+        "open": true
       }
     }
   },
   "NetworkTables Info": {
-    "Clients": {
-      "open": true
-    },
     "Connections": {
       "open": true
     },
     "Server": {
+      "Publishers": {
+        "open": true
+      },
+      "Subscribers": {
+        "open": true
+      },
       "open": true
     },
     "visible": true
