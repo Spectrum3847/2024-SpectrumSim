@@ -121,6 +121,22 @@ public class Swerve extends SwerveDrivetrain implements Subsystem, NTSendable {
         return m_kinematics.toChassisSpeeds(getState().ModuleStates);
     }
 
+    
+    /**
+     * Applies the specified control request to this swerve drivetrain.
+     *
+     * @param request Request to apply
+     */
+    public void writeSetpoints(SwerveModuleState[] setpoints) {
+        try {
+            m_stateLock.writeLock().lock();
+
+            Setpoints = setpoints;
+        } finally {
+            m_stateLock.writeLock().unlock();
+        }
+    }
+
     private void setPilotPerspective() {
         /* Periodically try to apply the operator perspective */
         /* If we haven't applied the operator perspective before, then we should apply it regardless of DS state */
@@ -140,7 +156,7 @@ public class Swerve extends SwerveDrivetrain implements Subsystem, NTSendable {
         }
     }
 
-    public void reorient(double angleDegrees) {
+    protected void reorient(double angleDegrees) {
         try {
             m_stateLock.writeLock().lock();
 
@@ -156,39 +172,20 @@ public class Swerve extends SwerveDrivetrain implements Subsystem, NTSendable {
         }
     }
 
-    public void reorientForward() {
-        double angleDegrees = 0;
-        if (Field.isRed()) {
-            angleDegrees = 180;
-        }
-        reorient(angleDegrees);
+    protected Command reorientPilotAngle(double angleDegrees) {
+        return runOnce(
+                () -> {
+                    double output;
+                    if (Field.isRed()) {
+                        output = (angleDegrees + 180) % 360;
+                    } else {
+                        output = angleDegrees;
+                    }
+                    reorient(output);
+                });
     }
 
-    public void reorientLeft() {
-        double angleDegrees = 90;
-        if (Field.isRed()) {
-            angleDegrees = 270;
-        }
-        reorient(angleDegrees);
-    }
-
-    public void reorientRight() {
-        double angleDegrees = 270;
-        if (Field.isRed()) {
-            angleDegrees = 90;
-        }
-        reorient(angleDegrees);
-    }
-
-    public void reorientBack() {
-        double angleDegrees = 180;
-        if (Field.isRed()) {
-            angleDegrees = 90;
-        }
-        reorient(angleDegrees);
-    }
-
-    public double getClosestCardinal() {
+    protected double getClosestCardinal() {
         double heading = getRotation().getRadians();
         if (heading > -Math.PI / 4 && heading <= Math.PI / 4) {
             return 0;
@@ -201,24 +198,12 @@ public class Swerve extends SwerveDrivetrain implements Subsystem, NTSendable {
         }
     }
 
-    public void cardinalReorient() {
-        double angleDegrees = getClosestCardinal();
-        reorient(angleDegrees);
-    }
-
-    /**
-     * Applies the specified control request to this swerve drivetrain.
-     *
-     * @param request Request to apply
-     */
-    public void writeSetpoints(SwerveModuleState[] setpoints) {
-        try {
-            m_stateLock.writeLock().lock();
-
-            Setpoints = setpoints;
-        } finally {
-            m_stateLock.writeLock().unlock();
-        }
+    protected Command cardinalReorient() {
+        return runOnce(
+                () -> {
+                    double angleDegrees = getClosestCardinal();
+                    reorient(angleDegrees);
+                });
     }
 
     // --------------------------------------------------------------------------------

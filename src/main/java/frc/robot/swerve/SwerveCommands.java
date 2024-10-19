@@ -52,7 +52,7 @@ public class SwerveCommands {
     }
 
     /** Turn the swerve wheels to an X to prevent the robot from moving */
-    public static Command Xbrake() {
+    public static Command xBrake() {
         return Xbrake.run().withName("Swerve.Xbrake");
     }
 
@@ -116,24 +116,20 @@ public class SwerveCommands {
                 .withName("Swerve.HeadingLock");
     }
 
-    public static Command reorient(double angleDegrees) {
-        return swerve.runOnce(() -> swerve.reorient(angleDegrees)).withName("Serve.reorient");
-    }
-
     public static Command reorientForward() {
-        return swerve.runOnce(() -> swerve.reorientForward()).withName("Swerve.reorientForward");
+        return swerve.reorientPilotAngle(0).withName("Swerve.reorientForward");
     }
 
     public static Command reorientLeft() {
-        return swerve.runOnce(() -> swerve.reorientLeft()).withName("Swerve.reorientLeft");
-    }
-
-    public static Command reorientRight() {
-        return swerve.runOnce(() -> swerve.reorientRight()).withName("Swerve.reorientRight");
+        return swerve.reorientPilotAngle(90).withName("Swerve.reorientLeft");
     }
 
     public static Command reorientBack() {
-        return swerve.runOnce(() -> swerve.reorientBack()).withName("Swerve.reorientBack");
+        return swerve.reorientPilotAngle(180).withName("Swerve.reorientBack");
+    }
+
+    public static Command reorientRight() {
+        return swerve.reorientPilotAngle(270).withName("Swerve.reorientRight");
     }
 
     public static Command cardinalReorient() {
