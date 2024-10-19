@@ -6,7 +6,9 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.RobotConfig.ConfigHolder;
+import frc.robot.auton.Auton;
 import frc.robot.climber.Climber;
 import frc.robot.climber.ClimberCommands;
 import frc.robot.elevator.Elevator;
@@ -42,6 +44,7 @@ public class Robot extends TimedRobot {
     @Getter private static Pilot pilot;
     @Getter private static Pivot pivot;
     @Getter private static VisionSystem visionSystem;
+    @Getter private static Auton auton;
 
     @SuppressWarnings("unused")
     private Command m_autonomousCommand;
@@ -93,6 +96,7 @@ public class Robot extends TimedRobot {
             pilot = new Pilot(config.pilot);
             pivot = new Pivot(config.pivot);
             Timer.delay(canInitDelay);
+            auton = new Auton();
             visionSystem = new VisionSystem(swerve::getRobotPose);
 
             /** Intialize Telemetry */
@@ -180,26 +184,26 @@ public class Robot extends TimedRobot {
     /** This method is called once when autonomous starts */
     @Override
     public void autonomousInit() {
-        /*try {
+        try {
             RobotTelemetry.print("@@@ Auton Init Starting @@@ ");
             clearCommandsAndButtons();
             Command autonCommand = Commands.waitSeconds(0.01).andThen(Auton.getAutonomousCommand());
 
             if (autonCommand != null) {
                 autonCommand.schedule();
-                Auton.startAutonTimer();
+                // Auton.startAutonTimer();
             } else {
                 RobotTelemetry.print("No Auton Command Found");
             }
 
-            LEDsCommands.countdown(15, 10).schedule();
+            // LEDsCommands.countdown(15, 10).schedule();
 
             RobotTelemetry.print("@@@ Auton Init Complete @@@ ");
         } catch (Throwable t) {
             // intercept error and log it
             CrashTracker.logThrowableCrash(t);
             throw t;
-        }*/
+        }
     }
 
     @Override
