@@ -2,10 +2,14 @@ package frc.robot.pivot;
 
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.configs.TalonFXConfigurator;
 import com.ctre.phoenix6.hardware.CANcoder;
+import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
+import com.ctre.phoenix6.sim.CANcoderSimState;
 import com.ctre.phoenix6.sim.TalonFXSimState;
 import edu.wpi.first.networktables.NTSendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
@@ -54,8 +58,9 @@ public class Pivot extends Mechanism {
 
         /* Cancoder config settings */
         @Getter private final int CANcoderID = 44;
-        @Getter private final double CANcoderGearRatio = 35.1;
+        @Getter private final double CANcoderGearRatio = -35.1;
         @Getter private double CANcoderOffset = 0;
+        @Getter private boolean isCANcoderAttached = false;
 
         private enum CANCoderFeedbackType {
             RemoteCANcoder,
@@ -72,59 +77,66 @@ public class Pivot extends Mechanism {
         /* Sim properties */
         @Getter private double pivotX = 0.55;
         @Getter private double pivotY = 0.1;
-        @Getter private double ratio = 50;
+        @Getter @Setter private double ratio = 1; // 15;
         @Getter private double length = 0.4;
 
         public PivotConfig() {
             super("Pivot", 41, RobotConfig.CANIVORE);
             configPIDGains(0, velocityKp, 0, 0);
             configFeedForwardGains(velocityKs, velocityKv, 0, 0);
-            configGearRatio(1);
+            configMotionMagic(147000, 161000, 0);
+            configGearRatio(1); // 172.8);
             configSupplyCurrentLimit(currentLimit, threshold, true);
             configForwardTorqueCurrentLimit(torqueCurrentLimit);
             configReverseTorqueCurrentLimit(torqueCurrentLimit);
-            configNeutralBrakeMode(true);
-            configClockwise_Positive();
-            configMinMaxRotations(0, 0.96);
+            configMinMaxRotations(0, 30); // .96
             configReverseSoftLimit(getMinRotation(), true);
             configForwardSoftLimit(getMaxRotation(), true);
-            configMotionMagic(147000, 161000, 0);
+            configNeutralBrakeMode(true);
+            configCounterClockwise_Positive();
+            setRatio(Math.abs(172.8)); // getGearRatio()));
         }
 
         public void configCANcoderOffset(double CANcoderOffset) {
             this.CANcoderOffset = CANcoderOffset;
         }
 
-        public void modifyMotorConfig(PivotConfig config) {
-            getTalonConfig().Feedback.FeedbackRemoteSensorID = CANcoderID;
+        public PivotConfig modifyMotorConfig(TalonFX motor) {
+            TalonFXConfigurator configurator = motor.getConfigurator();
+            TalonFXConfiguration talonConfigMod = getTalonConfig();
+            talonConfigMod.Feedback.FeedbackRemoteSensorID = CANcoderID;
             switch (pivotFeedbackSource) {
                 case RemoteCANcoder:
-                    getTalonConfig().Feedback.FeedbackSensorSource =
+                    talonConfigMod.Feedback.FeedbackSensorSource =
                             FeedbackSensorSourceValue.RemoteCANcoder;
                     break;
                 case FusedCANcoder:
-                    getTalonConfig().Feedback.FeedbackSensorSource =
+                    talonConfigMod.Feedback.FeedbackSensorSource =
                             FeedbackSensorSourceValue.FusedCANcoder;
                     break;
                 case SyncCANcoder:
-                    getTalonConfig().Feedback.FeedbackSensorSource =
+                    talonConfigMod.Feedback.FeedbackSensorSource =
                             FeedbackSensorSourceValue.SyncCANcoder;
                     break;
             }
-            getTalonConfig().Feedback.RotorToSensorRatio = CANcoderGearRatio;
+            talonConfigMod.Feedback.RotorToSensorRatio = CANcoderGearRatio;
+            configurator.apply(talonConfigMod);
+            talonConfig = talonConfigMod;
+            return this;
         }
     }
 
     private PivotConfig config;
     private CANcoder m_CANcoder;
     private PivotSim sim;
+    CANcoderSimState canCoderSim;
 
     public Pivot(PivotConfig config) {
         super(config);
-        this.config = config; // unsure if we need this, may delete and test
+        this.config = config;
 
-        if (isAttached()) {
-            config.modifyMotorConfig(config); // Modify configuration to use remote CANcoder fused
+        if (config.isCANcoderAttached()) {
+            config.modifyMotorConfig(motor); // Modify configuration to use remote CANcoder fused
             m_CANcoder = new CANcoder(config.getCANcoderID(), RobotConfig.CANIVORE);
             CANcoderConfiguration cancoderConfigs = new CANcoderConfiguration();
             cancoderConfigs.MagnetSensor.MagnetOffset = config.getCANcoderOffset();
@@ -132,7 +144,7 @@ public class Pivot extends Mechanism {
                     SensorDirectionValue.CounterClockwise_Positive;
             cancoderConfigs.MagnetSensor.AbsoluteSensorRange =
                     AbsoluteSensorRangeValue.Unsigned_0To1;
-            checkMotorResponse(m_CANcoder.getConfigurator().apply(cancoderConfigs));
+            checkCANcoderResponse(m_CANcoder.getConfigurator().apply(cancoderConfigs));
         }
 
         simulationInit();
@@ -151,6 +163,9 @@ public class Pivot extends Mechanism {
     public void initSendable(NTSendableBuilder builder) {
         if (isAttached()) {
             builder.addDoubleProperty("Position", this::getMotorPosition, null);
+            builder.addDoubleProperty("Velocity", this::getMotorVelocityRPM, null);
+            builder.addDoubleProperty(
+                    "Motor Voltage", this.motor.getSimState()::getMotorVoltage, null);
         }
     }
 
@@ -237,7 +252,7 @@ public class Pivot extends Mechanism {
         return false;
     }
 
-    public void checkMotorResponse(StatusCode response) {
+    public void checkCANcoderResponse(StatusCode response) {
         if (!response.isOK()) {
             System.out.println(
                     "Pivot CANcoder ID "
@@ -253,6 +268,8 @@ public class Pivot extends Mechanism {
     private void simulationInit() {
         if (isAttached()) {
             sim = new PivotSim(motor.getSimState(), RobotSim.leftView);
+
+            // m_CANcoder.setPosition(0);
         }
     }
 
@@ -260,6 +277,7 @@ public class Pivot extends Mechanism {
     public void simulationPeriodic() {
         if (isAttached()) {
             sim.simulationPeriodic();
+            // m_CANcoder.getSimState().setRawPosition(sim.getAngleRads() / 0.202);
         }
     }
 
@@ -272,7 +290,8 @@ public class Pivot extends Mechanism {
                             config.ratio,
                             config.length,
                             config.getMinRotation(),
-                            config.getMaxRotation()),
+                            80, // config.getMaxRotation() * config.getRatio(),
+                            config.getMinRotation()),
                     mech,
                     pivotMotorSim,
                     config.getName());

@@ -8,5 +8,6 @@ public class PM2024 extends ULTRAVIOLET2024 {
     public PM2024() {
         super();
         swerve.configEncoderOffsets(0.3, 0.3, 0.3, 0.3);
+        launcher.setAttached(false);
     }
 }

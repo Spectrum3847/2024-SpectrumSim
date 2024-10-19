@@ -9,6 +9,26 @@
       }
     },
     "Other Devices": {
+      "CANCoder (v6)[0]": {
+        "header": {
+          "open": true
+        }
+      },
+      "CANCoder (v6)[2]": {
+        "header": {
+          "open": true
+        }
+      },
+      "CANCoder (v6)[3]": {
+        "header": {
+          "open": true
+        }
+      },
+      "CANCoder (v6)[44]": {
+        "header": {
+          "open": true
+        }
+      },
       "Talon FX (v6)[20]": {
         "header": {
           "open": true
@@ -29,32 +49,27 @@
           "open": true
         }
       },
-      "Talon FX (v6)[42]": {
+      "Talon FX (v6)[40]": {
         "header": {
           "open": true
         }
       },
-      "Talon FX (v6)[42]/Rotor Sensor": {
+      "Talon FX (v6)[40]/Rotor Sensor": {
         "header": {
           "open": true
         }
       },
-      "Talon FX (v6)[52]": {
+      "Talon FX (v6)[41]": {
         "header": {
           "open": true
         }
       },
-      "Talon FX (v6)[52]/Rotor Sensor": {
+      "Talon FX (v6)[41]/Rotor Sensor": {
         "header": {
           "open": true
         }
       },
       "Talon FX (v6)[54]": {
-        "header": {
-          "open": true
-        }
-      },
-      "Talon FX (v6)[54]/Rotor Sensor": {
         "header": {
           "open": true
         }
@@ -135,12 +150,6 @@
         "open": true
       },
       "SmartDashboard": {
-        "Climber": {
-          "open": true
-        },
-        "Elevator": {
-          "open": true
-        },
         "Elevator:TEST": {
           "open": true
         },
@@ -154,6 +163,9 @@
           "Climber Root": {
             "open": true
           }
+        },
+        "Pivot": {
+          "open": true
         },
         "VisionSystemSim-main": {
           "Sim Field": {

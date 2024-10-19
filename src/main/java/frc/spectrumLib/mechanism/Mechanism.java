@@ -377,7 +377,7 @@ public abstract class Mechanism implements Subsystem, NTSendable {
         @Getter private String name;
         @Getter @Setter private boolean attached = true;
         @Getter private CanDeviceId id;
-        @Getter private TalonFXConfiguration talonConfig;
+        @Getter protected TalonFXConfiguration talonConfig;
         @Getter private int numMotors = 1;
         @Getter private double voltageCompSaturation = 12.0; // 12V by default
         @Getter private double minRotation;
